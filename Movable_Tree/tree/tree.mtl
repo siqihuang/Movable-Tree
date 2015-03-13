@@ -1,0 +1,27 @@
+newmtl tree:AS12_Branch2
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd as12brn1.tif
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 6.50
+newmtl tree:AS12_Leaf3
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd as12lef2.tif
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 6.50
+newmtl tree:AS12_Leaf5
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd as12lef1.tif
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 6.50

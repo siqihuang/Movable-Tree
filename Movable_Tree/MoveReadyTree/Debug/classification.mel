@@ -1,0 +1,130 @@
+global int $remainComponent=0;
+//global string $remainText="";
+global string $tags[];
+global string $remainText;
+global string $labelText;
+
+global proc createClassificationGUI(){
+	global int $remainComponent;
+	global string $selected[];
+	global string $tages[];
+	global string $meshField;
+	global string $option;
+	global string $remainText;
+	global string $labelText;
+	$remainText="Remaining Components: "+$remainComponent;
+	$labelText="current mesh: "+$selected[$remainComponent-1];
+
+	select $selected[$remainComponent-1];
+	viewFit;
+
+	window -title "Classification Command" -w 300 -h 200 ClassificationWindow;
+	columnLayout;
+		rowLayout -numberOfColumns 2 -columnWidth2 210 35;
+			$remainText=`text -label $remainText`;
+			button -label "current node" -command "selectClassificationNode()";
+		setParent ..;
+		$meshField = `scrollField -w 300 -h 200 -wordWrap true -editable false`;
+
+		showClassificationDetail($meshField,$option,1);
+
+		rowLayout -numberOfColumns 2 -columnWidth2 230 35;
+			$labelText=`text -label $labelText`;
+		        $option=`optionMenu -label "tag"`;
+        			menuItem -label "F";
+            			menuItem -label "R1";
+  	          		menuItem -label "R2";
+		setParent..;
+	setParent ..;
+
+	frameLayout -label "Mesh Selection" -collapsable 1 -w 300;
+		columnLayout;
+			rowLayout -numberOfColumns 2 -columnWidth2 260 35;
+				button -label "next" -command "showClassificationDetail($meshField,$option,1)";
+				button -label "last" -command "showClassificationDetail($meshField,$option,0)";
+			setParent..;
+		setParent..;
+	setParent..;
+
+	columnLayout;
+		rowLayout -numberOfColumns 2 -columnWidth2 240 35;
+			button -label "OK" -command "splitMesh()";
+			button -label "Cancel";
+		setParent..;
+	setParent..;
+	showWindow ClassificationWindow;
+}
+
+global proc splitMesh(){
+	global int $remainComponent;
+	if($remainComponent>0){
+		confirmDialog -title "ERROR" -message "Please tag all components!" -button "OK";
+	}
+	else{
+		setAttr classificationNode2015.trigger 1;
+	}
+}
+
+global proc setTagValue(string $option){
+	//int $index=`optionMenu -q -select $option`;
+	//print $index;
+}
+
+global proc selectClassificationNode(){
+	select classificationNode2015;
+}
+
+global proc showClassificationDetail(string $meshField,string $option,int $forward){
+	global string $selected[];
+	global string $tags[];
+	global int $remainComponent;
+	global string $remainText;
+	global string $labelText;
+	int $size=size($selected);
+
+	if(`optionMenu -exists $option`&&$remainComponent>0&&$forward==1){
+		string $s=`optionMenu -q -value $option`;
+		$tags[$remainComponent-1]=$s;
+		$remainComponent--;
+		string $currentRemain="Remaining Components: "+$remainComponent;
+		if($remainComponent<=0){
+			text -edit -label $currentRemain $remainText;
+			text -edit -label "current mesh: none" $labelText;
+			select classificationNode2015;
+		}
+		else{
+			string $currentLabel="current mesh: "+$selected[$remainComponent-1];
+			text -edit -label $currentRemain $remainText;
+			text -edit -label $currentLabel $labelText;
+			select $selected[$remainComponent-1];
+			viewFit;
+		}
+	}
+	else if(`optionMenu -exists $option`&&$remainComponent>=0&&$forward==0){
+		string $s=`optionMenu -q -value $option`;
+		print $remainComponent;
+		print "\n";
+		print $size;
+		print "\n";
+		if($remainComponent>0)
+			$tags[$remainComponent-1]=$s;
+		if($remainComponent<$size){
+			$remainComponent++;
+		}
+		string $currentRemain="Remaining Components: "+$remainComponent;
+		string $currentLabel="current mesh: "+$selected[$remainComponent-1];
+		text -edit -label $currentRemain $remainText;
+		text -edit -label $currentLabel $labelText;
+		select $selected[$remainComponent-1];
+		viewFit;
+	}
+
+	string $lines="";
+	for($i=$size-1;$i>=0;--$i){
+		$lines+=$selected[$i];
+		$lines+="				";
+		$lines+=$tags[$i];
+		$lines+="\n";
+	}
+	scrollField -edit -text $lines $meshField;
+}
