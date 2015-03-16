@@ -28,10 +28,36 @@ void objLoader::setMeshList(string meshList){
 void objLoader::setComponentNum(int componentNum){
 	this->componentNum=componentNum;
 	vertex=new vector<glm::vec3>[componentNum];
-	uv=new vector<glm::vec2>[componentNum];
+	UV_COORDS=new vector<glm::vec2>[componentNum];
 	faceInfo=new vector<string>[componentNum];
 	index=new vector<vector<unsigned int>>[componentNum];
+	UV_INDEXS = new vector<vector<unsigned int>>[componentNum];
 }
+
+int objLoader::GetComponentNum()
+{
+	return componentNum;
+}
+
+vector<glm::vec3>* objLoader::GetVertex()
+{
+	return vertex;	
+}
+vector<glm::vec2>* objLoader::GetUV()
+{
+	return UV_COORDS;
+}
+
+vector<string>* objLoader::GetFaceInfo()
+{
+	return faceInfo;
+}
+
+vector<vector<unsigned int>>* objLoader::GetIndex()
+{
+	return index;
+}
+
 
 void objLoader::readObj(){
 	ifstream inObj;
@@ -61,7 +87,7 @@ void objLoader::readObj(){
 			glm::vec2 vec;
 			inObj>>vec.x;
 			inObj>>vec.y;
-			uv[n].push_back(vec);
+			UV_COORDS[n].push_back(vec);
 		}
 		else if(n<3&&input==meshName[n]){
 			n++;
@@ -81,20 +107,24 @@ void objLoader::readObj(){
 	for(int i=0;i<componentNum;i++){
 		for(int j=0;j<faceInfo[i].size();j++){
 			vector<unsigned int> v;
+			vector<unsigned int> uv_idx;
 			sub=faceInfo[i][j];
 			std::size_t found = sub.find(" ");
 			while(found!=-1){
 				sub=sub.substr(found+1,sub.size()-1);
 				found=sub.find("/");
 				v.push_back(stoi(sub.substr(0,found)));
+
 				sub=sub.substr(found+1,sub.size()-1);
 				found=sub.find("/");
-				//
+				uv_idx.push_back(stoi(sub.substr(0,found)));
+
 				sub=sub.substr(found+1,sub.size()-1);
 				found=sub.find(" ");
-				//
 			}
+			//v is the vertices of a face
 			index[i].push_back(v);
+			UV_INDEXS[i].push_back(uv_idx);
 		}
 	}
 	

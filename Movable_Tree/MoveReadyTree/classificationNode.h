@@ -7,6 +7,8 @@
 #include "maya\MGlobal.h"
 #include "maya\MPxCommand.h"
 #include "objLoader.h"
+#include "InstancingModule.h"
+#include "union_find.h"
 #include <string>
 
 class classificationNode:MPxNode
@@ -25,6 +27,8 @@ public:
 	static MObject trigger;//the trigger that trigger compute
 	static MObject output;//the output
 	objLoader loader;
+	UnionFind uf;
+	InstancingModule im;
 };
 
 #endif

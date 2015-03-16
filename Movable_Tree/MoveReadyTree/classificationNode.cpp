@@ -68,6 +68,11 @@ MStatus classificationNode::compute(const MPlug &plug,MDataBlock &data){
 		loader.setMeshList(meshList);
 		loader.extractList(meshList,componentNum);
 		loader.readObj();
+
+		//4.1 union find
+		uf.Union(loader.index, loader.UV_INDEXS, loader.UV_COORDS, componentNum);
+		//4.2 instancing
+		im.Instancing();
 	}
 	/*if(plug==Empty){
 		int remain=data.inputValue(remainComponent,&status).asInt();

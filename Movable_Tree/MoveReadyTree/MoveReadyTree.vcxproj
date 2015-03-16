@@ -17,7 +17,10 @@
   <ItemGroup>
     <ClCompile Include="classificationCommand.cpp" />
     <ClCompile Include="classificationNode.cpp" />
+    <ClCompile Include="CommonData.cpp" />
+    <ClCompile Include="Domain.cpp" />
     <ClCompile Include="FileAnalysis.cpp" />
+    <ClCompile Include="InstancingModule.cpp" />
     <ClCompile Include="MayaPlugin.cpp" />
     <ClCompile Include="objLoader.cpp" />
     <ClCompile Include="Triangle.cpp" />
@@ -25,9 +28,14 @@
   <ItemGroup>
     <ClInclude Include="classificationCommand.h" />
     <ClInclude Include="classificationNode.h" />
+    <ClInclude Include="CommonData.h" />
+    <ClInclude Include="Domain.h" />
+    <ClInclude Include="Face.h" />
     <ClInclude Include="FileAnalysis.h" />
+    <ClInclude Include="InstancingModule.h" />
     <ClInclude Include="objLoader.h" />
     <ClInclude Include="Triangle.h" />
+    <ClInclude Include="UnionFindDomain.h" />
     <ClInclude Include="union_find.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -57,11 +65,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>C:\Users\siqiHuang\Documents\GitHub\Project2\MoveReadyTree\MoveReadyTree</OutDir>
+    <OutDir>C:\Users\Wingszero\Desktop\660 Adv CG\Movable-Tree\Movable_Tree</OutDir>
     <TargetExt>.mll</TargetExt>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <IntDir>$(Configuration)\</IntDir>
-    <IncludePath>C:\Users\siqiHuang\Documents\GitHub\Project2\MoveReadyTree\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Wingszero\Desktop\660 Adv CG\Movable-Tree\Movable_Tree\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -113,7 +121,7 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>.;C:\Program Files\Autodesk\Maya2015\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;C:\Program Files\Autodesk\Maya2015\include;..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>$(Configuration)\MoveReadyTree.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>

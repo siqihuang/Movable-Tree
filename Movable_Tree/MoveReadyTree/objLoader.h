@@ -8,19 +8,21 @@
 #include <string>
 #include<glm/glm.hpp>
 
+#include "CommonData.h"
+
 using namespace std;
 
 class objLoader{
-private:
+public:
 	int componentNum;
 	string fileName,meshList;
 	string *meshName;
 	vector<glm::vec3> *vertex;
-	vector<glm::vec2> *uv;
+	vector<glm::vec2> *UV_COORDS;
 	vector<string> *faceInfo;
 	vector<vector<unsigned int>> *index;
+	vector<vector<unsigned int>> *UV_INDEXS;
 
-public:
 	objLoader(){};
 	objLoader(string fileName,string meshList,int componentNum);
 	void setFileName(string fileName);
@@ -28,6 +30,12 @@ public:
 	void setComponentNum(int componentNum);
 	void readObj();
 	void extractList(string meshList,int componentNum);
+	
+	vector<glm::vec3>* GetVertex();
+	vector<glm::vec2>* GetUV();
+	vector<string>* GetFaceInfo();
+	vector<vector<unsigned int>>* GetIndex();
+	int GetComponentNum();
 };
 
 #endif
