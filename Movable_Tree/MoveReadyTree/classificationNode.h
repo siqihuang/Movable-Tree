@@ -9,6 +9,7 @@
 #include "objLoader.h"
 #include "InstancingModule.h"
 #include "union_find.h"
+#include "mtlLoader.h"
 #include <string>
 
 class classificationNode:MPxNode
@@ -20,15 +21,22 @@ public:
 
 	static MStatus initialize();
 	virtual MStatus compute(const MPlug &plug, MDataBlock &data);
+	void extractList(string tagList,int componentNum);
+
 	static MTypeId id;
-	static MObject MAFilePath;//the ma file path
+	static MObject ObjFilePath;//the obj file path
+	static MObject MtlFilePath;//the mtl file path
 	static MObject DomainNum;//the domain number
 	static MObject selectedList;//the selected list
 	static MObject trigger;//the trigger that trigger compute
+	static MObject tagList;//tag list
 	static MObject output;//the output
-	objLoader loader;
+	
 	UnionFind uf;
 	InstancingModule im;
+	string *tags;
+	objLoader Objloader;
+	mtlLoader Mtlloader;
 };
 
 #endif

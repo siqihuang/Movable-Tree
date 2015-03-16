@@ -1,0 +1,39 @@
+global int $reprensentativeInstanceNum;
+
+global proc createInstancingGUI(){
+	global int $representativeInstanceNum;
+	window -title "Instancing Command" -w 300 -h 240 InstancingWindow;
+	print $representativeInstanceNum;
+	columnLayout;
+		rowLayout -numberOfColumns 1 -columnWidth 310 35;
+			button -label "find Representative" -command "findRepresentative()";
+		setParent..;
+	setParent..;
+
+	frameLayout -label "instance info" -collapsable 1 -w 240;
+		columnLayout;
+			string $textRepInstanceNum="representative instance remains: "+$representativeInstanceNum;
+			rowLayout -numberOfColumns 1 -columnWidth 310 35;
+				text -label $textRepInstanceNum;
+			setParent..;
+		setParent..;
+	
+		columnLayout;
+			rowLayout -numberOfColumns 1 -columnWidth 310 30;
+				string $positionField = `scrollField -w 300 -h 100 -wordWrap true -editable false`;
+			setParent..;
+		setParent..;
+	setParent..;		
+
+	columnLayout;
+		rowLayout -numberOfColumns 2 -columnWidth2 200 35;
+			button -label "next";
+			button -label "last";
+		setParent..;
+	setParent..;
+
+	showWindow InstancingWindow;
+}
+
+global proc findRepresentative(){
+}

@@ -2,10 +2,12 @@
 
 //MTypeId id(0x80000);
 MTypeId classificationNode::id( 0x80000 );
-MObject classificationNode::MAFilePath;
+MObject classificationNode::ObjFilePath;
+MObject classificationNode::MtlFilePath;
 MObject classificationNode::DomainNum;
 MObject classificationNode::selectedList;
 MObject classificationNode::trigger;
+MObject classificationNode::tagList;
 MObject classificationNode::output;
 
 classificationNode::classificationNode(){
@@ -33,14 +35,23 @@ MStatus classificationNode::initialize(){
 	//nAttr.setWritable(false);
 	attributeAffects(trigger,output);
 
-	MAFilePath=tAttr.create("path","pa",MFnData::kString,&status);
-	addAttribute(MAFilePath);
+	ObjFilePath=tAttr.create("pathObj","paO",MFnData::kString,&status);
+	addAttribute(ObjFilePath);
+	tAttr.setWritable(true);
+	tAttr.setStorable(false);
+
+	MtlFilePath=tAttr.create("pathMtl","paM",MFnData::kString,&status);
+	addAttribute(MtlFilePath);
 	tAttr.setWritable(true);
 	tAttr.setStorable(false);
 
 	DomainNum=nAttr.create("domainNum","dN",MFnNumericData::kInt,0,&status);
 	addAttribute(DomainNum);
 	nAttr.setKeyable(false);
+
+	tagList=tAttr.create("tags","ta",MFnData::kString,&status);
+	addAttribute(tagList);
+	tAttr.setKeyable(false);
 
 	selectedList=tAttr.create("selected","sl",MFnData::kString,&status);
 	addAttribute(selectedList);
@@ -57,20 +68,36 @@ MStatus classificationNode::initialize(){
 MStatus classificationNode::compute(const MPlug &plug,MDataBlock &data){
 	MStatus status;
 	bool triggered=data.inputValue(trigger,&status).asBool();
-	if(plug==output&&triggered){
+	if(plug==output&&triggered)
+	{
 		int componentNum=data.inputValue(DomainNum,&status).asInt();
 		MString MmeshList=data.inputValue(selectedList,&status).asString();
-		MString MfilePath=data.inputValue(MAFilePath,&status).asString();
-		string meshList=string(MmeshList.asChar());
-		string filePath=string(MfilePath.asChar());
-		loader.setComponentNum(componentNum);
-		loader.setFileName(filePath);
-		loader.setMeshList(meshList);
-		loader.extractList(meshList,componentNum);
-		loader.readObj();
+		MString MObjPath=data.inputValue(ObjFilePath,&status).asString();
+		MString MMtlPath=data.inputValue(MtlFilePath,&status).asString();
+		MString Mtag=data.inputValue(tagList,&status).asString();
+		string meshList=string(MmeshList.asChar());		
+		string ObjPath=string(MObjPath.asChar());
+		string MtlPath=string(MMtlPath.asChar());
+		string tag=string(Mtag.asChar());		
+		
+		extractList(tag,componentNum);
 
+		Objloader.setComponentNum(componentNum);
+		Objloader.setFileName(ObjPath);
+		Objloader.setMeshList(meshList);
+		Objloader.extractList(meshList,componentNum);
+		Objloader.readObj();
+
+		Mtlloader.setComponentNum(componentNum);
+		Mtlloader.setFileName(MtlPath);
+		Mtlloader.getTempFile(Objloader.getTempName());
+		Mtlloader.readFile();
+		
+		MGlobal::executeCommand("createInstancingGUI()");
+		MGlobal::executeCommand("$reprensentativeInstanceNum=10");
+		
 		//4.1 union find
-		uf.Union(loader.index, loader.UV_INDEXS, loader.UV_COORDS, componentNum);
+		uf.Union(Objloader.index, Objloader.UV_INDEXS, Objloader.UV_COORDS, componentNum);
 		//4.2 instancing
 		im.Instancing();
 	}
@@ -101,4 +128,15 @@ MStatus classificationNode::compute(const MPlug &plug,MDataBlock &data){
 	}
 	*/
 	return status;
+}
+
+void classificationNode::extractList(string tagList,int componentNum){
+	string subList=tagList;
+	tags=new string[componentNum];
+	for(int i=0;i<componentNum;i++){
+		std::size_t found = subList.find("$$");
+		tags[i]=subList.substr(0,found);
+		subList=subList.substr(found+2,subList.length()-1);
+		MGlobal::displayInfo(MString(tags[i].c_str()));
+	}
 }
