@@ -14,7 +14,7 @@ class objLoader{
 private:
 	int componentNum;
 	string fileName,meshList;
-	string *meshName;
+	string *meshName,*tempName;
 	vector<glm::vec3> *vertex;
 	vector<glm::vec2> *uv;
 	vector<string> *faceInfo;
@@ -27,6 +27,7 @@ public:
 	void setMeshList(string meshList);
 	void setComponentNum(int componentNum);
 	void readObj();
+	string *getTempName();
 	void extractList(string meshList,int componentNum);
 };
 

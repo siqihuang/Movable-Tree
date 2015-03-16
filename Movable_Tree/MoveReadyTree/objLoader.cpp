@@ -9,6 +9,7 @@ objLoader::objLoader(string fileName,string meshList,int componentNum){
 void objLoader::extractList(string meshList,int componentNum){
 	string subList=meshList;
 	meshName=new string[componentNum];
+	tempName=new string[componentNum];
 	for(int i=0;i<componentNum;i++){
 		std::size_t found = subList.find("$$");
 		meshName[i]=subList.substr(0,found);
@@ -31,6 +32,10 @@ void objLoader::setComponentNum(int componentNum){
 	uv=new vector<glm::vec2>[componentNum];
 	faceInfo=new vector<string>[componentNum];
 	index=new vector<vector<unsigned int>>[componentNum];
+}
+
+string *objLoader::getTempName(){
+	return tempName;
 }
 
 void objLoader::readObj(){
@@ -74,6 +79,10 @@ void objLoader::readObj(){
 			inObj.getline(buffer,256,'\n');
 			string str=buffer;
 			faceInfo[n-1].push_back(str);
+		}
+		else if(input=="usemtl"){
+			inObj>>tempName[n-1];
+			MGlobal::displayInfo(MString(tempName[n-1].c_str()));
 		}
 	}
 	
