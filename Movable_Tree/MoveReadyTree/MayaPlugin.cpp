@@ -1,6 +1,7 @@
 #include "maya\MGlobal.h"
 #include "maya\MFnPlugin.h"
 #include "classificationNode.h"
+#include "instancingNode.h"
 #include "classificationCommand.h"
 
 MStatus initializePlugin(MObject obj){
@@ -13,6 +14,7 @@ MStatus initializePlugin(MObject obj){
 
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/meshSelection.mel\"");
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/classification.mel\"");
+	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/instancing.mel\"");
 	status = fnPlugin.registerUI("createMoveReadyTreeUI", "deleteMoveReadyTreeUI");
 
 	return status;
@@ -22,6 +24,7 @@ MStatus uninitializePlugin(MObject obj){
 	MStatus status;
 	MFnPlugin fnPlugin(obj);
 	status=fnPlugin.deregisterNode(classificationNode::id);
+	status=fnPlugin.deregisterNode(instancingNode::id);
 
 	status=fnPlugin.deregisterCommand("classificationCommand");
 

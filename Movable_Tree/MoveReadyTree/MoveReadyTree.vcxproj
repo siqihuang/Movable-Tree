@@ -21,7 +21,9 @@
     <ClCompile Include="Domain.cpp" />
     <ClCompile Include="FileAnalysis.cpp" />
     <ClCompile Include="InstancingModule.cpp" />
+    <ClCompile Include="instancingNode.cpp" />
     <ClCompile Include="MayaPlugin.cpp" />
+    <ClCompile Include="mtlLoader.cpp" />
     <ClCompile Include="objLoader.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
@@ -33,6 +35,8 @@
     <ClInclude Include="Face.h" />
     <ClInclude Include="FileAnalysis.h" />
     <ClInclude Include="InstancingModule.h" />
+    <ClInclude Include="instancingNode.h" />
+    <ClInclude Include="mtlLoader.h" />
     <ClInclude Include="objLoader.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="UnionFindDomain.h" />

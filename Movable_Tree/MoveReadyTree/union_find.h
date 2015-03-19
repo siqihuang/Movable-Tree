@@ -11,21 +11,22 @@
 #include <map>
 #include <ctime>
 
+/*
+struct UVCmp
+{
+	bool operator()	(glm::vec2 a, glm::vec2 b)
+	{
+		if(a.x == b.x) 
+			return a.y <= b.y;
+		else
+			return a.x < b.x;
+	}
+} uvcmp;
+*/
+
 class UnionFind
 {
 public:
-
-	struct UVCmp
-	{
-		bool operator()	(glm::vec2 a, glm::vec2 b)
-		{
-			if(a.x == b.x) 
-				return a.y <= b.y;
-			else
-				return a.x < b.x;
-		}
-	} uvcmp;
-
 	Face* _Find(Face* face)
 	{
 		if(face->parent != face)
@@ -59,7 +60,7 @@ public:
 	}
 	
 	vector<Domain*> Union(const vector<vector<unsigned int>> *index, 
-		const vector<vector<unsigned int>> *uv_indexs,  const vector<glm::vec2> *UV_COORDS, int componentNum)
+		const vector<vector<unsigned int>> *uv_indexs, const vector<glm::vec2> *UV_COORDS, int componentNum)
 	{
 		clock_t start = clock();
 		map<Face*, Domain*>domain_map;
@@ -111,12 +112,13 @@ public:
 				}
 			}
 		}
-
 		for(it = domain_map.begin(); it != domain_map.end(); ++it)
 		{
 			Domain* d = it->second;
-			sort(d->uv_coords_list.begin(), d->uv_coords_list.end(), uvcmp); //for instancing
+			//sort(d->uv_coords_list.begin(), d->uv_coords_list.end(), uvcmp);
+			//d->SortUVCoords(); //for instancing
 			domain_list.push_back(it->second);
+			//cout<<"f: "<<it->second->face_list.size()<<endl;
 		}
 
 		clock_t end = clock();

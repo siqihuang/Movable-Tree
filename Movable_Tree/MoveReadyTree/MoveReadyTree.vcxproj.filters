@@ -50,6 +50,12 @@
     <ClCompile Include="CommonData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="instancingNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mtlLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="classificationNode.h">
@@ -83,6 +89,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UnionFindDomain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="instancingNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mtlLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

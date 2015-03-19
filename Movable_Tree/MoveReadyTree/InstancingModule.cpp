@@ -14,7 +14,7 @@ void InstancingModule::Instancing()
 void InstancingModule::TextureMap()
 {
 	clock_t start = clock();
-	int len = domain_list.size();
+	size_t len = domain_list.size();
 
 	UnionFindDomain ufd;
 	
@@ -94,57 +94,55 @@ void InstancingModule::print()
 
 bool InstancingModule::_TextureMap(Domain *a, Domain *b)
 {
-	//uv size not match
+	//face size not match
+	if(a->face_list.size() != b->face_list.size())
+		return false;
+
 	if(a->uv_coords_list.size() != b->uv_coords_list.size())
 		return false;
 	
-	float dis;
-	for(int i = 0; i < a->uv_coords_list.size(); ++i)
-	{
-		/*
-		dis = fabs(a->uv_coords_list[i].x - b->uv_coords_list[i].x);
-		if(dis > EPS) return false;
+	size_t len = a->face_list.size();
+	//debug
+	//len = a->uv_coords_list.size();
 
-		dis = fabs(a->uv_coords_list[i].y - b->uv_coords_list[i].y); 
-		if(dis > EPS) return false;
-		*/
-		dis = glm::distance(a->uv_coords_list[i], b->uv_coords_list[i]);
-		if(dis > EPS) return false;
-	}
-	//if true
-	/*
-	for(int i = 0; i < a->uv_coords_list.size(); ++i)
+	bool *vis = new bool[len];
+	for(int i = 0; i < len; ++i)
 	{
-		printf("%f %f\n", a->uv_coords_list[i].x, b->uv_coords_list[i].x); 
+		vis[i] = false;
 	}
-	*/
-	return true;
-
-	/*
-	for(int i = 0; i < a->face_list.size(); ++i)
+	
+	//from domain a, pick nearest face from domain b.
+	for(int i = 0; i < len; ++i)
 	{
-		Face* face_1 = a->face_list[i];
-		for(int j = 0; j < b->face_list.size(); ++j)
+		bool found = false;
+		float dis = FLT_MAX;
+		int tar_idx = -1;
+		for(int j = 0; j < len; ++j)
 		{
-			Face* face_2 = b->face_list[j];
-			//uv distance
-			float dis = face_1->GetUVdistance(face_2);
-			if(dis < EPS)
+			if(vis[j]) continue;
+			//calc uv distance
+			float tmp_dis = a->face_list[i]->GetUVdistance(b->face_list[j]);
+			//float tmp_dis = glm::distance(a->uv_coords_list[i], b->uv_coords_list[j]);
+			//find nearest face
+			if(tmp_dis <= EPS && tmp_dis < dis)
 			{
-				if(dis < face_1->UVminDis) //nearer
-				{
-					//printf("yes");
-					face_1->UVminDis = dis;
-					face_1->nearestNeighbor = face_2;
-				}
-				if(dis < face_2->UVminDis) //nearer
-				{
-					//printf("yes");
-					face_2->UVminDis = dis;
-					face_2->nearestNeighbor = face_1;
-				}
+				//greedy: if found one neighbour near enough, pick it!	
+				dis = tmp_dis;
+				//vis[j] = true;
+				tar_idx = j;
+				found = true;
 			}
 		}
+		if(found)
+		{
+			vis[tar_idx] = true;
+		}
+		else
+		{
+			delete[] vis;
+			return false;
+		}
 	}
-	*/
+	delete[] vis;
+	return true;
 }
