@@ -6,11 +6,13 @@
 
 
 #include "CommonData.h"
-#include "Domain.h"
 #include <map>
 #include <ctime>
 
 
+class Domain;
+
+//for instancing: combine similar domain
 class UnionFindDomain
 {
 public:
@@ -23,7 +25,7 @@ public:
 		return dom->instance_pa;
 	}
 
-	void _Union(Domain* a, Domain* b) //union each faces
+	void _Union(Domain* a, Domain* b) 
 	{
 		Domain* pa = _Find(a);
 		Domain* pb = _Find(b);

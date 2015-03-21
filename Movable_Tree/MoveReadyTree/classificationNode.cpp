@@ -78,7 +78,7 @@ MStatus classificationNode::compute(const MPlug &plug,MDataBlock &data){
 		string meshList=string(MmeshList.asChar());		
 		string ObjPath=string(MObjPath.asChar());
 		string MtlPath=string(MMtlPath.asChar());
-		string tag=string(Mtag.asChar());		
+		string tag = string(Mtag.asChar());		
 		
 		extractList(tag,componentNum);
 
@@ -97,9 +97,11 @@ MStatus classificationNode::compute(const MPlug &plug,MDataBlock &data){
 		MGlobal::executeCommand("$reprensentativeInstanceNum=10");
 		
 		//4.1 union find
-		uf.Union(Objloader.index, Objloader.UV_INDEXS, Objloader.UV_COORDS, componentNum);
+		uf.Union(Objloader, componentNum);
 		//4.2 instancing
 		im.Instancing();
+		//4.3 computer F-domain graph
+		fdg.compute();
 	}
 	/*if(plug==Empty){
 		int remain=data.inputValue(remainComponent,&status).asInt();

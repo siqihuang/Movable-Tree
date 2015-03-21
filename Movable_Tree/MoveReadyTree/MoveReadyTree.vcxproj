@@ -15,6 +15,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bv.cpp" />
     <ClCompile Include="classificationCommand.cpp" />
     <ClCompile Include="classificationNode.cpp" />
     <ClCompile Include="CommonData.cpp" />
@@ -22,23 +23,27 @@
     <ClCompile Include="FileAnalysis.cpp" />
     <ClCompile Include="InstancingModule.cpp" />
     <ClCompile Include="instancingNode.cpp" />
+    <ClCompile Include="kd_tree.cpp" />
     <ClCompile Include="MayaPlugin.cpp" />
     <ClCompile Include="mtlLoader.cpp" />
     <ClCompile Include="objLoader.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bv.h" />
     <ClInclude Include="classificationCommand.h" />
     <ClInclude Include="classificationNode.h" />
     <ClInclude Include="CommonData.h" />
     <ClInclude Include="Domain.h" />
     <ClInclude Include="Face.h" />
+    <ClInclude Include="FdomainGraph.h" />
     <ClInclude Include="FileAnalysis.h" />
     <ClInclude Include="InstancingModule.h" />
     <ClInclude Include="instancingNode.h" />
+    <ClInclude Include="kd_tree.h" />
     <ClInclude Include="mtlLoader.h" />
     <ClInclude Include="objLoader.h" />
-    <ClInclude Include="Triangle.h" />
+    <ClInclude Include="Ray.h" />
     <ClInclude Include="UnionFindDomain.h" />
     <ClInclude Include="union_find.h" />
   </ItemGroup>

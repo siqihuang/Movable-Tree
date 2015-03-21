@@ -4,7 +4,10 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+
 #include "Face.h"
+
+class Face;
 
 class Domain
 {
@@ -16,20 +19,23 @@ public:
 	}
     ~Domain() {}
 	
-	vector<Face*>face_list;
-	string tag;
+	std::vector<Face*>face_list;
+	std::string tag;
+	
+	//domain index
+	int index;
 
 	//for instancing
-	vector<glm::vec2>uv_coords_list;
+	std::vector<glm::vec2>uv_coords_list;
 	Domain *instance_pa;
 	int rank;
 
-	void AddFace(Face* face)
+	void AddFace(Face* f)
 	{
-		face_list.push_back(face);
-		for(int i = 0; i < face->uv_coords.size(); ++i)
+		face_list.push_back(f);
+		for(int i = 0; i < f->uv_coords.size(); ++i)
 		{
-			uv_coords_list.push_back(face->uv_coords[i]);
+			uv_coords_list.push_back(f->uv_coords[i]);
 		}
 	}
 	void SortUVCoords()

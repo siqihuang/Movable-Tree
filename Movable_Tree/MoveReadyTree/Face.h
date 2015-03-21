@@ -4,12 +4,6 @@
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 
-#include "CommonData.h"
-#include <vector>
-
-using namespace std;
-
-
 class Face 
 {
 public:
@@ -17,16 +11,16 @@ public:
 	{
 		rank = 0;
 		parent = this;
-		UVminDis = FLT_MAX;
-		nearestNeighbor = NULL;
+		//UVminDis = FLT_MAX;
+		//nearestNeighbor = NULL;
 	}
 	
 	/*
-	inline Face(vector<unsigned int>_vertices, vector<unsigned int>_uv_indexs, int component_idx)
+	inline Face(std::vector<unsigned int>_vertex_indexs, std::vector<unsigned int>_uv_indexs, int component_idx)
 	{
 		rank = 0;
 		parent = this;
-		vertices = _vertices;
+		vertex_indexs = _vertex_indexs;
 		uv_indexs = _uv_indexs; 
 		UVminDis = FLT_MAX;
 		nearestNeighbor = NULL;
@@ -34,21 +28,23 @@ public:
 	}
 	*/
 	
-	inline Face(vector<unsigned int>_vertices, vector<unsigned int>_uv_indexs, vector<glm::vec2>_uv_coords) 
+	inline Face(const std::vector<unsigned int>&_vertex_indexs, const std::vector<glm::vec3>&_vertex_coords,
+		std::vector<unsigned int>&_uv_indexs, std::vector<glm::vec2>&_uv_coords) 
 	{
 		rank = 0;
 		parent = this;
-		vertices = _vertices;
+		vertex_coords = _vertex_coords;
+		vertex_indexs = _vertex_indexs;
 		uv_indexs = _uv_indexs; 
 		uv_coords = _uv_coords; 
-		UVminDis = FLT_MAX;
-		nearestNeighbor = NULL;
+		//UVminDis = FLT_MAX;
+		//nearestNeighbor = NULL;
 		/*
 		if(true)
 		{
-			for(int i = 0; i < _vertices.size(); ++i)
+			for(int i = 0; i < _vertex_indexs.size(); ++i)
 			{
-				printf("%d ", _vertices[i]);
+				printf("%d ", _vertex_indexs[i]);
 			}
 			printf("\n"); 
 			for(int i = 0; i < _uv_indexs.size(); ++i)
@@ -64,28 +60,14 @@ public:
 		}
 		*/
 	}
-
-
-	void init_uv_coords(int component_idx)
-	{
-		/*
-		for(int i = 0; i < uv_indexs.size(); ++i)
-		{
-			glm::vec2 tmp = UV_COORDS[component_idx][uv_indexs[i] - 1]; 
-			uv_coords.push_back(tmp);
-			printf("component:%d uv_idx:%d %f %f\n", component_idx, uv_indexs[i] - 1, 
-				tmp.x, tmp.y);
-		}
-		*/
-	}
 	
 	bool CheckShareVertex(Face *b)
 	{
-		for(int i = 0; i < vertices.size(); ++i)
+		for(int i = 0; i < vertex_indexs.size(); ++i)
 		{
-			for(int j = 0; j < b->vertices.size(); ++j)
+			for(int j = 0; j < b->vertex_indexs.size(); ++j)
 			{
-				if(vertices[i] == b->vertices[j]) //same vertex index
+				if(vertex_indexs[i] == b->vertex_indexs[j]) //same vertex index
 				{
 					return true;
 				}
@@ -94,19 +76,23 @@ public:
 		return false;
 	}
 
-	vector<unsigned int>vertices; //each vertex index
-	vector<unsigned int>uv_indexs; //each vertex's uv index
-	vector<glm::vec2>uv_coords; //each vertex's uv coordinates 
+	std::vector<unsigned int>vertex_indexs; //each vertex index
+	std::vector<glm::vec3>vertex_coords; //each vertex coordinates 
+	std::vector<unsigned int>uv_indexs; //each vertex's uv index
+	std::vector<glm::vec2>uv_coords; //each vertex's uv coordinates 
 	
 	int index; //face index
+
+	glm::vec3 min_pt;
+	glm::vec3 max_pt;
 
 	//4.1 union-find
 	int rank;	
 	Face* parent; 
 
 	//4.2 texture mapping
-	float UVminDis; 
-	Face* nearestNeighbor; 
+	//float UVminDis; 
+	//Face* nearestNeighbor; 
 
 	float GetUVdistance(Face* b)
 	{

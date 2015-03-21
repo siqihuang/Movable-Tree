@@ -17,11 +17,11 @@ public:
 	int componentNum;
 	string fileName,meshList;
 	string *meshName,*tempName;
-	vector<glm::vec3> *vertex;
-	vector<glm::vec2> *UV_COORDS;
 	vector<string> *faceInfo;
 	vector<vector<unsigned int>> *index;
+	vector<glm::vec3> *vertex;
 	vector<vector<unsigned int>> *UV_INDEXS;
+	vector<glm::vec2> *UV_COORDS;
 
 	objLoader(){};
 	objLoader(string fileName,string meshList,int componentNum);

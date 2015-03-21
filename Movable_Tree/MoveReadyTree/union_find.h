@@ -6,23 +6,11 @@
 
 
 #include "CommonData.h"
-#include "Domain.h"
+#include "objLoader.h"
 #include<algorithm>
 #include <map>
 #include <ctime>
 
-/*
-struct UVCmp
-{
-	bool operator()	(glm::vec2 a, glm::vec2 b)
-	{
-		if(a.x == b.x) 
-			return a.y <= b.y;
-		else
-			return a.x < b.x;
-	}
-} uvcmp;
-*/
 
 class UnionFind
 {
@@ -59,8 +47,7 @@ public:
 		}
 	}
 	
-	vector<Domain*> Union(const vector<vector<unsigned int>> *index, 
-		const vector<vector<unsigned int>> *uv_indexs, const vector<glm::vec2> *UV_COORDS, int componentNum)
+	void Union(const objLoader& objloader, int componentNum) 
 	{
 		clock_t start = clock();
 		map<Face*, Domain*>domain_map;
@@ -69,16 +56,25 @@ public:
 		{
 			printf("%d component\n", i);
 			vector<Face*>face_list;
-			printf("%d index[i] size\n", index[i].size());
-			for(int j = 0; j < index[i].size(); j++) //format to face structure
+			printf("%d index[i] size\n", objloader.index[i].size());
+			for(int j = 0; j < objloader.index[i].size(); j++) //format to face structure
 			{
-				vector<glm::vec2>_uv_coords;
-				for(int k = 0; k < uv_indexs[i][j].size(); ++k)
+				//vertices
+				vector<glm::vec3>_vertex_coords;
+				for(int k = 0; k < objloader.index[i][j].size(); ++k)
 				{
-					int uv_idx = uv_indexs[i][j][k] - 1;
-					_uv_coords.push_back(UV_COORDS[i][uv_idx]);
+					int idx = objloader.index[i][j][k] - 1;
+					_vertex_coords.push_back(objloader.vertex[i][idx]);
 				}
-				Face *face = new Face(index[i][j], uv_indexs[i][j], _uv_coords);
+
+				//UV
+				vector<glm::vec2>_uv_coords;
+				for(int k = 0; k < objloader.UV_INDEXS[i][j].size(); ++k)
+				{
+					int uv_idx = objloader.UV_INDEXS[i][j][k] - 1;
+					_uv_coords.push_back(objloader.UV_COORDS[i][uv_idx]);
+				}
+				Face *face = new Face(objloader.index[i][j], _vertex_coords, objloader.UV_INDEXS[i][j], _uv_coords);
 				face_list.push_back(face);
 			}
 
@@ -129,7 +125,7 @@ public:
 		printf("Domain list length: %d \n", domain_list.size());
 		printf("Time use: %lf secs\n\n", time); 
 
-		return domain_list;
+		//return domain_list;
 	}
 };
 

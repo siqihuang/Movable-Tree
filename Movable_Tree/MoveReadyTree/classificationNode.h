@@ -8,6 +8,7 @@
 #include "maya\MPxCommand.h"
 #include "objLoader.h"
 #include "InstancingModule.h"
+#include "FdomainGraph.h"
 #include "union_find.h"
 #include "mtlLoader.h"
 #include <string>
@@ -34,6 +35,8 @@ public:
 	
 	UnionFind uf;
 	InstancingModule im;
+	FdomainGraph fdg;
+
 	string *tags;
 	objLoader Objloader;
 	mtlLoader Mtlloader;

@@ -1,6 +1,6 @@
 #include "InstancingModule.h"
 
-//void InstancingModule::Instancing(vector<Domain*>&domain_list)
+//void InstancingModule::Instancing(std::vector<Domain*>&domain_list)
 void InstancingModule::Instancing()
 {
 //	ShapeMatching();
@@ -10,7 +10,7 @@ void InstancingModule::Instancing()
 	print();
 }
 
-//void InstancingModule::TextureMap(vector<Domain*>&domain_list)
+//void InstancingModule::TextureMap(std::vector<Domain*>&domain_list)
 void InstancingModule::TextureMap()
 {
 	clock_t start = clock();
@@ -41,8 +41,8 @@ void InstancingModule::TextureMap()
 	//printf("same copies instance: %d\n", cnt1);
 	//printf("not same copies instance: %d\n", cnt2);
 	
-	map<Domain*, vector<Domain*>>instance_map;
-	map<Domain*, vector<Domain*>>::iterator it;
+	std::map<Domain*, std::vector<Domain*>>instance_map;
+	std::map<Domain*, std::vector<Domain*>>::iterator it;
 	
 	//organize instance set
 	for(int i = 0; i < len; ++i) 
@@ -52,9 +52,9 @@ void InstancingModule::TextureMap()
 		//cannot find
 		if(it == instance_map.end())
 		{
-			vector<Domain*>instance_set;
+			std::vector<Domain*>instance_set;
 			instance_set.push_back(dom);
-			instance_map.insert(std::pair<Domain*, vector<Domain*>>(dom->instance_pa, instance_set)); 
+			instance_map.insert(std::pair<Domain*, std::vector<Domain*>>(dom->instance_pa, instance_set)); 
 		}
 		else
 		{
@@ -77,7 +77,7 @@ void InstancingModule::TextureMap()
 	printf("Time use: %lf secs\n", time); 
 }
 
-//void InstancingModule::print(vector<Domain*>&domain_list)
+//void InstancingModule::print(std::vector<Domain*>&domain_list)
 void InstancingModule::print()
 {
 	/*
