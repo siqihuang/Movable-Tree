@@ -1,9 +1,12 @@
 global int $reprensentativeInstanceNum;
+global string $RepToBeTaged="";
+global int $RepSurfaces[3];
 
 global proc createInstancingGUI(){
 	global int $representativeInstanceNum;
+	global string $RepToBeTaged;
+	global string $positionField;
 	window -title "Instancing Command" -w 300 -h 240 InstancingWindow;
-	print $representativeInstanceNum;
 	columnLayout;
 		rowLayout -numberOfColumns 1 -columnWidth 310 35;
 			button -label "find Representative" -command "findRepresentative()";
@@ -14,20 +17,25 @@ global proc createInstancingGUI(){
 		columnLayout;
 			string $textRepInstanceNum="representative instance remains: "+$representativeInstanceNum;
 			rowLayout -numberOfColumns 1 -columnWidth 310 35;
-				text -label $textRepInstanceNum;
+				$RepToBeTaged=`text -label $textRepInstanceNum`;
 			setParent..;
 		setParent..;
 	
 		columnLayout;
 			rowLayout -numberOfColumns 1 -columnWidth 310 30;
-				string $positionField = `scrollField -w 300 -h 100 -wordWrap true -editable false`;
+				$positionField = `scrollField -w 300 -h 100 -wordWrap true -editable false`;
+			setParent..;
+		setParent..;
+		columnLayout;
+			rowLayout -numberOfColumns 1 -columnWidth 310 30;
+				button -label "select" -command "showCoordinate($positionField)";
 			setParent..;
 		setParent..;
 	setParent..;		
 
 	columnLayout;
 		rowLayout -numberOfColumns 2 -columnWidth2 200 35;
-			button -label "next";
+			button -label "next" -command "selectAnchorPoint()";
 			button -label "last";
 		setParent..;
 	setParent..;
@@ -35,5 +43,55 @@ global proc createInstancingGUI(){
 	showWindow InstancingWindow;
 }
 
+global proc showCoordinate(string $positionField){
+	string $s[]=`ls -sl`;
+	float $vtxPos[3] = `xform -q -ws -t $s[0]`;
+	string $text="";
+	$text+="X: "+$vtxPos[0];
+	$text+="\n";
+	$text+="Y: "+$vtxPos[1];
+	$text+="\n";
+	$text+="Z: "+$vtxPos[2];
+	$text+="\n";
+	scrollField -edit -text $text $positionField;
+}
+
+global proc selectAnchorPoint(){
+	global int $RepSurfaces[3];
+	global string $RepToBeTaged;
+	global int $representativeInstanceNum;
+	string $polyName="polySurface"+$RepSurfaces[$representativeInstanceNum-1];
+
+	changeSelectMode -object;
+	select -cl;
+	select $polyName;
+	viewFit;
+
+	changeSelectMode -component;
+	selectType  -curveParameterPoint 1;
+	hilite $polyName;
+	//select $polyName;
+	//viewFit;
+
+	$representativeInstanceNum--;
+	string $tmp="representative instance remains: "+$representativeInstanceNum;
+	text -edit -label $tmp $RepToBeTaged;
+}
+
 global proc findRepresentative(){
+	global string $selected[];
+	global string $RepToBeTaged;
+	global int $representativeInstanceNum=3;
+	global int $RepSurfaces[3];
+	int $size=size($selected);
+	for($i=0;$i<$size;++$i){
+		string $tmp=$selected[$i]+"Shape";
+		polySeparate -ch 1 $tmp;
+	}
+	string $tmp="representative instance remains: "+$representativeInstanceNum;
+	text -edit -label $tmp $RepToBeTaged;
+
+	$RepSurfaces[0]=1;
+	$RepSurfaces[1]=171;
+	$RepSurfaces[2]=388;
 }
