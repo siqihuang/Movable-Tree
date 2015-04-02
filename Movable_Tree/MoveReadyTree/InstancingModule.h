@@ -6,7 +6,6 @@
 #include<ctime>
 #include<iostream>
 
-const float EPS = 1e-3f;
 
 class InstancingModule 
 {

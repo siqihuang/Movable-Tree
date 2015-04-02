@@ -4,10 +4,11 @@
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 
+
 class Face 
 {
 public:
-    inline Face()
+    Face()
 	{
 		rank = 0;
 		parent = this;
@@ -28,7 +29,7 @@ public:
 	}
 	*/
 	
-	inline Face(const std::vector<unsigned int>&_vertex_indexs, const std::vector<glm::vec3>&_vertex_coords,
+	Face(const std::vector<unsigned int>&_vertex_indexs, const std::vector<glm::vec3>&_vertex_coords,
 		std::vector<unsigned int>&_uv_indexs, std::vector<glm::vec2>&_uv_coords) 
 	{
 		rank = 0;
@@ -96,7 +97,6 @@ public:
 
 	float GetUVdistance(Face* b)
 	{
-		float dis = 0.f;
 		if(uv_coords.size() != b->uv_coords.size())
 		{
 			//printf("jason: %d %d\n", uv_coords.size(), b->uv_coords.size());
@@ -104,17 +104,43 @@ public:
 		}
 		//todo: uv coordinates is in order?
 		bool *vis = new bool[uv_coords.size()];
-		memset(vis, false, sizeof(vis));
 		for(int i = 0; i < uv_coords.size(); ++i)
 		{
-			for(int j = 0; i < uv_coords.size(); ++j)
+			vis[i] = false;
+		}
+		float dis = FLT_MAX;
+		float total_dis = 0.f;
+		for(int i = 0; i < uv_coords.size(); ++i)
+		{
+			bool found = false;
+			int tar_idx;
+			for(int j = 0;  j < uv_coords.size(); ++j)
 			{
-				//dis += glm::distance(uv_coords[i], b->uv_coords[i]);
-				dis += fabs(uv_coords[i].x - b->uv_coords[i].x) +  fabs(uv_coords[i].y - b->uv_coords[i].y); 
-				printf("%f ", dis);
+				if(vis[j])continue;
+				float tmp_dis = glm::distance(uv_coords[i], b->uv_coords[j]);
+				//find nearest
+				if(tmp_dis <= 1e-3f && tmp_dis < dis)
+				{
+					dis = tmp_dis;
+					found = true;
+					tar_idx = j;
+				}
+				//dis += fabs(uv_coords[i].x - b->uv_coords[i].x) +  fabs(uv_coords[i].y - b->uv_coords[i].y); 
+				//printf("%f ", dis);
+			}
+			if(found)
+			{
+				vis[tar_idx] = true;
+				total_dis += dis;
+			}
+			else
+			{
+				delete[ ] vis;
+				return FLT_MAX;
 			}
 		}
-		return dis;
+		delete[ ] vis;
+		return total_dis;
 	}
 };
 #endif

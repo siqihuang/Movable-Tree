@@ -95,13 +95,19 @@ MStatus classificationNode::compute(const MPlug &plug,MDataBlock &data){
 		
 		MGlobal::executeCommand("createInstancingGUI()");
 		MGlobal::executeCommand("$reprensentativeInstanceNum=10");
-		
+	
+		cout<<"meshList: "<<meshList<<endl;
+		cout<<"ObjPath: "<<ObjPath<<endl;
+		cout<<"MtlPath: "<<MtlPath<<endl;
+		cout<<"tag: "<<tag<<endl;
+
+
 		//4.1 union find
 		uf.Union(Objloader, componentNum);
 		//4.2 instancing
-		im.Instancing();
-		//4.3 computer F-domain graph
-		fdg.compute();
+		//im.Instancing();
+		//4.3 compute F-domain graph
+		//fdg.compute();
 	}
 	/*if(plug==Empty){
 		int remain=data.inputValue(remainComponent,&status).asInt();

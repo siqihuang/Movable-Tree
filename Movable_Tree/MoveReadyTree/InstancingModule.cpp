@@ -7,10 +7,9 @@ void InstancingModule::Instancing()
 	//TextureMap(domain_list);
 	//print(domain_list);
 	TextureMap();
-	print();
+	//print();
 }
 
-//void InstancingModule::TextureMap(std::vector<Domain*>&domain_list)
 void InstancingModule::TextureMap()
 {
 	clock_t start = clock();
@@ -47,18 +46,18 @@ void InstancingModule::TextureMap()
 	//organize instance set
 	for(int i = 0; i < len; ++i) 
 	{
-		Domain* dom = domain_list[i];
-		it  = instance_map.find(dom->instance_pa);
+		Domain* d = domain_list[i];
+		it  = instance_map.find(d->instance_pa);
 		//cannot find
 		if(it == instance_map.end())
 		{
 			std::vector<Domain*>instance_set;
-			instance_set.push_back(dom);
-			instance_map.insert(std::pair<Domain*, std::vector<Domain*>>(dom->instance_pa, instance_set)); 
+			instance_set.push_back(d);
+			instance_map.insert(std::pair<Domain*, std::vector<Domain*>>(d->instance_pa, instance_set)); 
 		}
 		else
 		{
-			it->second.push_back(dom);
+			it->second.push_back(d);
 		}
 	}
 	
@@ -98,8 +97,8 @@ bool InstancingModule::_TextureMap(Domain *a, Domain *b)
 	if(a->face_list.size() != b->face_list.size())
 		return false;
 
-	if(a->uv_coords_list.size() != b->uv_coords_list.size())
-		return false;
+	//if(a->uv_coords_list.size() != b->uv_coords_list.size())
+		//return false;
 	
 	size_t len = a->face_list.size();
 	//debug
@@ -116,7 +115,7 @@ bool InstancingModule::_TextureMap(Domain *a, Domain *b)
 	{
 		bool found = false;
 		float dis = FLT_MAX;
-		int tar_idx = -1;
+		int tar_idx;
 		for(int j = 0; j < len; ++j)
 		{
 			if(vis[j]) continue;
@@ -126,9 +125,7 @@ bool InstancingModule::_TextureMap(Domain *a, Domain *b)
 			//find nearest face
 			if(tmp_dis <= EPS && tmp_dis < dis)
 			{
-				//greedy: if found one neighbour near enough, pick it!	
 				dis = tmp_dis;
-				//vis[j] = true;
 				tar_idx = j;
 				found = true;
 			}
