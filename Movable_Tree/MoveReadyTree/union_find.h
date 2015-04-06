@@ -7,6 +7,7 @@
 
 #include "CommonData.h"
 #include "objLoader.h"
+#include "mtlLoader.h"
 #include<algorithm>
 #include <map>
 #include <ctime>
@@ -47,7 +48,7 @@ public:
 		}
 	}
 	
-	void Union(const objLoader& objloader, int componentNum) 
+	void Union(const objLoader& objloader, const mtlLoader& mtlloader, int componentNum) 
 	{
 		clock_t start = clock();
 		map<Face*, Domain*>domain_map;
@@ -57,7 +58,9 @@ public:
 			printf("%d component\n", i);
 			vector<Face*>face_list;
 			printf("%d index[i] size\n", objloader.index[i].size());
-			for(int j = 0; j < objloader.index[i].size(); j++) //format to face structure
+			string texture_file = mtlloader.getTextureFile()[i];
+			//Each faces
+			for(int j = 0; j < objloader.index[i].size(); j++) 
 			{
 				//vertices
 				vector<glm::vec3>_vertex_coords;
@@ -73,6 +76,11 @@ public:
 				{
 					int uv_idx = objloader.UV_INDEXS[i][j][k] - 1;
 					_uv_coords.push_back(objloader.UV_COORDS[i][uv_idx]);
+					
+					/*
+					//printf("uv_coords: %d %f %f\n", uv_idx, 
+						//objloader.UV_COORDS[i][uv_idx].x, objloader.UV_COORDS[i][uv_idx].y);
+					*/
 				}
 				Face *face = new Face(objloader.index[i][j], _vertex_coords, objloader.UV_INDEXS[i][j], _uv_coords);
 				face_list.push_back(face);
@@ -93,12 +101,13 @@ public:
 			for(int j = 0; j < face_list.size(); j++) //each faces
 			{
 				Face* face = face_list[j];
-				it  = domain_map.find(face->parent);
+				it  = domain_map.find(_Find(face));
 				//new d not created 
 				if(it == domain_map.end())
 				{
 					//new a domain
 					Domain* d = new Domain();
+					d->texture_file = texture_file;
 					d->AddFace(face);
 					domain_map.insert(std::pair<Face*, Domain*>(face->parent, d)); 
 				}

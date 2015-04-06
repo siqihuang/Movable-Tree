@@ -48,11 +48,11 @@ public:
 		MGlobal::executeCommand("$reprensentativeInstanceNum=10");
 		
 		//4.1 union find
-		uf.Union(Objloader, componentNum);
+		//uf.Union(Objloader, componentNum);
 		//4.2 instancing
-		im.Instancing();
+		//im.Instancing();
 		//4.3 compute F-domain graph
-		fdg.compute();
+		//fdg.compute();
 	}
 };
 

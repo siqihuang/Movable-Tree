@@ -97,50 +97,42 @@ public:
 
 	float GetUVdistance(Face* b)
 	{
-		if(uv_coords.size() != b->uv_coords.size())
+		int n = uv_coords.size();
+		if(n != b->uv_coords.size())
 		{
 			//printf("jason: %d %d\n", uv_coords.size(), b->uv_coords.size());
 			return FLT_MAX;
 		}
-		//todo: uv coordinates is in order?
-		bool *vis = new bool[uv_coords.size()];
-		for(int i = 0; i < uv_coords.size(); ++i)
+		bool *vis = new bool[n];
+		for(int i = 0; i < n; ++i)
 		{
 			vis[i] = false;
 		}
-		float dis = FLT_MAX;
-		float total_dis = 0.f;
-		for(int i = 0; i < uv_coords.size(); ++i)
+		for(int i = 0; i < n; ++i)
 		{
 			bool found = false;
-			int tar_idx;
-			for(int j = 0;  j < uv_coords.size(); ++j)
+			for(int j = 0;  j < n; ++j)
 			{
 				if(vis[j])continue;
-				float tmp_dis = glm::distance(uv_coords[i], b->uv_coords[j]);
-				//find nearest
-				if(tmp_dis <= 1e-3f && tmp_dis < dis)
+				float tmp_dis = fabs(uv_coords[i].x - b->uv_coords[j].x) + fabs(uv_coords[i].y - b->uv_coords[j].y); 
+				//greedy
+				if(tmp_dis < 0.01f) 
 				{
-					dis = tmp_dis;
 					found = true;
-					tar_idx = j;
+					vis[j] = true;
+					break;
 				}
 				//dis += fabs(uv_coords[i].x - b->uv_coords[i].x) +  fabs(uv_coords[i].y - b->uv_coords[i].y); 
 				//printf("%f ", dis);
 			}
-			if(found)
-			{
-				vis[tar_idx] = true;
-				total_dis += dis;
-			}
-			else
+			if(!found)
 			{
 				delete[ ] vis;
 				return FLT_MAX;
 			}
 		}
 		delete[ ] vis;
-		return total_dis;
+		return 0;
 	}
 };
 #endif

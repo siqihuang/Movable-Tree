@@ -100,12 +100,10 @@ MStatus classificationNode::compute(const MPlug &plug,MDataBlock &data){
 		cout<<"ObjPath: "<<ObjPath<<endl;
 		cout<<"MtlPath: "<<MtlPath<<endl;
 		cout<<"tag: "<<tag<<endl;
-
-
 		//4.1 union find
-		uf.Union(Objloader, componentNum);
+		uf.Union(Objloader, Mtlloader, componentNum);
 		//4.2 instancing
-		//im.Instancing();
+		im.Instancing();
 		//4.3 compute F-domain graph
 		//fdg.compute();
 	}
