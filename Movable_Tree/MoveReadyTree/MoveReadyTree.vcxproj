@@ -25,6 +25,7 @@
     <ClCompile Include="instancingNode.cpp" />
     <ClCompile Include="kd_tree.cpp" />
     <ClCompile Include="MayaPlugin.cpp" />
+    <ClCompile Include="mesh.cpp" />
     <ClCompile Include="mtlLoader.cpp" />
     <ClCompile Include="objLoader.cpp" />
     <ClCompile Include="Triangle.cpp" />
@@ -41,6 +42,7 @@
     <ClInclude Include="InstancingModule.h" />
     <ClInclude Include="instancingNode.h" />
     <ClInclude Include="kd_tree.h" />
+    <ClInclude Include="mesh.h" />
     <ClInclude Include="mtlLoader.h" />
     <ClInclude Include="objLoader.h" />
     <ClInclude Include="Ray.h" />
@@ -74,11 +76,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>C:\Users\Wingszero\Desktop\660 Adv CG\Movable-Tree\Movable_Tree</OutDir>
+    <OutDir>C:\Users\siqiHuang\Documents\GitHub\moveReadyTree\Movable-Tree\Movable_Tree\mel</OutDir>
     <TargetExt>.mll</TargetExt>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <IntDir>$(Configuration)\</IntDir>
-    <IncludePath>C:\Users\Wingszero\Desktop\660 Adv CG\Movable-Tree\Movable_Tree\include;$(IncludePath)</IncludePath>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>C:\Users\siqiHuang\Documents\GitHub\moveReadyTree\Movable-Tree\Movable_Tree\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -96,6 +98,8 @@
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;C:\Program Files\Autodesk\Maya2015\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>$(Configuration)\MoveReadyTree.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>.\Debug/</AssemblerListingLocation>
+      <ObjectFileName>.Debug/</ObjectFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

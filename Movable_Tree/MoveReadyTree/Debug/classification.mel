@@ -3,6 +3,7 @@ global int $remainComponent=0;
 global string $tags[];
 global string $remainText;
 global string $labelText;
+global string $domainName[];
 
 global proc createClassificationGUI(){
 	global int $remainComponent;
@@ -57,12 +58,45 @@ global proc createClassificationGUI(){
 
 global proc splitMesh(){
 	global int $remainComponent;
+	global string $tags[];
+	global string $selected[];
+	global string $domainName[];
 	if($remainComponent>0){
 		confirmDialog -title "ERROR" -message "Please tag all components!" -button "OK";
 	}
 	else{
+		sendTag();
+		//getDomains();
 		setAttr classificationNode2015.trigger 1;
+		createInstancingGUI();
+		createNode instancingNode -n "instancingNode2015";
+		deleteUI ClassificationWindow;
 	}
+}
+
+global proc getDomains(){
+	global string $selected[];
+	global string $domainName[];
+	int $size=size($selected);	
+	for($i=0;$i<$size;++$i){
+		string $tmp=$selected[$i]+"Shape";
+		polySeparate -ch 1 $tmp;
+	}
+	string $transforms[] = `ls -tr`; //lists all the transform nodes in the scene
+	string $polyMeshes[] = `filterExpand -sm 12 $transforms`; //filters out all the non-polymesh nodes
+	select -r $polyMeshes; //selects all the polymeshes
+	$domainName=`ls -sl`;
+}
+
+global proc sendTag(){
+	global string $tags[];
+	string $tagList="";
+	int $tagSize=size($tags);
+	for($i=0;$i<$tagSize;++$i){
+		$tagList+=$tags[$i];
+		$tagList+="$$";
+	}
+	setAttr -type "string" classificationNode2015.tags $tagList;
 }
 
 global proc setTagValue(string $option){

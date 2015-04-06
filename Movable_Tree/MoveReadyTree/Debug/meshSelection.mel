@@ -1,5 +1,6 @@
 global string $selected[];
 global string $ObjFilePath="";
+global string $MtlFilePath="";
 global string $combine;
 
 global proc createMeshSelectionGUI()
@@ -19,29 +20,39 @@ global proc createMeshSelectionGUI()
 		rowLayout -numberOfColumns 1;
 			text -label "Selected Obj File Path";
 		setParent ..;
-		//string $pathName="";
-		string $pathNameField = `scrollField -w 300 -h 30 -wordWrap true -editable false`;
+		string $ObjPathField = `scrollField -w 300 -h 30 -wordWrap true -editable false`;
 		setParent ..;
 		rowLayout -numberOfColumns 1 -columnWidth2 300 35;
-			button -label "browse" -command ("getFilePath "+$pathNameField);
+			button -label "browse" -command ("getObjPath "+$ObjPathField);
 	setParent ..;
 
-	button -label "OK" -command "checkInput($selected,$ObjFilePath)";
+	columnLayout;
+		rowLayout -numberOfColumns 1;
+			text -label "Selected Mtl File Path";
+		setParent ..;
+		string $MtlPathField = `scrollField -w 300 -h 30 -wordWrap true -editable false`;
+		setParent ..;
+		rowLayout -numberOfColumns 1 -columnWidth2 300 35;
+			button -label "browse" -command ("getMtlPath "+$MtlPathField);
+	setParent ..;
+
+	button -label "OK" -command "checkInput($selected,$ObjFilePath,$MtlFilePath)";
 	showWindow MeshSelectionWindow;
 }
 
-global proc checkInput(string $selected[],string $ObjFilePath){
+global proc checkInput(string $selected[],string $ObjFilePath,string $MtlFilePath){
 	int $size=size($selected);
 	if($size==0) confirmDialog -title "ERROR" -message "No mesh selected!"  -button "OK";
 	else if($ObjFilePath=="") confirmDialog -title "ERROR" -message "No Obj path selected" -button "OK";
+	else if($MtlFilePath=="") confirmDialog -title "ERROR" -message "No Mtl path selected" -button "OK";
 	else{
-		createClassificationNode($selected,$ObjFilePath);
+		createClassificationNode($selected,$ObjFilePath,$MtlFilePath);
 		createClassificationGUI();
 		deleteUI MeshSelectionWindow;
 	}
 }
 
-global proc createClassificationNode(string $selected[], string $filePath){
+global proc createClassificationNode(string $selected[], string $ObjFilePath,string $MtlFilePath){
 	int $componentNum=size($selected);
 	//int $iterations = `intSliderGrp -q -v $iter`;
 	//float $stepSize = `floatSliderGrp -q -v $step`;
@@ -55,7 +66,8 @@ global proc createClassificationNode(string $selected[], string $filePath){
 	}
 	//classificationCommand -se $combine -p $filePath -sn $componentNum;
 	createNode classificationNode -n "classificationNode2015";
-	setAttr -type "string" classificationNode2015.path $filePath;
+	setAttr -type "string" classificationNode2015.pathObj $ObjFilePath;
+	setAttr -type "string" classificationNode2015.pathMtl $MtlFilePath;
 	setAttr classificationNode2015.dN $componentNum;
 	setAttr -type "string" classificationNode2015.sl $combine;
 	//setAttr -visible false LSystemWindow;
@@ -66,7 +78,7 @@ global proc getComponent(string $field)
 	global string $selected[];//= `ls -sl`;
 	global int $remainComponent;
 	$selected=`ls -sl`;
-	global string $lines = "";
+	string $lines = "";
 	int $size=size($selected);
 	for($i=0;$i<$size;++$i){
 		$lines+=$selected[$i];
@@ -78,12 +90,18 @@ global proc getComponent(string $field)
 	scrollField -edit -text $lines $field;
 }
 
-global proc getFilePath(string $field)
+global proc getObjPath(string $field)
 {
 	global string $ObjFilePath;
 	$ObjFilePath= `fileDialog -dm "*.obj"`;
 	scrollField -e -text $ObjFilePath $field;
-	//return $pathName;
+}
+
+global proc getMtlPath(string $field)
+{
+	global string $MtlFilePath;
+	$MtlFilePath= `fileDialog -dm "*.mtl"`;
+	scrollField -e -text $MtlFilePath $field;
 }
 
 global proc createMoveReadyTreeUI(){

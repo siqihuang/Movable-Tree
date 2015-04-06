@@ -1,0 +1,29 @@
+﻿Build started 2015/4/6 11:50:44.
+     1>Project "C:\Users\siqiHuang\Documents\GitHub\moveReadyTree\Movable-Tree\Movable_Tree\MoveReadyTree\MoveReadyTree.vcxproj" on node 2 (Build target(s)).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(346,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /I. /I"C:\Program Files\Autodesk\Maya2015\include" /Zi /nologo /W3 /WX- /Od /D _DEBUG /D WIN32 /D _WINDOWS /D _USRDLL /D NT_PLUGIN /D _HAS_ITERATOR_DEBUGGING=0 /D _SECURE_SCL=0 /D _SECURE_SCL_THROWS=0 /D _SECURE_SCL_DEPRECATE=0 /D _CRT_SECURE_NO_DEPRECATE /D TBB_USE_DEBUG=0 /D __TBB_LIB_NAME=tbb.lib /D REQUIRE_IOSTREAM /D AW_NEW_IOSTREAMS /D Bits64_ /D _WINDLL /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo".Debug/" /Fd"x64\Debug\MoveReadyTree.pdb" /Gd /TP /errorReport:prompt instancingNode.cpp
+         instancingNode.cpp
+     1>instancingNode.cpp(73): warning C4267: 'initializing' : conversion from 'size_t' to 'int', possible loss of data
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(1137,5): warning MSB8012: TargetPath(C:\Users\siqiHuang\Documents\GitHub\moveReadyTree\Movable-Tree\Movable_Tree\mel\MoveReadyTree.mll) does not match the Linker's OutputFile property value (C:\Users\siqiHuang\Documents\GitHub\moveReadyTree\Movable-Tree\Movable_Tree\MoveReadyTree\Debug\MoveReadyTree.mll). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"Debug\MoveReadyTree.mll" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files\Autodesk\Maya2015\lib" Foundation.lib OpenMaya.lib OpenMayaUI.lib OpenMayaAnim.lib OpenMayaFX.lib OpenMayaRender.lib OpenGL32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"Debug\MoveReadyTree.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE:NO /NXCOMPAT /IMPLIB:"Debug\MoveReadyTree.lib" /MACHINE:X64 /export:initializePlugin /export:uninitializePlugin /DLL .Debug/bv.obj
+         .Debug/classificationCommand.obj
+         .Debug/classificationNode.obj
+         .Debug/CommonData.obj
+         .Debug/Domain.obj
+         .Debug/FileAnalysis.obj
+         .Debug/InstancingModule.obj
+         .Debug/instancingNode.obj
+         .Debug/kd_tree.obj
+         .Debug/MayaPlugin.obj
+         .Debug/mesh.obj
+         .Debug/mtlLoader.obj
+         .Debug/objLoader.obj
+         .Debug/Triangle.obj
+         MoveReadyTree.vcxproj -> C:\Users\siqiHuang\Documents\GitHub\moveReadyTree\Movable-Tree\Movable_Tree\mel\MoveReadyTree.mll
+     1>Done Building Project "C:\Users\siqiHuang\Documents\GitHub\moveReadyTree\Movable-Tree\Movable_Tree\MoveReadyTree\MoveReadyTree.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:04.62

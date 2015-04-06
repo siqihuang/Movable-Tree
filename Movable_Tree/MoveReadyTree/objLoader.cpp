@@ -63,6 +63,8 @@ string *objLoader::getTempName(){
 	return tempName;
 }
 
+int count=0;
+
 void objLoader::readObj(){
 	ifstream inObj;
 	inObj.open(fileName);
@@ -92,6 +94,7 @@ void objLoader::readObj(){
 			inObj>>vec.x;
 			inObj>>vec.y;
 			UV_COORDS[n].push_back(vec);
+			if(vec.x<0||vec.y<0) MGlobal::displayInfo("!");
 		}
 		else if(n<3&&input==meshName[n]){
 			n++;

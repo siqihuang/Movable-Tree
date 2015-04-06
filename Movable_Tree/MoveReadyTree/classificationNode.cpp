@@ -1,4 +1,5 @@
 #include "classificationNode.h"
+#include "CommonData.h"
 
 //MTypeId id(0x80000);
 MTypeId classificationNode::id( 0x80000 );
@@ -93,15 +94,18 @@ MStatus classificationNode::compute(const MPlug &plug,MDataBlock &data){
 		Mtlloader.getTempFile(Objloader.getTempName());
 		Mtlloader.readFile();
 		
-		MGlobal::executeCommand("createInstancingGUI()");
+		//MGlobal::executeCommand("createInstancingGUI()");
 		MGlobal::executeCommand("$reprensentativeInstanceNum=10");
 		
 		//4.1 union find
 		uf.Union(Objloader, componentNum);
+		int size=domain_list.size();
+		string s=std::to_string(size);
+		MGlobal::displayInfo(MString(s.c_str()));
 		//4.2 instancing
-		im.Instancing();
+		//im.Instancing();
 		//4.3 computer F-domain graph
-		fdg.compute();
+		//fdg.compute();
 	}
 	/*if(plug==Empty){
 		int remain=data.inputValue(remainComponent,&status).asInt();
