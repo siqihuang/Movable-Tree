@@ -98,12 +98,9 @@ MStatus classificationNode::compute(const MPlug &plug,MDataBlock &data){
 		MGlobal::executeCommand("$reprensentativeInstanceNum=10");
 		
 		//4.1 union find
-		uf.Union(Objloader, componentNum);
-		int size=domain_list.size();
-		string s=std::to_string(size);
-		MGlobal::displayInfo(MString(s.c_str()));
+		uf.Union(Objloader, Mtlloader, componentNum);
 		//4.2 instancing
-		//im.Instancing();
+		im.Instancing();
 		//4.3 computer F-domain graph
 		//fdg.compute();
 	}
