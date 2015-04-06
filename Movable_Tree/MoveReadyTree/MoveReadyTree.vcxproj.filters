@@ -62,7 +62,11 @@
     <ClCompile Include="kd_tree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="mesh.cpp">
+=======
+    <ClCompile Include="test.cpp">
+>>>>>>> origin/master
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

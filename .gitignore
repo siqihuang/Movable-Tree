@@ -29,3 +29,8 @@
 #other
 *.sdf
 *.tlog
+*.mll
+Movable_Tree/MoveReadyTree/MoveReadyTree.vcxproj.filters
+*.filters
+*.mll
+*.filters

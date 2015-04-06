@@ -190,7 +190,7 @@ KdNode* KdTree::build_tree(const std::vector<Domain*>& domain_list)
 {
 	for(int i = 0; i < domain_list.size(); ++i) 
 	{
-		Domain* d;
+		Domain* d = domain_list[i];
 		for(int j = 0; j < d->face_list.size(); ++j) 
 		{
 			root->face_list.push_back(d->face_list[j]);	

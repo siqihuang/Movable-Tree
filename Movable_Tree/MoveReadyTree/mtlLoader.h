@@ -19,8 +19,8 @@ public:
 	void setComponentNum(int componentNum);
 	void setFileName(string fileName);
 	void readFile();
-	void getTempFile(string *tempFile);
-	string *getTextureFile();
+	void getTempFile(string *tempFile) ;
+	string *getTextureFile() const;
 };
 
 #endif

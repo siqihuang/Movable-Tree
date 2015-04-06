@@ -10,13 +10,14 @@ void mtlLoader::setFileName(string fileName){
 	this->fileName=fileName;
 }
 
-void mtlLoader::getTempFile(string *tempFile){
+void mtlLoader::getTempFile(string *tempFile) 
+{
 	this->textureFile=new string[componentNum];
 	this->tempFile=new string[componentNum];
 	for(int i=0;i<componentNum;i++) this->tempFile[i]=tempFile[i];
 }
 
-string *mtlLoader::getTextureFile(){
+string *mtlLoader::getTextureFile() const{
 	return textureFile;
 }
 

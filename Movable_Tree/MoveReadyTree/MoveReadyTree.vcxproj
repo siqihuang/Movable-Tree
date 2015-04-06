@@ -28,6 +28,7 @@
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="mtlLoader.cpp" />
     <ClCompile Include="objLoader.cpp" />
+    <ClCompile Include="test.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>

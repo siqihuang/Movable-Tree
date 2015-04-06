@@ -115,8 +115,10 @@ void objLoader::readObj(){
 	}
 	
 	string sub;
-	for(int i=0;i<componentNum;i++){
-		for(int j=0;j<faceInfo[i].size();j++){
+	for(int i=0;i<componentNum;i++)
+	{
+		for(int j=0;j<faceInfo[i].size();j++)
+		{
 			vector<unsigned int> v;
 			vector<unsigned int> uv_idx;
 			sub=faceInfo[i][j];
@@ -124,19 +126,48 @@ void objLoader::readObj(){
 			while(found!=-1){
 				sub=sub.substr(found+1,sub.size()-1);
 				found=sub.find("/");
-				v.push_back(stoi(sub.substr(0,found)));
+				//vertex
+				int idx = stoi(sub.substr(0,found));
+				if(i > 0)
+				{
+					for(int k = 0; k < i; ++k)
+					{
+						idx -= vertex[k].size();
+					}
+				}
+				v.push_back(idx);
 
 				sub=sub.substr(found+1,sub.size()-1);
 				found=sub.find("/");
-				uv_idx.push_back(stoi(sub.substr(0,found)));
-
+				
+				//uv_idx
+				idx = stoi(sub.substr(0,found));
+				if(i > 0)
+				{
+					for(int k = 0; k < i; ++k)
+					{
+						idx -= UV_COORDS[k].size();
+					}
+				}
+				uv_idx.push_back(idx);
+				//
 				sub=sub.substr(found+1,sub.size()-1);
 				found=sub.find(" ");
 			}
-			//v is the vertices of a face
 			index[i].push_back(v);
 			UV_INDEXS[i].push_back(uv_idx);
 		}
+		//debug
+		/*
+		for(int i = 0; i < componentNum; ++i)
+		{
+			for(int j = 0; j < UV_INDEXS[i].size(); ++j)
+			{
+				for(int k = 0; k < UV_INDEXS[i][j].size(); ++k)
+					printf("uv idx:%d ", UV_INDEXS[i][j][k]);
+			}
+		}
+		*/
 	}
 	
 	MGlobal::displayInfo("Reading complete!");

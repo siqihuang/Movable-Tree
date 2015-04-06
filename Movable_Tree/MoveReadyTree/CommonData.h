@@ -15,6 +15,7 @@ extern std::vector<Domain*>domain_list;
 //after 4.2 instancing: all instance set 
 extern std::vector<std::vector<Domain*>>all_instance_set;
 
+extern float EPS; 
 /*
 extern std::vector<glm::vec3> *vertex;
 extern std::vector<glm::vec2> *UV_COORDS; 
