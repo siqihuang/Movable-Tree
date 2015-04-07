@@ -20,7 +20,7 @@ public:
 	
 	std::vector<Face*>face_list;
 	std::string tag;
-	std::string texture_file; //todo
+	std::string texture_file; 
 	
 	//domain index
 	int index;
