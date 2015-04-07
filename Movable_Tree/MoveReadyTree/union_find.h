@@ -42,15 +42,12 @@ public:
 		if(pa->rank >= pb->rank)
 		{
 			pb->parent = pa;
-		}
-		else if (pa->rank < pb->rank)
-		{
-			pa->parent = pb;
-		}
-		else if (pa->rank == pb->rank)
-		{
-			pa->parent = pb;
 			++pa->rank;
+		}
+		else 
+		{
+			pa->parent = pb;
+			++pb->rank;
 		}
 	}
 	
@@ -93,15 +90,21 @@ public:
 				face_list.push_back(face);
 			}
 
+			printf("face_list size %d\n", face_list.size()); 
 			for(int j = 0; j < face_list.size(); j++) //each faces
 			{
 				for(int k = j + 1; k < face_list.size(); k++) 
 				{
+					if(_Find(face_list[j]) == _Find(face_list[k])) continue;
 					bool res = face_list[j]->CheckShareVertex(face_list[k]);
 					if(res)
 					{
 						_Union(face_list[j], face_list[k]);
 					}
+				}
+				if(j % 500 == 0)
+				{
+					printf("Union-find processing %d face... \n", j);
 				}
 			}
 			
@@ -115,7 +118,6 @@ public:
 					//new a domain
 					Domain* d = new Domain();
 					d->texture_file = texture_file;
-					d->index = ++domain_idx;
 					d->tag = tags[i];
 					d->AddFace(face);
 					domain_map.insert(std::pair<Face*, Domain*>(face->parent, d)); 
@@ -129,6 +131,7 @@ public:
 		for(it = domain_map.begin(); it != domain_map.end(); ++it)
 		{
 			Domain* d = it->second;
+			d->index = domain_list.size(); 
 			domain_list.push_back(it->second);
 		}
 		
