@@ -16,7 +16,7 @@ public:
 		init();
 
 		clock_t start = clock();
-
+			
 		compute_graph();
 
 		clock_t end = clock();
@@ -38,11 +38,7 @@ public:
 			{
 				fdomain_list.push_back(domain_list[i]);
 				total_faces += domain_list[i]->face_list.size();
-			}
-			
-			//init graph data structure
-			std::vector<int>v;
-			graph.push_back(v);
+			}	
 		}
 		printf("fdomain_list size: %d\n", fdomain_list.size());	
 		printf("fdomain_list face size: %d\n", total_faces); 
@@ -51,32 +47,86 @@ public:
 	//brute_force version
 	void compute_graph()
 	{
-		for(int i = 0; i < domain_list.size(); ++i)
+		int n = fdomain_list.size();	
+		int shape = fdomain_list[0]->face_list[0]->uv_coords.size();
+
+		if(shape == 3) //triangle
 		{
-			for(int j = i + 1; j < domain_list.size(); ++j)
+			for(int i = 0; i < n; ++i)
 			{
-				if(IsCollided(domain_list[i], domain_list[j]))
+				for(int j = i + 1; j < n; ++j)
 				{
-					AddEdge(domain_list[i]->index, domain_list[j]->index);
-					AddEdge(domain_list[j]->index, domain_list[i]->index);
+					if(IsCollidedTri(fdomain_list[i], fdomain_list[j]))
+					{
+						AddEdge(fdomain_list[i]->index, fdomain_list[j]->index);
+						AddEdge(fdomain_list[j]->index, fdomain_list[i]->index);
+					}
 				}
+				printf("Finished The %d fdomain.......\n", fdomain_list[i]->index);
+			}
+		}
+		else if(shape == 4) //quad
+		{
+			for(int i = 0; i < n; ++i)
+			{
+				for(int j = i + 1; j < n; ++j)
+				{
+					if(IsCollidedQuad(fdomain_list[i], fdomain_list[j]))
+					{
+						AddEdge(fdomain_list[i]->index, fdomain_list[j]->index);
+						AddEdge(fdomain_list[j]->index, fdomain_list[i]->index);
+					}
+				}
+				printf("Finished The %d fdomain.......", i); 
 			}
 		}
 	}
 
 	void AddEdge(int a, int b)
-	{
-		graph[a].push_back(b);
+	{	
+		std::map<int , std::vector<int>>::iterator it;
+		it = graph.find(a);
+		if(it == graph.end())
+		{
+			std::vector<int>v;
+			v.push_back(b);
+			graph.insert(std::pair<int, std::vector<int>>(a, v));
+		}
+		else
+		{
+			it->second.push_back(b);
+		}
 	}
 
-	bool IsCollided(Domain* a, Domain* b)
+	bool IsCollidedTri(Domain* a, Domain* b)
 	{
 		for(int i = 0; i < a->face_list.size(); ++i)
 		{
 			Face* a_face = a->face_list[i];
 			for(int j = 0; j < b->face_list.size(); ++j)
 			{
-				if(a_face->IsCollided(b->face_list[j]))
+				if(Face::TriangleIntersectionTest(a_face->vertex_coords, b->face_list[j]->vertex_coords))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	bool IsCollidedQuad(Domain* a, Domain* b)
+	{
+		for(int i = 0; i < a->face_list.size(); ++i)
+		{
+			Face* a_face = a->face_list[i];	
+			for(int j = 0; j < b->face_list.size(); ++j)
+			{
+				Face* b_face = b->face_list[j];	
+				bool res = Face::TriangleIntersectionTest(a_face->C1, b_face->C1) ||
+					Face::TriangleIntersectionTest(a_face->C1, b_face->C2) ||
+					Face::TriangleIntersectionTest(a_face->C2, b_face->C1) ||
+					Face::TriangleIntersectionTest(a_face->C2, b_face->C2); 
+				if(res)					
 				{
 					return true;
 				}
@@ -88,22 +138,33 @@ public:
 	void print()
 	{
 		printf("Graph structure:\n"); 
-		for(int i = 0; i <= graph.size(); ++i)
+
+		std::map<int , std::vector<int>>::iterator it = graph.begin();
+		for(; it != graph.end(); ++it)
 		{
-			printf("Domain Index: %d\n", i);	
-			for(int j = 0; j <= graph[i].size(); ++j)
+			int len = it->second.size();
+			printf("Domain Index: %d neighbor size: %d\n", it->first, len); 
+			for(int i = 0; i < len; ++i) 
 			{
-				printf("%d ", j);	
+				printf("%d ", it->second[i]); 
 			}
 			printf("\n");	
+		}
+
+		it = graph.begin();
+		for(; it != graph.end(); ++it)
+		{
+			if(it->second.size() == 0)
+			{
+				printf("Index %d Has no neighbor: \n", it->first);
+			}
 		}
 	}
 
 	//edge table
-	std::vector<std::vector<int>>graph;
-	KdTree* ktree;
+	std::map<int , std::vector<int>>graph;
 	
-	
+	KdTree* ktree;	
 };
 
 #endif
