@@ -61,7 +61,8 @@ void InstancingModule::TextureMap()
 	for(it = instance_map.begin(); it != instance_map.end(); ++it)
 	{
 		all_instance_set.push_back(it->second);
-		printf("each instance set size: %d\n", it->second.size());
+		printf("each instance set size: %d ", it->second.size()); 
+		std::cout<<it->second[0]->tag<<std::endl;
 		//debug
 		/*
 		if(it->second.size() < 10)

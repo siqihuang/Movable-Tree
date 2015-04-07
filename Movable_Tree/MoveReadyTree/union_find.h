@@ -16,6 +16,12 @@
 class UnionFind
 {
 public:
+	int domain_idx;
+	UnionFind()
+	{
+		domain_idx = 0;
+	}
+
 	Face* _Find(Face* face)
 	{
 		if(face->parent != face)
@@ -48,7 +54,7 @@ public:
 		}
 	}
 	
-	void Union(const objLoader& objloader, const mtlLoader& mtlloader, int componentNum) 
+	void Union(const objLoader& objloader, const mtlLoader& mtlloader, const string* tags, int componentNum) 
 	{
 		clock_t start = clock();
 		map<Face*, Domain*>domain_map;
@@ -62,6 +68,7 @@ public:
 			//Each faces
 			for(int j = 0; j < objloader.index[i].size(); j++) 
 			{
+				if(objloader.index[i][j].size() <= 0) continue;
 				//vertices
 				vector<glm::vec3>_vertex_coords;
 				for(int k = 0; k < objloader.index[i][j].size(); ++k)
@@ -97,17 +104,19 @@ public:
 					}
 				}
 			}
-
+			
 			for(int j = 0; j < face_list.size(); j++) //each faces
 			{
 				Face* face = face_list[j];
 				it  = domain_map.find(_Find(face));
-				//new d not created 
+				//new domain not created 
 				if(it == domain_map.end())
 				{
 					//new a domain
 					Domain* d = new Domain();
 					d->texture_file = texture_file;
+					d->index = ++domain_idx;
+					d->tag = tags[i];
 					d->AddFace(face);
 					domain_map.insert(std::pair<Face*, Domain*>(face->parent, d)); 
 				}
@@ -120,11 +129,27 @@ public:
 		for(it = domain_map.begin(); it != domain_map.end(); ++it)
 		{
 			Domain* d = it->second;
-			//sort(d->uv_coords_list.begin(), d->uv_coords_list.end(), uvcmp);
-			//d->SortUVCoords(); //for instancing
 			domain_list.push_back(it->second);
-			//cout<<"f: "<<it->second->face_list.size()<<endl;
 		}
+		
+		//for test
+		/*
+		int total_faces = 0;
+		for(int i = 0; i < domain_list.size(); ++i) 
+		{
+			total_faces += domain_list[i]->face_list.size();
+			if(domain_list[i]->face_list.size() <= 1) 
+			{
+				printf("===================jason %d %d \n", domain_list[i]->face_list.size(), domain_list[i]->index); 
+				Face* face = domain_list[i]->face_list[0];
+				for(int j = 0; j < face->vertex_indexs.size(); ++j) 
+				{
+					printf("%f ", face->vertex_indexs[j]);
+				}
+			}
+		}
+		printf("total face==============: %d\n", total_faces);
+		*/
 
 		clock_t end = clock();
 		double time = (double) (end-start) / CLOCKS_PER_SEC; 

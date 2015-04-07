@@ -80,6 +80,7 @@ MStatus classificationNode::compute(const MPlug &plug,MDataBlock &data){
 		string ObjPath=string(MObjPath.asChar());
 		string MtlPath=string(MMtlPath.asChar());
 		string tag = string(Mtag.asChar());		
+
 		
 		extractList(tag,componentNum);
 
@@ -98,7 +99,7 @@ MStatus classificationNode::compute(const MPlug &plug,MDataBlock &data){
 		MGlobal::executeCommand("$reprensentativeInstanceNum=10");
 		
 		//4.1 union find
-		uf.Union(Objloader, Mtlloader, componentNum);
+		uf.Union(Objloader, Mtlloader, tags, componentNum);
 		//4.2 instancing
 		im.Instancing();
 		//4.3 computer F-domain graph
