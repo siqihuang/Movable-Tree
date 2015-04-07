@@ -94,9 +94,8 @@ void objLoader::readObj(){
 			inObj>>vec.x;
 			inObj>>vec.y;
 			UV_COORDS[n].push_back(vec);
-			if(vec.x<0||vec.y<0) MGlobal::displayInfo("!");
 		}
-		else if(n<3&&input==meshName[n]){
+		else if(n<componentNum&&input==meshName[n]){
 			n++;
 			MString num(std::to_string(n).c_str());
 			MString s="reading the "+num+" mesh";

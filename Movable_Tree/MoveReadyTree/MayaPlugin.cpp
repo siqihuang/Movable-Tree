@@ -26,7 +26,7 @@ MStatus initializePlugin(MObject obj){
 	status=fnPlugin.registerNode("classificationNode",classificationNode::id,classificationNode::creator,classificationNode::initialize);
 	status=fnPlugin.registerNode("instancingNode",instancingNode::id,instancingNode::creator,instancingNode::initialize);
 	status = fnPlugin.registerCommand( "classificationCommand",classificationCommand::creator,classificationCommand::newSyntax );
-
+	
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/meshSelection.mel\"");
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/classification.mel\"");
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/instancing.mel\"");

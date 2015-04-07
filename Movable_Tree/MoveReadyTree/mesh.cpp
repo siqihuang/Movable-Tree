@@ -27,6 +27,14 @@ void mesh::appendToMesh(MPointArray& points, MIntArray& faceCounts,MIntArray& fa
 	for(int i=0;i<gFaceConnects.length();i++){
 		faceConnects.append(gFaceConnects[i]);
 	}
+	if(gPoints.length()==0){
+		std::string s=std::to_string(gPoints.length());
+		MGlobal::displayInfo(MString(s.c_str()));
+		s=std::to_string(gFaceCounts[0]);
+		MGlobal::displayInfo(MString(s.c_str()));
+		s=std::to_string(gFaceConnects.length());
+		MGlobal::displayInfo(MString(s.c_str()));
+	}
 }
 
 void mesh::initMesh(int num){

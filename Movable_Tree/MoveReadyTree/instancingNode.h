@@ -22,6 +22,7 @@
 
 #include <maya/MIOStream.h>
 #include <string>
+#include <vector>
 #include "CommonData.h"
 #include "mesh.h"
 
@@ -36,10 +37,11 @@ public:
 	virtual MStatus compute(const MPlug &plug, MDataBlock &data);
 	static MTypeId id;
 	static MObject repInstancingNum;
-	static MObject outputMesh[410];//the output
+	static std::vector<MObject>outputMesh;//the output
 	static MObject trigger;//the trigger
 	static MObject command;//command
 	static MObject state;
+	static int domainNum;
 	mesh m;
 protected:
 	MObject createMesh(int n,MObject& outData, MStatus& stat);

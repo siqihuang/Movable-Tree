@@ -96,8 +96,12 @@ global proc findRepresentative(){
 		string $tmp=$selected[$i]+"Shape";
 		polySeparate -ch 1 $tmp;
 	}*/
+	for($i=0;$i<$size;++$i){
+		select $selected[$i];
+		doDelete;
+	}
 	
-	for($i=0;$i<200;++$i){
+	for($i=0;$i<4517;++$i){
 		string $com="connectAttr instancingNode2015.outputMesh"+$i+" instancingShape"+$i+".inMesh";
 		eval($com);
 	}
