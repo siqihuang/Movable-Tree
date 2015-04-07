@@ -8,27 +8,25 @@
 class Face 
 {
 public:
+	int index; 
+	std::vector<unsigned int>vertex_indexs; //each vertex index
+	std::vector<glm::vec3>vertex_coords; //each vertex coordinates 
+	std::vector<unsigned int>uv_indexs; //each vertex's uv index
+	std::vector<glm::vec2>uv_coords; //each vertex's uv coordinates 
+
+	glm::vec3 min_pt;
+	glm::vec3 max_pt;
+
+	//4.1 union-find
+	int rank;	
+	Face* parent; 
+
     Face()
 	{
 		rank = 0;
 		parent = this;
-		//UVminDis = FLT_MAX;
-		//nearestNeighbor = NULL;
 	}
-	
-	/*
-	inline Face(std::vector<unsigned int>_vertex_indexs, std::vector<unsigned int>_uv_indexs, int component_idx)
-	{
-		rank = 0;
-		parent = this;
-		vertex_indexs = _vertex_indexs;
-		uv_indexs = _uv_indexs; 
-		UVminDis = FLT_MAX;
-		nearestNeighbor = NULL;
-		init_uv_coords(component_idx);
-	}
-	*/
-	
+
 	Face(const std::vector<unsigned int>&_vertex_indexs, const std::vector<glm::vec3>&_vertex_coords,
 		std::vector<unsigned int>&_uv_indexs, std::vector<glm::vec2>&_uv_coords) 
 	{
@@ -38,28 +36,6 @@ public:
 		vertex_indexs = _vertex_indexs;
 		uv_indexs = _uv_indexs; 
 		uv_coords = _uv_coords; 
-		//UVminDis = FLT_MAX;
-		//nearestNeighbor = NULL;
-		/*
-		if(true)
-		{
-			for(int i = 0; i < _vertex_indexs.size(); ++i)
-			{
-				printf("%d ", _vertex_indexs[i]);
-			}
-			printf("\n"); 
-			for(int i = 0; i < _uv_indexs.size(); ++i)
-			{
-				printf("%d ", _uv_indexs[i]);
-			}
-			printf("\n"); 
-			for(int i = 0; i < _uv_coords.size(); ++i)
-			{
-				printf("%f %f", _uv_coords[i].x, _uv_coords[i].y);
-			}
-			printf("\n"); 
-		}
-		*/
 	}
 	
 	bool CheckShareVertex(Face *b)
@@ -77,25 +53,38 @@ public:
 		return false;
 	}
 
-	std::vector<unsigned int>vertex_indexs; //each vertex index
-	std::vector<glm::vec3>vertex_coords; //each vertex coordinates 
-	std::vector<unsigned int>uv_indexs; //each vertex's uv index
-	std::vector<glm::vec2>uv_coords; //each vertex's uv coordinates 
-	
-	int index; //face index
+	bool IsCollided(const Face* b)
+	{
+		int vn = vertex_coords.size(); 
+		if(vn != b->vertex_coords.size())
+		{
+			printf("ERROR! Face a vertex num is different from face b");
+			return false;
+		}
+		//quad
+		if(vn == 4)
+		{
+			return QuadIntersectionTest(b);
+		}
+		//triangle
+		else if(vn == 3)
+		{
+			return TriangleIntersectionTest(b);
+		}
+		return true;
+	}
 
-	glm::vec3 min_pt;
-	glm::vec3 max_pt;
+	bool QuadIntersectionTest(const Face *b)
+	{
+		return false;
+	}
 
-	//4.1 union-find
-	int rank;	
-	Face* parent; 
+	bool TriangleIntersectionTest(const Face *b)
+	{
+		return false;
+	}
 
-	//4.2 texture mapping
-	//float UVminDis; 
-	//Face* nearestNeighbor; 
-
-	float GetUVdistance(Face* b)
+	float GetUVdistance(const Face* b)
 	{
 		int n = uv_coords.size();
 		if(n != b->uv_coords.size())
@@ -122,8 +111,6 @@ public:
 					vis[j] = true;
 					break;
 				}
-				//dis += fabs(uv_coords[i].x - b->uv_coords[i].x) +  fabs(uv_coords[i].y - b->uv_coords[i].y); 
-				//printf("%f ", dis);
 			}
 			if(!found)
 			{

@@ -46,15 +46,31 @@ KdNode::~KdNode()
 
 struct sort_cmp
 {
+	int dim;
 	sort_cmp(int dim)
 	{
 		this->dim = dim;
 	}
+	/*
 	bool operator() (Face *a, Face *b)
 	{
 		return a->min_pt[dim] < b->min_pt[dim];
 	}
-	int dim;
+	*/
+	bool operator() (Domain *a, Domain *b)
+	{
+		float min_dim1 = FLT_MAX;
+		float min_dim2 = FLT_MAX;
+		for(int i = 0; i < a->face_list.size(); ++i)
+		{
+			min_dim1 = std::min(min_dim1, a->face_list[i]->min_pt[dim]); 
+		}
+		for(int i = 0; i < b->face_list.size(); ++i)
+		{
+			min_dim1 = std::min(min_dim2, b->face_list[i]->min_pt[dim]); 
+		}
+		return min_dim1 < min_dim2;
+	}
 };
 
 inline float quick_select_mid_pt(float a[], int n, int k)
@@ -81,8 +97,12 @@ inline float quick_select_mid_pt(float a[], int n, int k)
 
 float KdNode::find_mid(int dim)
 {
-	sort(face_list.begin(), face_list.end(), sort_cmp(dim));
-	return face_list[face_list.size()/2]->min_pt[dim];
+	//sort(face_list.begin(), face_list.end(), sort_cmp(dim));
+	//return face_list[face_list.size()/2]->min_pt[dim];
+
+	sort(d_list.begin(), d_list.end(), sort_cmp(dim));
+	return 1.f;
+	//return d_list[d_list.size()/2]->min_pt[dim];
 }
 
 int KdNode::divide_node(int lev)
@@ -97,10 +117,6 @@ int KdNode::divide_node(int lev)
 	std::vector<Face*>left_tris;
 	std::vector<Face*>right_tris;
 	
-	//if overlap triangles of left&right node reaches to this number, no more divide 
-	int max_overlap = n / 4;  
-	//overlap on left and right node
-	int match = 0; 
 	for(int i = 0; i < n; ++i) //each triangle	
 	{
 		bool l,r; 
@@ -126,8 +142,6 @@ int KdNode::divide_node(int lev)
 			l |= smaller;
 			r |= !smaller;
 		}
-		//a triangle both in left&right tree, and overlap each other over 50%. 
-		if(l && r && ++match >= max_overlap) return lev;
 		if(l) left_tris.push_back(face);
 		if(r) right_tris.push_back(face);
 	}
@@ -191,13 +205,14 @@ KdNode* KdTree::build_tree(const std::vector<Domain*>& domain_list)
 	for(int i = 0; i < domain_list.size(); ++i) 
 	{
 		Domain* d = domain_list[i];
-		for(int j = 0; j < d->face_list.size(); ++j) 
-		{
-			root->face_list.push_back(d->face_list[j]);	
-		}
+		//for(int j = 0; j < d->face_list.size(); ++j) 
+		//{
+		//root->d_list.push_back(d->face_list[j]);	
+		root->d_list.push_back(d);
+		//}
 	}
 	root = new KdNode();
-	root->box = new BV(root->face_list);
+	root->box = new BV(root->d_list);
 
 	clock_t newtime, oldtime;
 	oldtime = clock();

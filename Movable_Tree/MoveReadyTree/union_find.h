@@ -102,7 +102,7 @@ public:
 						_Union(face_list[j], face_list[k]);
 					}
 				}
-				if(j % 500 == 0)
+				if(j % 1000 == 0)
 				{
 					printf("Union-find processing %d face... \n", j);
 				}
