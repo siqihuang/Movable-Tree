@@ -101,7 +101,7 @@ global proc findRepresentative(){
 		doDelete;
 	}
 	
-	for($i=0;$i<4517;++$i){
+	for($i=0;$i<4517;++$i){//409 for tree1, 517 for tree2, 4516 for tree3
 		string $com="connectAttr instancingNode2015.outputMesh"+$i+" instancingShape"+$i+".inMesh";
 		eval($com);
 	}

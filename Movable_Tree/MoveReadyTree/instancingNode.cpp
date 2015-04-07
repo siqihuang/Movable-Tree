@@ -1,5 +1,5 @@
 #include "instancingNode.h"
-#define DOMAINS 4517
+#define DOMAINS 4517//tree1 409,tree2 517, tree3 4516
 MTypeId instancingNode::id( 0x80001 );
 MObject instancingNode::repInstancingNum;
 std::vector<MObject> instancingNode::outputMesh;//the output
