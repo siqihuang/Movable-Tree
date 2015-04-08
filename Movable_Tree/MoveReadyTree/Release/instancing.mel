@@ -1,0 +1,220 @@
+global int $reprensentativeInstanceNum;
+global string $RepToBeTaged="";
+global string $showHideButton;
+global int $RepSurfaces[];
+global int $currentRepInstanceNum;
+global int $showHideMode;
+global string $findRepButton;
+global int $anchorPointIndex[];
+global proc createInstancingGUI(){
+	global int $representativeInstanceNum;
+	global string $RepToBeTaged;
+	global string $positionField;
+	global string $showHideButton;
+	global string $findRepButton;
+	global int $showHideMode;
+	$showHideMode=1;
+	window -title "Instancing Command" -w 300 -h 240 InstancingWindow;
+	columnLayout;
+		rowLayout -numberOfColumns 2 -columnWidth2 160 35;
+			$findRepButton=`button -label "find Representative" -command "findRepresentative()"`;
+			$showHideButton=`button -label "hide other" -command "showHideMesh()"`;
+		setParent..;
+	setParent..;
+
+	frameLayout -label "instance info" -collapsable 1 -w 240;
+		columnLayout;
+			string $textRepInstanceNum="representative instance remains: "+$representativeInstanceNum;
+			rowLayout -numberOfColumns 1 -columnWidth 310 35;
+				$RepToBeTaged=`text -label $textRepInstanceNum`;
+			setParent..;
+		setParent..;
+	
+		columnLayout;
+			rowLayout -numberOfColumns 1 -columnWidth 310 30;
+				$positionField = `scrollField -w 300 -h 100 -wordWrap true -editable false`;
+			setParent..;
+		setParent..;
+		columnLayout;
+			rowLayout -numberOfColumns 2 -columnWidth2 170 30;
+				button -label "select" -command "selectCoordinate($positionField)";
+				button -label "relocate" -command "relocateMesh()";
+			setParent..;
+		setParent..;
+	setParent..;		
+
+	columnLayout;
+		rowLayout -numberOfColumns 2 -columnWidth2 200 35;
+			button -label "next" -command "selectAnchorPoint(0);showCoordinate($positionField)";
+			button -label "last" -command "selectAnchorPoint(1);showCoordinate($positionField)";
+		setParent..;
+	setParent..;
+
+	showWindow InstancingWindow;
+}
+
+global proc relocateMesh(){
+	global int $RepSurfaces[];
+	global int $currentRepInstanceNum;
+	if($currentRepInstanceNum<0) return;
+	string $polyName="instancing"+$RepSurfaces[$currentRepInstanceNum];
+
+	changeSelectMode -object;
+	select -cl;
+	select $polyName;
+	viewFit;
+
+	changeSelectMode -component;
+	selectType  -curveParameterPoint 1;
+	hilite $polyName;
+}
+
+global proc showHideMesh(){
+	global int $RepSurfaces[];
+	global int $currentRepInstanceNum;
+	global int $representativeInstanceNum;
+	global int $showHideMode;
+	global string $showHideButton;
+	if($representativeInstanceNum<0||$currentRepInstanceNum<0) return;
+	if($showHideMode==1){
+		hide -all;//hide all objects;
+		string $polyName="instancing"+$RepSurfaces[$currentRepInstanceNum];
+		select $polyName;
+		showHidden -above;
+		button -edit -label "show other" $showHideButton;
+		$showHideMode=0;
+	}
+	else{
+		showHidden -all;//show all object
+		string $polyName="instancing"+$RepSurfaces[$currentRepInstanceNum];
+		select $polyName;
+		button -edit -label "hide other" $showHideButton;
+		$showHideMode=1;
+	}
+}
+
+global proc selectCoordinate(string $positionField){
+	global int $currentRepInstanceNum;
+	global int $anchorPointIndex[];
+	string $s[]=`ls -sl`;
+	if(size($s)==0){
+		confirmDialog -title "ERROR" -message "Please select a point!" -button "OK";
+		return;
+	}
+	if(size($s)>1||`match ":" $s[0]`!=""){
+		confirmDialog -title "WARNING" -message "Multiple points are selected, only the first point is saved!" -button "OK";
+	}
+
+	//if($vtxPos[0]==0&&$vtxPos[1]==0&&$vtxPos[2]==0)
+		//confirmDialog -title "WARNING" -message "Please check the selection mode" -button "OK";
+	
+	string $tmp=`match "vtx.*" $s[0]`;
+	int $end=`size $tmp`-1;
+	string $subTmp=`substring $tmp 5 $end`;
+	$anchorPointIndex[$currentRepInstanceNum]=$subTmp;
+
+	showCoordinate($positionField);
+}
+
+global proc showCoordinate(string $positionField){
+	global int $currentRepInstanceNum;
+	global int $RepSurfaces[];
+	global int $anchorPointIndex[];
+	if(size($anchorPointIndex)<=$currentRepInstanceNum||$currentRepInstanceNum<0){
+		scrollField -edit -text "" $positionField;	
+		return;
+	}
+	string $tmp="instancing"+$RepSurfaces[$currentRepInstanceNum]+".vtx["+$anchorPointIndex[$currentRepInstanceNum]+"]";
+	float $vtxPos[3] = `xform -q -ws -t $tmp`;
+	string $text="";
+	$text+="X: "+$vtxPos[0];
+	$text+="\n";
+	$text+="Y: "+$vtxPos[1];
+	$text+="\n";
+	$text+="Z: "+$vtxPos[2];
+	$text+="\n";
+	scrollField -edit -text $text $positionField;	
+	select $tmp;
+}
+
+global proc selectAnchorPoint(int $n){
+	global int $RepSurfaces[];
+	global string $RepToBeTaged;
+	global int $representativeInstanceNum;
+	global int $currentRepInstanceNum;
+	global int $showHideMode;
+	global int $anchorPointIndex[];
+	
+	if($n==0&&$currentRepInstanceNum>=size($anchorPointIndex)){
+		confirmDialog -title "ERROR" -message "Please assign the anchor point of the current domain!" -button "OK";
+		return;
+	}
+
+	if($n==0&&$representativeInstanceNum>0){
+		$currentRepInstanceNum++;
+		$representativeInstanceNum--;
+	}
+	else if($n==1&&$currentRepInstanceNum>0){
+		$currentRepInstanceNum--;
+		$representativeInstanceNum++;
+	}
+
+	if($representativeInstanceNum<0) return;
+	if($currentRepInstanceNum<0) return;
+	string $polyName="instancing"+$RepSurfaces[$currentRepInstanceNum];
+
+	if($showHideMode==0){
+		hide -all;
+		select $polyName;
+		showHidden -above;		
+	}
+	
+	changeSelectMode -object;
+	select -cl;
+	select $polyName;
+	viewFit;
+
+	changeSelectMode -component;
+	selectType  -curveParameterPoint 1;
+	hilite $polyName;
+	
+	if($representativeInstanceNum==0)
+		showHidden -all;
+
+	string $tmp="representative instance remains: "+$representativeInstanceNum;
+	text -edit -label $tmp $RepToBeTaged;
+
+	
+}
+
+global proc findRepresentative(){
+	global string $selected[];
+	global int $RepSurfaces[];
+	global string $RepToBeTaged;
+	global int $representativeInstanceNum;
+	global int $currentRepInstanceNum;
+	global string $findRepButton;
+	$currentRepInstanceNum=-1;
+	$representativeInstanceNum=size($RepSurfaces);
+	//global int $RepSurfaces[3];
+	int $size=size($selected);
+	string $tmp="representative instance remains: "+$representativeInstanceNum;
+	text -edit -label $tmp $RepToBeTaged;
+
+	//setAttr instancingNode2015.trigger 1;
+
+	/*for($i=0;$i<$size;++$i){
+		string $tmp=$selected[$i]+"Shape";
+		polySeparate -ch 1 $tmp;
+	}*/
+	for($i=0;$i<$size;++$i){
+		select $selected[$i];
+		doDelete;
+	}
+	
+	for($i=0;$i<409;++$i){//409 for tree1, 517 for tree2, 4516 for tree3
+		string $com="connectAttr instancingNode2015.outputMesh"+$i+" instancingShape"+$i+".inMesh";
+		eval($com);
+	}
+	button -edit -enable false $findRepButton;	
+}

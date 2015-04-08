@@ -114,7 +114,15 @@ global proc createMoveReadyTreeUI(){
 
 global proc deleteMoveReadyTreeUI()
 {
+	global string $selected[];
+	global string $tags[];
+	global int $RepSurfaces[];
+	global int $representativeInstanceNum;
+	global int $anchorPointIndex[]; 
 	deleteUI -menu MRTMenu;
-	//deleteUI MeshSelectionWindow;
-	//deleteUI ClassificationWindow;
+	clear($selected);
+	clear($tags);
+	$representativeInstanceNum=0;
+	clear($RepSurfaces);
+	clear($anchorPointIndex);
 }

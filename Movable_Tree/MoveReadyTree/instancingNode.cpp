@@ -1,5 +1,5 @@
 #include "instancingNode.h"
-#define DOMAINS 4517//tree1 409,tree2 517, tree3 4516
+#define DOMAINS 409//tree1 409,tree2 517, tree3 4516
 MTypeId instancingNode::id( 0x80001 );
 MObject instancingNode::repInstancingNum;
 std::vector<MObject> instancingNode::outputMesh;//the output
@@ -91,6 +91,15 @@ MStatus instancingNode::compute(const MPlug &plug,MDataBlock &data){
 			//createNode mesh -n instancingShape1 -p instancing1;
 			MGlobal::executeCommand("sets -add initialShadingGroup "+Mshape);
 			//sets -add initialShadingGroup instancingShape1;
+		}
+
+		length=all_instance_set.size();
+		for(int i=0;i<length;i++){
+			Domain *tmp=all_instance_set[i][0];
+			std::string s=std::to_string(tmp->index);
+			std::string com="$RepSurfaces["+std::to_string(i)+"]="+s+";";
+			MGlobal::executeCommand(MString(com.c_str()));
+			MGlobal::displayInfo(s.c_str());
 		}
 		data.setClean(plug);
 	}
