@@ -200,6 +200,56 @@ public:
 		}
 		return false;
 	}
+	
+	//arguments: domain_1 index, domain_2 index
+	void connect_edge(int index1 ,int index2)
+	{
+		Domain* a; 
+		Domain* b;
+		int cnt = 0;
+		//find these two domains' pointers
+		for(int i = 0; i < fdomain_list.size(); ++i)
+		{
+			if(fdomain_list[i]->index == index1)
+			{
+				a = fdomain_list[i];
+				++cnt;
+				if(cnt == 2) break;
+			}
+			else if(fdomain_list[i]->index == index2)
+			{
+				b = fdomain_list[i];
+				++cnt;
+				if(cnt == 2) break;
+			}
+		}
+
+		//update fgraph
+		std::map<Domain*, std::vector<Domain*>>::iterator it; 
+		//a
+		it = fgraph.find(a);
+		if(it != fgraph.end())
+		{
+			it->second.push_back(b);
+		}
+		else
+		{
+			printf("ERROR!!!! Can not find Domain:%d in fgraph\n", a->index);
+		}
+		//b
+		it = fgraph.find(b);
+		if(it != fgraph.end())
+		{
+			it->second.push_back(a);
+		}
+		else
+		{
+			printf("ERROR!!!! Can not find Domain:%d in fgraph\n", b->index);
+		}
+		
+		//update fdomain_components 
+		compute_connect_components();
+	}
 
 	void print()
 	{
