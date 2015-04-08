@@ -42,7 +42,11 @@ MStatus connectingNode::compute(const MPlug &plug,MDataBlock &data){
 		//4.3 computer F-domain graph
 		if(state==0){
 			fdg.compute();
-			
+			std::string num=std::to_string(fdomain_components.size());
+			MString com="$unconnectedDomainNum="+MString(num.c_str())+";";
+			com+="string $tmp=\"unconnected domains: \"+$unconnectedDomainNum;";
+			com+="text -edit -label $tmp $domainsToBeConnected;";
+			MGlobal::executeCommand(com);
 			state=1;
 		}
 

@@ -1,10 +1,12 @@
 global string $buildFDButton;
 global int $unconnectedDomainNum;
 global string $buildFDButton;
+global string $domainsToBeConnected;
 
 global proc createConnectingGUI(){
 	global int $unconnectedDomainNum;
 	global string $buildFDButton;
+	global string $domainsToBeConnected;
 	window -title "Connecting Command" -w 300 -h 240 ConnectingWindow;
 	columnLayout;
 		rowLayout -numberOfColumns 2 -columnWidth2 160 35;
@@ -16,7 +18,7 @@ global proc createConnectingGUI(){
 		columnLayout;
 			string $unconnectedDomain="unconnected domains: "+$unconnectedDomainNum;
 			rowLayout -numberOfColumns 1 -columnWidth 310 35;
-				$RepToBeTaged=`text -label $unconnectedDomain`;
+				$domainsToBeConnected=`text -label $unconnectedDomain`;
 			setParent..;
 		setParent..;
 	setParent..;
