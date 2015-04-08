@@ -2,7 +2,6 @@
 #define KDTREE_H 
 
 #include "bv.h"
-#include "Face.h"
 #include "Domain.h"
 #include <vector>
 #include <algorithm>
@@ -15,7 +14,7 @@ class KdNode
 {
 public:
     KdNode(); 
-    KdNode(const std::vector<Face*>& in_tris, BV* pa_box, float mid, int dim, bool is_left); 
+    KdNode(const std::vector<Domain*>& in_tris, BV* pa_box, float mid, int dim, bool is_left); 
     virtual ~KdNode();
 		
 	KdNode* left;
@@ -23,10 +22,7 @@ public:
 
 	BV *box; //bounding box of triangles
 
-	//to remove
-	std::vector<Face*>face_list; //list of triangle
-
-	std::vector<Domain*>d_list; //list of domain 
+	std::vector<Domain*>dlist; //list of domain 
 
 	int divide_node(int lev); //base on midpoint
 	float find_mid(int dim); //fine midean to divide the node
