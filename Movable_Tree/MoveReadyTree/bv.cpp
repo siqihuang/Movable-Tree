@@ -18,6 +18,37 @@ BV::BV(std::vector<glm::vec3>&all_points)
 	}
 }
 
+BV::BV(std::vector<Domain*>&all_domains)
+{
+	use_aabb = true;
+	float min_x, max_x, min_y, max_y, min_z, max_z;
+	min_x = min_y = min_z= FLT_MAX;
+	max_x = max_y = max_z = -FLT_MAX;
+	
+	//calc min,max_pt
+	for (std::vector<Domain*>::iterator iter = all_domains.begin(); iter != all_domains.end(); ++iter) 
+	{
+		//each faces
+		for(int f = 0; f < (*iter)->face_list.size(); ++f)
+		{
+			//each vertex 
+			for(int i = 0; i < (*iter)->face_list[f]->vertex_coords.size(); ++i)
+			{
+				min_x = std::min(min_x, (*iter)->face_list[i]->vertex_coords[i].x);	
+				max_x = std::max(max_x, (*iter)->face_list[i]->vertex_coords[i].x);	
+
+				min_y = std::min(min_y, (*iter)->face_list[i]->vertex_coords[i].y); 
+				max_y = std::max(max_y, (*iter)->face_list[i]->vertex_coords[i].y); 
+
+				min_z = std::min(min_z, (*iter)->face_list[i]->vertex_coords[i].z); 
+				max_z = std::max(max_z, (*iter)->face_list[i]->vertex_coords[i].z); 
+			}
+		}
+	}
+	max_pt = glm::vec3(max_x, max_y, max_z);
+	min_pt = glm::vec3(min_x, min_y, min_z);
+}
+
 BV::BV(std::vector<Face*>&all_tris)
 {
 	use_aabb = true;

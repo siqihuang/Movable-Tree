@@ -7,8 +7,10 @@
 #include <glm/glm.hpp>
 #include "ray.h"
 #include "Face.h"
+#include "Domain.h"
 
 class Face;
+class Domain;
 
 #ifndef EPS
 #define EPS 1e-6f
@@ -20,6 +22,7 @@ public:
 	BV();
 	BV(std::vector<glm::vec3>&);
 	BV(std::vector<Face*>&);
+	BV(std::vector<Domain*>&all_domains);
 	virtual ~BV(); 
     
 	bool is_intersect(const Ray &);
