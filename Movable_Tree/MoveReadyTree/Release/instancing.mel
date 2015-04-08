@@ -6,6 +6,7 @@ global int $currentRepInstanceNum;
 global int $showHideMode;
 global string $findRepButton;
 global int $anchorPointIndex[];
+
 global proc createInstancingGUI(){
 	global int $representativeInstanceNum;
 	global string $RepToBeTaged;
@@ -183,8 +184,6 @@ global proc selectAnchorPoint(int $n){
 
 	string $tmp="representative instance remains: "+$representativeInstanceNum;
 	text -edit -label $tmp $RepToBeTaged;
-
-	
 }
 
 global proc findRepresentative(){

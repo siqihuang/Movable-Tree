@@ -22,7 +22,11 @@ public:
 	KdNode* right;
 
 	BV *box; //bounding box of triangles
+
+	//to remove
 	std::vector<Face*>face_list; //list of triangle
+
+	std::vector<Domain*>d_list; //list of domain 
 
 	int divide_node(int lev); //base on midpoint
 	float find_mid(int dim); //fine midean to divide the node

@@ -15,7 +15,11 @@ extern std::vector<Domain*>domain_list;
 //after 4.2 instancing: all instance set 
 extern std::vector<std::vector<Domain*>>all_instance_set;
 
+//after 4.3 compute F-domain Graph 
+extern std::vector<Domain*>fdomain_list;
+
 extern float EPS; 
+
 static void print_domainlist()
 {
 	//printf("common data: %d\n", domain_list.size());
