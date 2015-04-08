@@ -30,7 +30,9 @@ global proc createInstancingGUI(){
 				$RepToBeTaged=`text -label $textRepInstanceNum`;
 			setParent..;
 		setParent..;
+	setParent..;
 	
+	frameLayout -label "instance operation" -collapsable 1 -w 240;
 		columnLayout;
 			rowLayout -numberOfColumns 1 -columnWidth 310 30;
 				$positionField = `scrollField -w 300 -h 100 -wordWrap true -editable false`;
@@ -45,9 +47,10 @@ global proc createInstancingGUI(){
 	setParent..;		
 
 	columnLayout;
-		rowLayout -numberOfColumns 2 -columnWidth2 200 35;
+		rowLayout -numberOfColumns 3 -columnWidth2 200 35;
 			button -label "next" -command "selectAnchorPoint(0);showCoordinate($positionField)";
 			button -label "last" -command "selectAnchorPoint(1);showCoordinate($positionField)";
+			button -label "OK";
 		setParent..;
 	setParent..;
 
