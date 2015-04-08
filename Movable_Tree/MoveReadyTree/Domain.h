@@ -14,6 +14,8 @@ public:
 	Domain()
 	{
 		instance_pa = this; 
+		mst_pa = this;
+		fdomain_pa = this;
 		rank = 0;
 	}
     ~Domain() {}
@@ -28,6 +30,13 @@ public:
 	//for instancing
 	std::vector<glm::vec2>uv_coords_list;
 	Domain *instance_pa;
+	
+	//for fgraph connected components
+	Domain *fdomain_pa;
+
+	//minimum spanning tree
+	Domain *mst_pa;
+
 	int rank;
 
 	void AddFace(Face* f)

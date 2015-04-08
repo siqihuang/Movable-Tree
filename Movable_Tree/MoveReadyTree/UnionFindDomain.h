@@ -36,15 +36,12 @@ public:
 		if(pa->rank >= pb->rank)
 		{
 			pb->instance_pa = pa;
-		}
-		else if (pa->rank < pb->rank)
-		{
-			pa->instance_pa = pb;
-		}
-		else if (pa->rank == pb->rank)
-		{
-			pa->instance_pa = pb;
 			++pa->rank;
+		}
+		else 
+		{
+			pa->instance_pa = pb;
+			++pb->rank;
 		}
 	}
 };
