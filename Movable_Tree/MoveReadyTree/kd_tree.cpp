@@ -7,7 +7,7 @@ KdNode::KdNode()
 	right = NULL;
 }
 
-KdNode::KdNode(const std::vector<Face*>& in_tris, BV* pa_box, float mid, int dim, bool is_left) //for son treenode
+KdNode::KdNode(const std::vector<Domain*>& domain_list, BV* pa_box, float mid, int dim, bool is_left) //for son treenode
 {
 	box = new BV();
 	box->min_pt = pa_box->min_pt;
@@ -33,14 +33,14 @@ KdNode::KdNode(const std::vector<Face*>& in_tris, BV* pa_box, float mid, int dim
 			box->min_pt.z = mid;
 		break;
 	}
-	face_list = in_tris;
+	dlist = domain_list;
 	left = NULL;
 	right = NULL;
 }
 
 KdNode::~KdNode() 
 {
-	face_list.clear();
+	dlist.clear();
 	delete box;
 }
 
@@ -50,13 +50,7 @@ struct sort_cmp
 	sort_cmp(int dim)
 	{
 		this->dim = dim;
-	}
-	/*
-	bool operator() (Face *a, Face *b)
-	{
-		return a->min_pt[dim] < b->min_pt[dim];
-	}
-	*/
+	}	
 	bool operator() (Domain *a, Domain *b)
 	{
 		float min_dim1 = FLT_MAX;
@@ -67,7 +61,7 @@ struct sort_cmp
 		}
 		for(int i = 0; i < b->face_list.size(); ++i)
 		{
-			min_dim1 = std::min(min_dim2, b->face_list[i]->min_pt[dim]); 
+			min_dim2 = std::min(min_dim2, b->face_list[i]->min_pt[dim]); 
 		}
 		return min_dim1 < min_dim2;
 	}
@@ -97,18 +91,18 @@ inline float quick_select_mid_pt(float a[], int n, int k)
 
 float KdNode::find_mid(int dim)
 {
-	//sort(face_list.begin(), face_list.end(), sort_cmp(dim));
-	//return face_list[face_list.size()/2]->min_pt[dim];
+	//sort(dlist.begin(), dlist.end(), sort_cmp(dim));
+	//return dlist[dlist.size()/2]->min_pt[dim];
 
-	sort(d_list.begin(), d_list.end(), sort_cmp(dim));
+	sort(dlist.begin(), dlist.end(), sort_cmp(dim));
 	return 1.f;
-	//return d_list[d_list.size()/2]->min_pt[dim];
+	//return dlist[dlist.size()/2]->min_pt[dim];
 }
 
 int KdNode::divide_node(int lev)
 {
 	level = lev;
-	int n = face_list.size();
+	int n = dlist.size();
 	if(lev >= MAX_LEVEL || n <= MIN_TRIS_NUM) return lev;	
 
 	int dim = box->get_longest_axis(); 
@@ -117,13 +111,15 @@ int KdNode::divide_node(int lev)
 	std::vector<Face*>left_tris;
 	std::vector<Face*>right_tris;
 	
+	/*
 	for(int i = 0; i < n; ++i) //each triangle	
 	{
 		bool l,r; 
 		l = r = false; //if insert into left/right sub-tree
 		float tar;
-		Face* face = face_list[i];
-		for(int j = 0; j < face->vertex_coords.size(); ++j) //each triangle point
+		Domain* domain = dlist[i];
+		//jason
+		for(int j = 0; j < domain->vertex_coords.size(); ++j) //each triangle point
 		{
 			if(l && r)break;
 			switch(dim)
@@ -149,6 +145,7 @@ int KdNode::divide_node(int lev)
 	left = new KdNode(left_tris, box, mid, dim, true);
 	right = new KdNode(right_tris, box, mid, dim, false);
 	return std::max(left->divide_node(level + 1), right->divide_node(level + 1));
+	*/
 
 	/*
 	if(level == 0)
@@ -180,9 +177,9 @@ void KdNode::print()
 {
 	printf("\n");
 	printf("level: %d\n", level);
-	for(int i = 0; i < face_list.size(); ++i)
+	for(int i = 0; i < dlist.size(); ++i)
 	{
-		printf("%d ", face_list[i]->index);
+		printf("%d ", dlist[i]->index);
 	}
 }
 
@@ -205,19 +202,19 @@ KdNode* KdTree::build_tree(const std::vector<Domain*>& domain_list)
 	for(int i = 0; i < domain_list.size(); ++i) 
 	{
 		Domain* d = domain_list[i];
-		//for(int j = 0; j < d->face_list.size(); ++j) 
+		//for(int j = 0; j < d->dlist.size(); ++j) 
 		//{
-		//root->d_list.push_back(d->face_list[j]);	
-		root->d_list.push_back(d);
+		//root->dlist.push_back(d->dlist[j]);	
+		root->dlist.push_back(d);
 		//}
 	}
 	root = new KdNode();
-	root->box = new BV(root->d_list);
+	root->box = new BV(root->dlist);
 
 	clock_t newtime, oldtime;
 	oldtime = clock();
 
-	printf("Mesh triangles num %d\n", root->face_list.size());
+	printf("Mesh triangles num %d\n", root->dlist.size());
 	printf("KdTree start building...\n");
 
 	level = root->divide_node(0);
