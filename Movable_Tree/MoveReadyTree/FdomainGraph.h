@@ -64,7 +64,8 @@ public:
 			}
 		}
 
-		//std::vector<std::vector<Domain*>>fdomain_components;
+		//rebuild
+		fdomain_components.clear();
 		for(int i = 0; i < fdomain_list.size(); ++i) 
 		{
 			//find parent of fdomain component
