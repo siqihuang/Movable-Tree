@@ -2,6 +2,7 @@ global string $buildFDButton;
 global int $unconnectedDomainNum;
 global string $buildFDButton;
 global string $domainsToBeConnected;
+global int $connectingBlock[];
 
 global proc createConnectingGUI(){
 	global int $unconnectedDomainNum;
@@ -21,11 +22,18 @@ global proc createConnectingGUI(){
 				$domainsToBeConnected=`text -label $unconnectedDomain`;
 			setParent..;
 		setParent..;
+
+		columnLayout;
+			rowLayout -numberOfColumns 2 -columnWidth2 95 35;
+				button -label "connect" -command "connectingBlocks()";
+				button -label "highlight blocks" -command "highlightBlocks()";
+			setParent..;
+		setParent..;
 	setParent..;
 
 	columnLayout;
 		rowLayout -numberOfColumns 2 -columnWidth2 160 35;
-			button -label "next" ;
+			button -label "next" -command "gettingBlocks()";
 			button -label "OK";
 		setParent..;
 	setParent..;
@@ -37,4 +45,52 @@ global proc buildFDomain(){
 	global string $buildFDButton;
 	createNode connectingNode -n "connectingNode2015";
 	button -edit -enable false $buildFDButton;
+}
+
+global proc gettingBlocks(){
+	setAttr connectingNode2015.tmp1 1;
+}
+
+global proc connectingBlocks(){
+	string $twoDomains[]=`ls-sl`;
+	int $domainNum[],$domainsInBlock,$stringSize;
+	$domainsInBlock=0;
+	if(size($twoDomains)!=2) confirmDialog -title "ERROR" -message "Please select exactly two domains!" -button "OK";
+
+	$stringSize=`size $twoDomains[0]`;
+	$domainNum[0]=`substring $twoDomains[0] 11 $stringSize`;
+	$stringSize=`size $twoDomains[1]`;
+	$domainNum[1]=`substring $twoDomains[1] 11 $stringSize`;
+	if(checkSelectedDomainInBlock($domainNum[0])==1) $domainsInBlock++;
+	if(checkSelectedDomainInBlock($domainNum[1])==1) $domainsInBlock++;
+	if($domainsInBlock==0){
+		confirmDialog -title "ERROR" -message "Cannot select two domains outside the block!" -button "OK";
+		return;
+	}
+	if($domainsInBlock==2){
+		confirmDialog -title "ERROR" -message "Cannot select two domains inside the block!" -button "OK";
+		return;
+	}
+}
+
+global proc int checkSelectedDomainInBlock(int $domainIndex){
+	global int $connectingBlock[];
+	int $length;
+	$length=size($connectingBlock);
+	for($i=0;$i<$length;++$i){
+		if($domainIndex==$connectingBlock[$i]) return 1;
+	}
+	return 0;
+}
+
+global proc highlightBlocks(){
+	global int $connectingBlock[];
+	int $length=size($connectingBlock);
+	string $com="select ";
+	for($i=0;$i<$length;++$i){
+		$com+="instancing"+$connectingBlock[$i]+" ";
+	}
+	$com+=";";
+	eval($com);
+	viewFit;
 }

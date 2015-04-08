@@ -42,14 +42,59 @@ MStatus connectingNode::compute(const MPlug &plug,MDataBlock &data){
 		//4.3 computer F-domain graph
 		if(state==0){
 			fdg.compute();
-			std::string num=std::to_string(fdomain_components.size());
-			MString com="$unconnectedDomainNum="+MString(num.c_str())+";";
-			com+="string $tmp=\"unconnected domains: \"+$unconnectedDomainNum;";
-			com+="text -edit -label $tmp $domainsToBeConnected;";
-			MGlobal::executeCommand(com);
+			extractBlockNum();	
 			state=1;
 		}
+		else if(state==1){
+			MGlobal::executeCommand("clear($connectingBlock)");//clear the last data
+			hideOtherMesh();
+			setBlockGroup();
+			state=2;
+		}
+		else if(state==2){
+			//fdg.connect_edge();
 
+		}
 	}
 	return MS::kSuccess;
+}
+
+void connectingNode::extractBlockNum(){
+	std::string num=std::to_string(fdomain_components.size());
+	MString com="$unconnectedDomainNum="+MString(num.c_str())+";";
+	com+="string $tmp=\"unconnected domains: \"+$unconnectedDomainNum;";
+	com+="text -edit -label $tmp $domainsToBeConnected;";
+	MGlobal::executeCommand(com);
+}
+
+void connectingNode::hideOtherMesh(){
+	MGlobal::executeCommand("hide -all");//hide all domain first;
+	std::string com;
+	com="select ";
+	for(int i=0;i<fdomain_list.size();i++){
+		com+="instancing"+std::to_string(fdomain_list[i]->index)+" ";
+	}
+	std::string s=std::to_string(fdomain_list.size());
+	MGlobal::displayInfo(MString(s.c_str()));
+	com+=";showHidden -above;";
+	MGlobal::executeCommand(MString(com.c_str()));
+}
+
+void connectingNode::setBlockGroup(){
+	std::map<Domain*, std::vector<Domain*>>::iterator it;
+	int n=0;
+	std::string com;
+	com="";
+	it=fgraph.begin();//once at a time, no need to loop, recompute after every operation
+	com="$connectingBlock["+std::to_string(n)+"]="+std::to_string(it->first->index)+";";
+	MGlobal::executeCommand(MString(com.c_str()));
+	n++;
+	for(int i = 0; i < it->second.size(); ++i)
+	{
+		com="$connectingBlock["+std::to_string(n)+"]="+std::to_string(it->second[i]->index)+";";
+		MGlobal::executeCommand(MString(com.c_str()));
+		n++;
+		MGlobal::displayInfo(MString(com.c_str()));
+	}
+	state=2;
 }

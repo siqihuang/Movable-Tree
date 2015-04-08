@@ -15,6 +15,9 @@ public:
 	connectingNode(void);
 	~connectingNode(void);
 	static void *creator();
+	void hideOtherMesh();
+	void setBlockGroup();
+	void extractBlockNum();
 
 	static MStatus initialize();
 	virtual MStatus compute(const MPlug &plug, MDataBlock &data);
