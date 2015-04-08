@@ -32,6 +32,7 @@ MStatus initializePlugin(MObject obj){
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/meshSelection.mel\"");
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/classification.mel\"");
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/instancing.mel\"");
+	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/connecting.mel\"");
 	status = fnPlugin.registerUI("createMoveReadyTreeUI", "deleteMoveReadyTreeUI");
 
 	return status;
@@ -42,6 +43,7 @@ MStatus uninitializePlugin(MObject obj){
 	MFnPlugin fnPlugin(obj);
 	status=fnPlugin.deregisterNode(classificationNode::id);
 	status=fnPlugin.deregisterNode(instancingNode::id);
+	status=fnPlugin.deregisterNode(connectingNode::id);
 
 	status=fnPlugin.deregisterCommand("classificationCommand");
 

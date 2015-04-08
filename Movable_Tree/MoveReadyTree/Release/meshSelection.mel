@@ -118,11 +118,13 @@ global proc deleteMoveReadyTreeUI()
 	global string $tags[];
 	global int $RepSurfaces[];
 	global int $representativeInstanceNum;
+	global int $unconnectedDomainNum;
 	global int $anchorPointIndex[]; 
 	deleteUI -menu MRTMenu;
 	clear($selected);
 	clear($tags);
 	$representativeInstanceNum=0;
+	$unconnectedDomainNum=0;
 	clear($RepSurfaces);
 	clear($anchorPointIndex);
 }

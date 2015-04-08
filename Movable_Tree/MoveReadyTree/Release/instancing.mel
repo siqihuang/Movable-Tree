@@ -6,6 +6,7 @@ global int $currentRepInstanceNum;
 global int $showHideMode;
 global string $findRepButton;
 global int $anchorPointIndex[];
+global string $InstancingOKButton;
 
 global proc createInstancingGUI(){
 	global int $representativeInstanceNum;
@@ -13,6 +14,7 @@ global proc createInstancingGUI(){
 	global string $positionField;
 	global string $showHideButton;
 	global string $findRepButton;
+	global string $InstancingOKButton;
 	global int $showHideMode;
 	$showHideMode=1;
 	window -title "Instancing Command" -w 300 -h 240 InstancingWindow;
@@ -50,7 +52,7 @@ global proc createInstancingGUI(){
 		rowLayout -numberOfColumns 3 -columnWidth2 200 35;
 			button -label "next" -command "selectAnchorPoint(0);showCoordinate($positionField)";
 			button -label "last" -command "selectAnchorPoint(1);showCoordinate($positionField)";
-			button -label "OK";
+			$InstancingOKButton=`button -label "OK" -enable false -command "createConnectingGUI();deleteUI InstancingWindow"`;
 		setParent..;
 	setParent..;
 
@@ -144,15 +146,16 @@ global proc showCoordinate(string $positionField){
 global proc selectAnchorPoint(int $n){
 	global int $RepSurfaces[];
 	global string $RepToBeTaged;
+	global string $InstancingOKButton;
 	global int $representativeInstanceNum;
 	global int $currentRepInstanceNum;
 	global int $showHideMode;
 	global int $anchorPointIndex[];
 	
-	if($n==0&&$currentRepInstanceNum>=size($anchorPointIndex)){
+	/*if($n==0&&$currentRepInstanceNum>=size($anchorPointIndex)){
 		confirmDialog -title "ERROR" -message "Please assign the anchor point of the current domain!" -button "OK";
 		return;
-	}
+	} comment it for debug only!!!!!*/
 
 	if($n==0&&$representativeInstanceNum>0){
 		$currentRepInstanceNum++;
@@ -182,8 +185,11 @@ global proc selectAnchorPoint(int $n){
 	selectType  -curveParameterPoint 1;
 	hilite $polyName;
 	
-	if($representativeInstanceNum==0)
+	if($representativeInstanceNum==0){
 		showHidden -all;
+		button -edit -enable true $InstancingOKButton;
+		//need to be fixed in the final version here!!
+	}
 
 	string $tmp="representative instance remains: "+$representativeInstanceNum;
 	text -edit -label $tmp $RepToBeTaged;
