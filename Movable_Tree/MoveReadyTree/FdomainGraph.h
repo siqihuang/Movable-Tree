@@ -21,7 +21,7 @@ public:
 		compute_graph();
 
 		//copy to global data
-		fgraph = graph;
+		//fgraph = graph;
 		
 		//4.4 Compute each fdomain components according to the fgraph.
 		compute_connect_components();
@@ -66,17 +66,19 @@ public:
 
 		//rebuild
 		fdomain_components.clear();
+		//build fdomain components
 		for(int i = 0; i < fdomain_list.size(); ++i) 
 		{
-			//find parent of fdomain component
+			//find which component this domain belongs to 
 			Domain* pa = _Find(fdomain_list[i]);
 			it = fdomain_components.find(pa);	
+
 			//can not find, build one
 			if(it == fdomain_components.end())
 			{
-				std::vector<Domain*>v;
-				v.push_back(fdomain_list[i]);
-				fdomain_components.insert(std::pair<Domain*, std::vector<Domain*>>(pa, v));
+				std::vector<Domain*>domain_set;
+				domain_set.push_back(fdomain_list[i]);
+				fdomain_components.insert(std::pair<Domain*, std::vector<Domain*>>(pa, domain_set));
 			}
 			else
 			{
@@ -84,10 +86,16 @@ public:
 			}
 		}
 		
-		printf("\nTotal components:%d ====Each fdomain components:\n", fdomain_components.size());
+		printf("\nTotal components:%d\n=======Each fdomain components:\n", fdomain_components.size());
+		printf("[	PRINT_FDOMAIN_COMPONENTS]");
 		for(it = fdomain_components.begin(); it != fdomain_components.end(); ++it)
 		{
 			printf("%d\n", it->first->index);
+			for(int j = 0; j < it->second.size(); ++j)
+			{
+				printf("%d: ", it->second[j]->index);
+			}
+			printf("\n");
 		}
 		printf("\n");
 	}
@@ -110,12 +118,21 @@ public:
 		printf("fdomain_list face size: %d\n", total_faces); 
 	}
 
+	//Compute Fdomain-graph.
 	//brute_force version
 	void compute_graph()
 	{
 		int n = fdomain_list.size();	
-		int shape = fdomain_list[0]->face_list[0]->uv_coords.size();
+		fgraph.clear();
+		std::map<Domain*, std::vector<Domain*>>::iterator it;
+		//init fgraph
+		for(int i = 0; i < n; ++i)
+		{
+			std::vector<Domain*>neighbors;
+			fgraph.insert(std::pair<Domain*, std::vector<Domain*>>(fdomain_list[i], neighbors)); 
+		}
 
+		int shape = fdomain_list[0]->face_list[0]->uv_coords.size();
 		if(shape == 3) //triangle
 		{
 			for(int i = 0; i < n; ++i)
@@ -151,13 +168,13 @@ public:
 	void AddEdge(Domain* a, Domain*b)
 	{	
 		std::map<Domain*, std::vector<Domain*>>::iterator it;
-		it = graph.find(a);
+		it = fgraph.find(a);
 		//not create
-		if(it == graph.end())
+		if(it == fgraph.end())
 		{
-			std::vector<Domain*>v;
-			v.push_back(b);
-			graph.insert(std::pair<Domain*, std::vector<Domain*>>(a, v));
+			std::vector<Domain*>neighbors;
+			neighbors.push_back(b);
+			fgraph.insert(std::pair<Domain*, std::vector<Domain*>>(a, neighbors));
 		}
 		else
 		{
@@ -247,6 +264,17 @@ public:
 		{
 			printf("ERROR!!!! Can not find Domain:%d in fgraph\n", b->index);
 		}
+
+		printf("F-Graph updated!\n[PRINT_FGRAPH]\n");
+		for(it = fgraph.begin(); it != fgraph.end(); ++it)
+		{
+			printf("%d:\n", it->first->index);			
+			for(int j = 0; j < it->second.size(); ++j)
+			{
+				printf("%d: ", it->second[j]->index);
+			}
+			printf("\n"); 
+		}
 		
 		//update fdomain_components 
 		compute_connect_components();
@@ -256,8 +284,8 @@ public:
 	{
 		printf("Graph structure:\n"); 
 
-		std::map<Domain*, std::vector<Domain*>>::iterator it = graph.begin();
-		for(; it != graph.end(); ++it)
+		std::map<Domain*, std::vector<Domain*>>::iterator it = fgraph.begin();
+		for(; it != fgraph.end(); ++it)
 		{
 			int len = it->second.size();
 			printf("Domain Index: %d neighbor size: %d\n", it->first->index, len); 
@@ -268,8 +296,8 @@ public:
 			printf("\n");	
 		}
 
-		it = graph.begin();
-		for(; it != graph.end(); ++it)
+		it = fgraph.begin();
+		for(; it != fgraph.end(); ++it)
 		{
 			if(it->second.size() == 0)
 			{
@@ -281,7 +309,7 @@ public:
 	}
 
 	//edge table
-	std::map<Domain*, std::vector<Domain*>>graph;
+	//std::map<Domain*, std::vector<Domain*>>graph;
 	
 	KdTree* ktree;	
 };
