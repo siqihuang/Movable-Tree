@@ -32,11 +32,6 @@
 *.log
 *.mll
 *.filters
-*.obj
 *.opensdf
-*.obj
-*.exp
 *.exp
 *.lastbuildstate
-*.obj
-*.obj
