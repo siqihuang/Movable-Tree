@@ -248,7 +248,11 @@ public:
 		it = fgraph.find(a);
 		if(it != fgraph.end())
 		{
-			it->second.push_back(b);
+			//avoid copies
+			if(std::find(it->second.begin(), it->second.end(), b) == it->second.end())
+			{
+				it->second.push_back(b);
+			}
 		}
 		else
 		{
@@ -258,7 +262,11 @@ public:
 		it = fgraph.find(b);
 		if(it != fgraph.end())
 		{
-			it->second.push_back(a);
+			//avoid copies
+			if(std::find(it->second.begin(), it->second.end(), a) == it->second.end())
+			{
+				it->second.push_back(a);
+			}
 		}
 		else
 		{
@@ -278,6 +286,22 @@ public:
 		
 		//update fdomain_components 
 		compute_connect_components();
+	}
+	
+	//4.5 
+	int GetInitialRootDomain()
+	{
+		int cnt = 0;
+		int idx = 0;
+		for(int i = 0; i < fdomain_list.size(); ++i) 
+		{
+			if(cnt < fdomain_list[i]->face_list.size())
+			{
+				cnt = fdomain_list[i]->face_list.size();
+				idx = fdomain_list[i]->index;
+			}
+		}
+		return idx;
 	}
 
 	void print()
