@@ -6,6 +6,7 @@
 
 #include "Domain.h"
 #include <vector>
+#include <map>
 
 class Domain;
 

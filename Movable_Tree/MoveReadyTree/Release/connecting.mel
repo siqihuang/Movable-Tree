@@ -1,0 +1,38 @@
+global string $buildFDButton;
+global int $unconnectedDomainNum;
+global string $buildFDButton;
+
+global proc createConnectingGUI(){
+	global int $unconnectedDomainNum;
+	global string $buildFDButton;
+	window -title "Connecting Command" -w 300 -h 240 ConnectingWindow;
+	columnLayout;
+		rowLayout -numberOfColumns 2 -columnWidth2 160 35;
+			$buildFDButton=`button -label "Build F Domain Graph" -command "buildFDomain()"`;
+		setParent..;
+	setParent..;
+
+	frameLayout -label "connecting info" -collapsable 1 -w 200;
+		columnLayout;
+			string $unconnectedDomain="unconnected domains: "+$unconnectedDomainNum;
+			rowLayout -numberOfColumns 1 -columnWidth 310 35;
+				$RepToBeTaged=`text -label $unconnectedDomain`;
+			setParent..;
+		setParent..;
+	setParent..;
+
+	columnLayout;
+		rowLayout -numberOfColumns 2 -columnWidth2 160 35;
+			button -label "next" ;
+			button -label "OK";
+		setParent..;
+	setParent..;
+
+	showWindow ConnectingWindow;
+}
+
+global proc buildFDomain(){
+	global string $buildFDButton;
+	createNode connectingNode -n "connectingNode2015";
+	button -edit -enable false $buildFDButton;
+}

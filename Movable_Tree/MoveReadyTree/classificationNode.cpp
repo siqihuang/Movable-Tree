@@ -102,8 +102,6 @@ MStatus classificationNode::compute(const MPlug &plug,MDataBlock &data){
 		uf.Union(Objloader, Mtlloader, tags, componentNum);
 		//4.2 instancing
 		im.Instancing();
-		//4.3 computer F-domain graph
-		fdg.compute();
 	}
 	/*if(plug==Empty){
 		int remain=data.inputValue(remainComponent,&status).asInt();

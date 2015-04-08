@@ -7,7 +7,9 @@
 #include <maya/MFnTypedAttribute.h>
 #include <maya/MFnNumericAttribute.h>
 
-class connectingNode{
+#include "FdomainGraph.h"
+
+class connectingNode:MPxNode{
 public:
 	connectingNode(void);
 	~connectingNode(void);
@@ -16,6 +18,10 @@ public:
 	static MStatus initialize();
 	virtual MStatus compute(const MPlug &plug, MDataBlock &data);
 	static MTypeId id;
+	static MObject tmp;
+	static MObject tmp1;
+	static int state;
+	FdomainGraph fdg;
 };
 
 #endif
