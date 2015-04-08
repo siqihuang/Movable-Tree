@@ -8,6 +8,7 @@
 #include <maya/MFnNumericAttribute.h>
 
 #include "FdomainGraph.h"
+#include "CommonData.h"
 
 class connectingNode:MPxNode{
 public:
