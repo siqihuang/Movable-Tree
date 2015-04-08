@@ -16,8 +16,15 @@ public:
 		init();
 
 		clock_t start = clock();
-			
+		
+		//4.3 Compute Fdomain graph
 		compute_graph();
+
+		//copy to global data
+		fgraph = graph;
+		
+		//4.4 Compute each fdomain components according to the fgraph.
+		compute_connect_components();
 
 		clock_t end = clock();
 		double time = (double) (end-start) / CLOCKS_PER_SEC; 
@@ -25,6 +32,63 @@ public:
 		printf("Time used: %lf secs\n\n", time); 
 
 		print();
+	}
+	
+	Domain* _Find(Domain* dom)
+	{
+		if(dom->fdomain_pa != dom)
+		{
+			dom->fdomain_pa = _Find(dom->fdomain_pa);
+		}
+		return dom->fdomain_pa;
+	}
+
+	void _Union(Domain* a, Domain* b) 
+	{
+		Domain* pa = _Find(a);
+		Domain* pb = _Find(b);
+		if(pa != pb)
+		{
+			pb->fdomain_pa = pa;
+		}
+	}
+
+	void compute_connect_components()
+	{
+		std::map<Domain*, std::vector<Domain*>>::iterator it;
+		for(it = fgraph.begin(); it != fgraph.end(); ++it)
+		{
+			for(int i = 0; i < it->second.size(); ++i)
+			{
+				_Union(it->first, it->second[i]);
+			}
+		}
+
+		//std::vector<std::vector<Domain*>>fdomain_components;
+		for(int i = 0; i < fdomain_list.size(); ++i) 
+		{
+			//find parent of fdomain component
+			Domain* pa = _Find(fdomain_list[i]);
+			it = fdomain_components.find(pa);	
+			//can not find, build one
+			if(it == fdomain_components.end())
+			{
+				std::vector<Domain*>v;
+				v.push_back(fdomain_list[i]);
+				fdomain_components.insert(std::pair<Domain*, std::vector<Domain*>>(pa, v));
+			}
+			else
+			{
+				it->second.push_back(fdomain_list[i]);
+			}
+		}
+		
+		printf("\nTotal components:%d ====Each fdomain components:\n", fdomain_components.size());
+		for(it = fdomain_components.begin(); it != fdomain_components.end(); ++it)
+		{
+			printf("%d\n", it->first->index);
+		}
+		printf("\n");
 	}
 
 	void init()
@@ -40,6 +104,7 @@ public:
 				total_faces += domain_list[i]->face_list.size();
 			}	
 		}
+		printf("\n\n==============================\n");
 		printf("fdomain_list size: %d\n", fdomain_list.size());	
 		printf("fdomain_list face size: %d\n", total_faces); 
 	}
@@ -58,8 +123,8 @@ public:
 				{
 					if(IsCollidedTri(fdomain_list[i], fdomain_list[j]))
 					{
-						AddEdge(fdomain_list[i]->index, fdomain_list[j]->index);
-						AddEdge(fdomain_list[j]->index, fdomain_list[i]->index);
+						AddEdge(fdomain_list[i], fdomain_list[j]);
+						AddEdge(fdomain_list[j], fdomain_list[i]);
 					}
 				}
 				printf("Finished The %d fdomain.......\n", fdomain_list[i]->index);
@@ -73,24 +138,25 @@ public:
 				{
 					if(IsCollidedQuad(fdomain_list[i], fdomain_list[j]))
 					{
-						AddEdge(fdomain_list[i]->index, fdomain_list[j]->index);
-						AddEdge(fdomain_list[j]->index, fdomain_list[i]->index);
+						AddEdge(fdomain_list[i], fdomain_list[j]);
+						AddEdge(fdomain_list[j], fdomain_list[i]);
 					}
 				}
-				printf("Finished The %d fdomain.......", i); 
+				printf("Finished The %d fdomain.......\n", i); 
 			}
 		}
 	}
 
-	void AddEdge(int a, int b)
+	void AddEdge(Domain* a, Domain*b)
 	{	
-		std::map<int , std::vector<int>>::iterator it;
+		std::map<Domain*, std::vector<Domain*>>::iterator it;
 		it = graph.find(a);
+		//not create
 		if(it == graph.end())
 		{
-			std::vector<int>v;
+			std::vector<Domain*>v;
 			v.push_back(b);
-			graph.insert(std::pair<int, std::vector<int>>(a, v));
+			graph.insert(std::pair<Domain*, std::vector<Domain*>>(a, v));
 		}
 		else
 		{
@@ -139,14 +205,14 @@ public:
 	{
 		printf("Graph structure:\n"); 
 
-		std::map<int , std::vector<int>>::iterator it = graph.begin();
+		std::map<Domain*, std::vector<Domain*>>::iterator it = graph.begin();
 		for(; it != graph.end(); ++it)
 		{
 			int len = it->second.size();
-			printf("Domain Index: %d neighbor size: %d\n", it->first, len); 
+			printf("Domain Index: %d neighbor size: %d\n", it->first->index, len); 
 			for(int i = 0; i < len; ++i) 
 			{
-				printf("%d ", it->second[i]); 
+				printf("%d ", it->second[i]->index); 
 			}
 			printf("\n");	
 		}
@@ -156,13 +222,15 @@ public:
 		{
 			if(it->second.size() == 0)
 			{
-				printf("Index %d Has no neighbor: \n", it->first);
+				printf("Index %d Has no neighbor: \n", it->first->index);
 			}
 		}
+
+
 	}
 
 	//edge table
-	std::map<int , std::vector<int>>graph;
+	std::map<Domain*, std::vector<Domain*>>graph;
 	
 	KdTree* ktree;	
 };

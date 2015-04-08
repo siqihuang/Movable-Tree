@@ -38,3 +38,5 @@
 *.exp
 *.exp
 *.lastbuildstate
+*.obj
+*.obj
