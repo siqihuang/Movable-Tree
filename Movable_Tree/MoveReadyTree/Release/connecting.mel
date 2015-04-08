@@ -48,6 +48,7 @@ global proc buildFDomain(){
 }
 
 global proc gettingBlocks(){
+	setAttr connectingNode2015.tri true;
 	setAttr connectingNode2015.tmp1 1;
 }
 
@@ -55,7 +56,10 @@ global proc connectingBlocks(){
 	string $twoDomains[]=`ls-sl`;
 	int $domainNum[],$domainsInBlock,$stringSize;
 	$domainsInBlock=0;
-	if(size($twoDomains)!=2) confirmDialog -title "ERROR" -message "Please select exactly two domains!" -button "OK";
+	if(size($twoDomains)!=2){
+		confirmDialog -title "ERROR" -message "Please select exactly two domains!" -button "OK";
+		return;
+	}
 
 	$stringSize=`size $twoDomains[0]`;
 	$domainNum[0]=`substring $twoDomains[0] 11 $stringSize`;
@@ -71,6 +75,10 @@ global proc connectingBlocks(){
 		confirmDialog -title "ERROR" -message "Cannot select two domains inside the block!" -button "OK";
 		return;
 	}
+	setAttr connectingNode2015.index1 $domainNum[0];
+	setAttr connectingNode2015.index2 $domainNum[1];
+	setAttr connectingNode2015.tri true;
+	setAttr connectingNode2015.tmp1 1;
 }
 
 global proc int checkSelectedDomainInBlock(int $domainIndex){

@@ -18,12 +18,16 @@ public:
 	void hideOtherMesh();
 	void setBlockGroup();
 	void extractBlockNum();
+	void turnOffTrigger(MDataBlock &data);
 
 	static MStatus initialize();
 	virtual MStatus compute(const MPlug &plug, MDataBlock &data);
 	static MTypeId id;
 	static MObject tmp;
 	static MObject tmp1;
+	static MObject index1;
+	static MObject index2;
+	static MObject trigger;
 	static int state;
 	FdomainGraph fdg;
 };

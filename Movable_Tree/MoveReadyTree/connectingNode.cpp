@@ -3,6 +3,9 @@
 MTypeId connectingNode::id( 0x80002 );
 MObject connectingNode::tmp;
 MObject connectingNode::tmp1;
+MObject connectingNode::index1;
+MObject connectingNode::index2;
+MObject connectingNode::trigger;
 int connectingNode::state;
 
 connectingNode::connectingNode(){
@@ -27,9 +30,15 @@ MStatus connectingNode::initialize()
 
 	connectingNode::tmp=nAttr.create("tmp","t",MFnNumericData::kInt,0,&returnStatus);
 	connectingNode::tmp1=nAttr.create("tmp1","t1",MFnNumericData::kInt,0,&returnStatus);
-	
+	connectingNode::index1=nAttr.create("index1","in1",MFnNumericData::kInt,-1,&returnStatus);
+	connectingNode::index2=nAttr.create("index2","in2",MFnNumericData::kInt,-1,&returnStatus);
+	connectingNode::trigger=nAttr.create("trigger","tri",MFnNumericData::kBoolean,true,&returnStatus);
+
 	addAttribute(tmp);
 	addAttribute(tmp1);
+	addAttribute(index1);
+	addAttribute(index2);
+	addAttribute(trigger);
 
 	attributeAffects(tmp1,tmp);
 
@@ -38,22 +47,32 @@ MStatus connectingNode::initialize()
 
 MStatus connectingNode::compute(const MPlug &plug,MDataBlock &data){
 	MStatus status=MStatus::kSuccess;
-	if(plug==tmp){
+	bool tri=data.inputValue(trigger,&status).asBool();
+	if(plug==tmp&&tri){
 		//4.3 computer F-domain graph
 		if(state==0){
 			fdg.compute();
 			extractBlockNum();	
 			state=1;
+			turnOffTrigger(data);
 		}
 		else if(state==1){
 			MGlobal::executeCommand("clear($connectingBlock)");//clear the last data
 			hideOtherMesh();
 			setBlockGroup();
+			MGlobal::executeCommand("highlightBlocks();");
 			state=2;
+			turnOffTrigger(data);
 		}
 		else if(state==2){
-			//fdg.connect_edge();
-
+			int in1=data.inputValue(index1,&status).asInt();
+			int in2=data.inputValue(index2,&status).asInt();
+			in1=domain_list[in1]->index;
+			in2=domain_list[in2]->index;
+			fdg.connect_edge(in1,in2);
+			extractBlockNum();
+			state=1;
+			turnOffTrigger(data);
 		}
 	}
 	return MS::kSuccess;
@@ -97,4 +116,10 @@ void connectingNode::setBlockGroup(){
 		MGlobal::displayInfo(MString(com.c_str()));
 	}
 	state=2;
+}
+
+void connectingNode::turnOffTrigger(MDataBlock &data){
+	MStatus status=MStatus::kSuccess;
+	MDataHandle triggerHandle=data.outputValue(trigger,&status);
+	triggerHandle.setBool(false);
 }
