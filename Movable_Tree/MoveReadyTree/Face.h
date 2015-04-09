@@ -141,8 +141,21 @@ public:
 		vertex_indexs = _vertex_indexs;
 		uv_indexs = _uv_indexs; 
 		uv_coords = _uv_coords; 
+		//compute max_pt, min_pt
+		max_pt = min_pt = vertex_coords[0];
+		for(int i = 1; i < vertex_coords.size(); ++i)
+		{
+			glm::vec3 tmp = vertex_coords[i];
+			min_pt.x = std::min(min_pt.x, tmp.x); 
+			min_pt.y = std::min(min_pt.y, tmp.y); 
+			min_pt.z = std::min(min_pt.z, tmp.z); 
 
+			max_pt.x = std::max(max_pt.x, tmp.x); 
+			max_pt.y = std::max(max_pt.y, tmp.y); 
+			max_pt.z = std::max(max_pt.z, tmp.z); 
+		}
 		//is quad. So separate a quad into 2 triangles
+		//for collision detection
 		if(vertex_coords.size() == 4)
 		{
 			C1.resize(3);
