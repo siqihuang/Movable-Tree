@@ -104,7 +104,7 @@ void connectingNode::setBlockGroup(){
 	int n=0;
 	std::string com;
 	com="";
-	it=fgraph.begin();//once at a time, no need to loop, recompute after every operation
+	it=fdomain_components.begin();//once at a time, no need to loop, recompute after every operation
 	com="$connectingBlock["+std::to_string(n)+"]="+std::to_string(it->first->index)+";";
 	MGlobal::executeCommand(MString(com.c_str()));
 	n++;
