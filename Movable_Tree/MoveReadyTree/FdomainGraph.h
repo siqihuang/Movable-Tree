@@ -536,7 +536,7 @@ public:
 			}
 			printf("\n");	
 		}
-		for(FDG_ITER it; it != fgraph.end(); ++it)
+		for(FDG_ITER it = fgraph.begin(); it != fgraph.end(); ++it)
 		{
 			if(it->second.size() == 0)
 			{
