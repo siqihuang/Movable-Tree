@@ -361,7 +361,7 @@ public:
 	void SetRootDomain(int index)
 	{
 		Domain * d = GetDomainByIndex(index);
-		if(d)
+		if(d != NULL)
 		{
 			d->SetRoot();
 		}
