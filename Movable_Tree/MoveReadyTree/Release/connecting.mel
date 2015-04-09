@@ -39,7 +39,7 @@ global proc createConnectingGUI(){
 	columnLayout;
 		rowLayout -numberOfColumns 2 -columnWidth2 160 35;
 			button -label "next" -command "gettingBlocks()";
-			$connectingOKButton=`button -label "OK" -enable false`;
+			$connectingOKButton=`button -label "OK" -enable false -command "rootSelectionGUI()"`;
 		setParent..;
 	setParent..;
 
@@ -67,6 +67,7 @@ global proc gettingBlocks(){
 
 	if($unconnectedDomainNum==1){
 		button -edit -enable true $connectingOKButton;
+
 	}
 }
 
