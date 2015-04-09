@@ -3,11 +3,16 @@ global int $unconnectedDomainNum;
 global string $buildFDButton;
 global string $domainsToBeConnected;
 global int $connectingBlock[];
+global int $connectedCurrentBlock;
+global string $connectingOKButton;
 
 global proc createConnectingGUI(){
 	global int $unconnectedDomainNum;
 	global string $buildFDButton;
 	global string $domainsToBeConnected;
+	global string $connectingOKButton;
+	global int $connectedCurrentBlock;
+	$connectedCurrentBlock=1;
 	window -title "Connecting Command" -w 300 -h 240 ConnectingWindow;
 	columnLayout;
 		rowLayout -numberOfColumns 2 -columnWidth2 160 35;
@@ -34,7 +39,7 @@ global proc createConnectingGUI(){
 	columnLayout;
 		rowLayout -numberOfColumns 2 -columnWidth2 160 35;
 			button -label "next" -command "gettingBlocks()";
-			button -label "OK";
+			$connectingOKButton=`button -label "OK" -enable false`;
 		setParent..;
 	setParent..;
 
@@ -48,14 +53,40 @@ global proc buildFDomain(){
 }
 
 global proc gettingBlocks(){
+	global int $connectedCurrentBlock;
+	global int $unconnectedDomainNum;
+	global string $connectingOKButton;
+	if($connectedCurrentBlock==0){	
+		confirmDialog -title "ERROR" -message "Please connect two separate block first!" -button "OK";
+		return;
+	}
+
 	setAttr connectingNode2015.tri true;
 	setAttr connectingNode2015.tmp1 1;
+	$connectedCurrentBlock=0;
+
+	if($unconnectedDomainNum==1){
+		button -edit -enable true $connectingOKButton;
+	}
 }
 
 global proc connectingBlocks(){
+	global int $unconnectedDomainNum;
+	global int $connectedCurrentBlock;
 	string $twoDomains[]=`ls-sl`;
 	int $domainNum[],$domainsInBlock,$stringSize;
 	$domainsInBlock=0;
+	
+	if($unconnectedDomainNum==1){
+		confirmDialog -title "ERROR" -message "Only one block exist, push OK to go on" -button "OK";
+		return;
+	}
+
+	if($connectedCurrentBlock==1){
+		confirmDialog -title "ERROR" -message "already connected, please push next first" -button "OK";
+		return;
+	}
+
 	if(size($twoDomains)!=2){
 		confirmDialog -title "ERROR" -message "Please select exactly two domains!" -button "OK";
 		return;
@@ -75,6 +106,7 @@ global proc connectingBlocks(){
 		confirmDialog -title "ERROR" -message "Cannot select two domains inside the block!" -button "OK";
 		return;
 	}
+	$connectedCurrentBlock=1;
 	setAttr connectingNode2015.index1 $domainNum[0];
 	setAttr connectingNode2015.index2 $domainNum[1];
 	setAttr connectingNode2015.tri true;

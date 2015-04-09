@@ -52,7 +52,7 @@ global proc createInstancingGUI(){
 		rowLayout -numberOfColumns 3 -columnWidth2 200 35;
 			button -label "next" -command "selectAnchorPoint(0);showCoordinate($positionField)";
 			button -label "last" -command "selectAnchorPoint(1);showCoordinate($positionField)";
-			$InstancingOKButton=`button -label "OK" -enable false -command "createConnectingGUI();deleteUI InstancingWindow"`;
+			$InstancingOKButton=`button -label "OK" -enable false -command "createConnectingGUI();deleteUI InstancingWindow;select -all;select -cl;changeSelectMode -object;"`;
 		setParent..;
 	setParent..;
 
