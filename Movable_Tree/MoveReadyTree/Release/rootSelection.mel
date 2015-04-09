@@ -1,0 +1,30 @@
+global int $FDomainNum;
+
+global proc rootSelectionGUI(){
+	global int $FDomainNum;	
+	
+	window -title "Connecting Command" -w 300 -h 240 rootSelectionWindow;
+
+	columnLayout;
+		rowLayout -numberOfColumns 1 -columnWidth2 95 35;
+			string $FDomainNumText="F Domain Num: "+$FDomainNum;
+			text -label $FDomainNumText;
+		setParent..;
+	setParent..;
+
+	frameLayout -label "select root" -collapsable 1 -w 200;
+		columnLayout;
+			rowLayout -numberOfColumns 2 -columnWidth2 90 35;
+				button -label "select";
+				button -label "show preferrance";
+			setParent..;
+		setParent..;
+	setParent..;
+
+	columnLayout;
+		rowLayout -numberOfColumns 1 -columnWidth2 95 35;
+			button -label "OK";
+		setParent..;
+	setParent..;
+	showWindow rootSelectionWindow;
+}

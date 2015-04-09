@@ -51,10 +51,14 @@ MStatus connectingNode::compute(const MPlug &plug,MDataBlock &data){
 	if(plug==tmp&&tri){
 		//4.3 computer F-domain graph
 		if(state==0){
+			MGlobal::displayInfo("0");
 			fdg.compute();
+			MGlobal::displayInfo("1");
 			extractBlockNum();	
+			MGlobal::displayInfo("2");
 			state=1;
 			turnOffTrigger(data);
+			MGlobal::displayInfo("3");
 		}
 		else if(state==1){
 			MGlobal::executeCommand("clear($connectingBlock)");//clear the last data
