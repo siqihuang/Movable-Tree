@@ -4,6 +4,10 @@
 #include "CommonData.h"
 #include "kd_tree.h"
 #include<ctime>
+#include<queue>
+#include<set>
+
+#define FDG_ITER std::map<Domain*, std::vector<Domain*>>::iterator 
 
 class FdomainGraph 
 {
@@ -31,7 +35,7 @@ public:
 		printf("\nAfter 4.3 Compute F-domain graph\n"); 
 		printf("Time used: %lf secs\n\n", time); 
 
-		print();
+		print_graph();
 	}
 	
 	Domain* _Find(Domain* dom)
@@ -55,7 +59,7 @@ public:
 
 	void compute_connect_components()
 	{
-		std::map<Domain*, std::vector<Domain*>>::iterator it;
+		FDG_ITER it;
 		for(it = fgraph.begin(); it != fgraph.end(); ++it)
 		{
 			for(int i = 0; i < it->second.size(); ++i)
@@ -73,7 +77,7 @@ public:
 			Domain* pa = _Find(fdomain_list[i]);
 			it = fdomain_components.find(pa);	
 
-			//can not find, build one
+			//can not find this set, build it 
 			if(it == fdomain_components.end())
 			{
 				std::vector<Domain*>domain_set;
@@ -124,7 +128,7 @@ public:
 	{
 		int n = fdomain_list.size();	
 		fgraph.clear();
-		std::map<Domain*, std::vector<Domain*>>::iterator it;
+		FDG_ITER it; 
 		//init fgraph
 		for(int i = 0; i < n; ++i)
 		{
@@ -141,8 +145,8 @@ public:
 				{
 					if(IsCollidedTri(fdomain_list[i], fdomain_list[j]))
 					{
-						AddEdge(fdomain_list[i], fdomain_list[j]);
-						AddEdge(fdomain_list[j], fdomain_list[i]);
+						AddEdge(fdomain_list[i], fdomain_list[j], fgraph);
+						AddEdge(fdomain_list[j], fdomain_list[i], fgraph);
 					}
 				}
 				printf("Finished The %d fdomain.......\n", fdomain_list[i]->index);
@@ -156,8 +160,8 @@ public:
 				{
 					if(IsCollidedQuad(fdomain_list[i], fdomain_list[j]))
 					{
-						AddEdge(fdomain_list[i], fdomain_list[j]);
-						AddEdge(fdomain_list[j], fdomain_list[i]);
+						AddEdge(fdomain_list[i], fdomain_list[j], fgraph);
+						AddEdge(fdomain_list[j], fdomain_list[i], fgraph);
 					}
 				}
 				printf("Finished The %d fdomain.......\n", i); 
@@ -165,23 +169,68 @@ public:
 		}
 	}
 
-	void AddEdge(Domain* a, Domain*b)
+	void AddEdge(Domain* a, Domain*b, std::map<Domain*, std::vector<Domain*>>&graph)
 	{	
-		std::map<Domain*, std::vector<Domain*>>::iterator it;
-		it = fgraph.find(a);
+		FDG_ITER it = graph.find(a);
 		//not create
-		if(it == fgraph.end())
+		if(it == graph.end())
 		{
 			std::vector<Domain*>neighbors;
 			neighbors.push_back(b);
-			fgraph.insert(std::pair<Domain*, std::vector<Domain*>>(a, neighbors));
+			graph.insert(std::pair<Domain*, std::vector<Domain*>>(a, neighbors));
 		}
 		else
 		{
-			it->second.push_back(b);
+			//avoid copies	
+			if(std::find(it->second.begin(), it->second.end(), b) == it->second.end())
+			{
+				it->second.push_back(b);
+			}
 		}
 	}
 
+	void DelEdgeInMiniTree(Domain* a, Domain*b) 
+	{	
+		FDG_ITER it = mini_tree.find(a);
+		//found it in mini tree
+		if(it != mini_tree.end())
+		{
+			std::remove(it->second.begin(), it->second.end(), b);
+			it = mini_tree.find(b);
+			if(it != mini_tree.end())
+			{
+				std::remove(it->second.begin(), it->second.end(), a);
+			}
+			//then add origin redundant edge into mini tree
+			//TODO
+		}
+		else
+		{
+			//user remove the redundant edge, so no works need to do
+		}
+	}
+	
+	void DelEdgeExternal(int index1 ,int index2)
+	{
+		Domain* a = GetDomainByIndex(index1);	
+		Domain* b = GetDomainByIndex(index2);	
+		if(a && b)
+		{
+			DelEdgeInMiniTree(a, b);
+		}
+	}
+
+	Domain* GetDomainByIndex(int index) 
+	{
+		for(int i = 0; i < fdomain_list.size(); ++i)
+		{
+			if(fdomain_list[i]->index == index)
+			{
+				return fdomain_list[i];
+			}
+		}
+		return NULL;
+	}
 	bool IsCollidedTri(Domain* a, Domain* b)
 	{
 		for(int i = 0; i < a->face_list.size(); ++i)
@@ -241,40 +290,15 @@ public:
 				if(cnt == 2) break;
 			}
 		}
-
 		//update fgraph
-		std::map<Domain*, std::vector<Domain*>>::iterator it; 
-		//a
-		it = fgraph.find(a);
-		if(it != fgraph.end())
-		{
-			//avoid copies
-			if(std::find(it->second.begin(), it->second.end(), b) == it->second.end())
-			{
-				it->second.push_back(b);
-			}
-		}
-		else
-		{
-			printf("ERROR!!!! Can not find Domain:%d in fgraph\n", a->index);
-		}
-		//b
-		it = fgraph.find(b);
-		if(it != fgraph.end())
-		{
-			//avoid copies
-			if(std::find(it->second.begin(), it->second.end(), a) == it->second.end())
-			{
-				it->second.push_back(a);
-			}
-		}
-		else
-		{
-			printf("ERROR!!!! Can not find Domain:%d in fgraph\n", b->index);
-		}
+		AddEdge(a, b, fgraph);
+		AddEdge(b, a, fgraph);
+
+		//update fdomain_components 
+		compute_connect_components();
 
 		printf("F-Graph updated!\n[PRINT_FGRAPH]\n");
-		for(it = fgraph.begin(); it != fgraph.end(); ++it)
+		for(FDG_ITER it = fgraph.begin(); it != fgraph.end(); ++it)
 		{
 			printf("%d:\n", it->first->index);			
 			for(int j = 0; j < it->second.size(); ++j)
@@ -283,9 +307,6 @@ public:
 			}
 			printf("\n"); 
 		}
-		
-		//update fdomain_components 
-		compute_connect_components();
 	}
 	
 	//4.5 
@@ -304,12 +325,184 @@ public:
 		return idx;
 	}
 
-	void print()
+	void SetRootDomain(int index)
+	{
+		for(int i = 0; i < fdomain_list.size(); ++i) 
+		{
+			if(fdomain_list[i]->index == index)
+			{
+				fdomain_list[i]->SetRoot();
+				return;
+			}
+		}
+	}
+	
+	void BeginRemoveLoops()
+	{
+		ComputeMST();
+		FindRedundantEdges();
+		FindLoops();
+	}
+
+	//BFS: from the root domain
+	void ComputeMST()
+	{
+		Domain* root;
+		for(int i = 0; i < fdomain_list.size(); ++i) 
+		{
+			if(fdomain_list[i]->IsRoot())
+			{
+				root = fdomain_list[i];
+				break;
+			}
+		}
+		std::queue<Domain*>q;
+		q.push(root);
+		while(!q.empty())
+		{
+			Domain* node = q.front();
+			q.pop();
+			FDG_ITER it = fgraph.find(node);
+			if(it == fgraph.end())
+			{
+				printf("[ERROR]====ComputeMST, Can not find domain:%d", node->index);
+				return;
+			}
+			else
+			{
+				//node's neighbors
+				for(int i = 0; i < it->second.size(); ++i)
+				{
+					if(node->mst_pa != it->second[i]->mst_pa)
+					{
+						//union
+						it->second[i]->mst_pa = node->mst_pa;
+						//Add to mini tree
+						AddEdge(node, it->second[i], mini_tree);
+						AddEdge(it->second[i], node, mini_tree);
+						//in queue
+						q.push(it->second[i]);
+					}
+				}
+			}
+		}
+	}
+
+	bool FindLoopRecursive(Domain* src ,Domain* tar, std::vector<int>&loop_path, std::set<Domain*>&vis)	
+	{
+		vis.insert(src);
+		FDG_ITER it = mini_tree.find(src);
+		if(it == mini_tree.end())
+		{
+			printf("[ERROR] Mini tree can not find domain a%d:\n", src->index);
+			return false;
+		}
+		else
+		{
+			//src's neighbors
+			for(int i = 0; i < it->second.size(); ++i)
+			{
+				Domain* cur = it->second[i];
+				//find target
+				if(cur == tar)
+				{
+					loop_path.push_back(tar->index);
+					return true;	
+				}
+				//not visited
+				else if(vis.find(cur) == vis.end())
+				{
+					if(FindLoopRecursive(cur, tar, loop_path, vis))	
+					{
+						loop_path.push_back(cur->index);
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	void FindLoops()
+	{
+		std::vector<int>loop_path;
+		FDG_ITER re_it = redundant_edges.begin();
+		
+		Domain* a = re_it->first;
+		bool found = false;
+		for(int i = 0; i < re_it->second.size(); ++i)
+		{
+			std::set<Domain*>vis;
+			found = FindLoopRecursive(a, re_it->second[i], loop_path, vis);
+			if(found)
+			{
+				loop_path.push_back(a->index);
+				break;
+			}
+		}
+
+		//print
+		printf("[PRINT LOOP PATH]:\n");
+		for(int i = 0; i < loop_path.size(); ++i)	
+		{
+			printf("%d ", loop_path[i]);
+		}
+		printf("\n");
+
+	}
+	
+	void FindRedundantEdges()	
+	{
+		FDG_ITER mst_it;
+		for(FDG_ITER fg_it = fgraph.begin(); fg_it != fgraph.end(); ++fg_it)
+		{
+			Domain* key = fg_it->first;
+			//can not find this node in mini tree
+			if(mini_tree.find(key) == mini_tree.end())
+			{
+				redundant_edges.insert(std::pair<Domain*, std::vector<Domain*>>(key, fg_it->second)); 
+			}
+			else
+			{
+				//find all edges not in mini tree
+				for(int i = 0; i < fg_it->second.size(); ++i)
+				{
+					Domain* tar = fg_it->second[i];
+					bool found = false;
+					for(int j = 0; j < mst_it->second.size(); ++j)
+					{
+						if(tar == mst_it->second[j])
+						{
+							found = true;
+							break;
+						}
+					}
+					if(!found)
+					{
+						//add to redundant
+						AddEdge(key, tar, redundant_edges);
+						AddEdge(tar, key, redundant_edges);
+					}
+				}
+			}
+		}
+		//print
+		printf("[PRINT REDUNDANT EDGES] size:%d\n", redundant_edges.size());
+		for(FDG_ITER it = redundant_edges.begin(); it != redundant_edges.end(); ++it)
+		{
+			printf("%d\n", it->first->index);	
+			for(int i = 0; i < mst_it->second.size(); ++i)
+			{
+				printf("%d\n", it->second[i]);
+			}
+			printf("\n");
+		}
+	}
+
+	void print_graph()
 	{
 		printf("Graph structure:\n"); 
-
-		std::map<Domain*, std::vector<Domain*>>::iterator it = fgraph.begin();
-		for(; it != fgraph.end(); ++it)
+		for(FDG_ITER it = fgraph.begin(); it != fgraph.end(); ++it)
 		{
 			int len = it->second.size();
 			printf("Domain Index: %d neighbor size: %d\n", it->first->index, len); 
@@ -319,22 +512,17 @@ public:
 			}
 			printf("\n");	
 		}
-
-		it = fgraph.begin();
-		for(; it != fgraph.end(); ++it)
+		for(FDG_ITER it; it != fgraph.end(); ++it)
 		{
 			if(it->second.size() == 0)
 			{
 				printf("Index %d Has no neighbor: \n", it->first->index);
 			}
 		}
-
-
 	}
 
 	//edge table
 	//std::map<Domain*, std::vector<Domain*>>graph;
-	
 	KdTree* ktree;	
 };
 

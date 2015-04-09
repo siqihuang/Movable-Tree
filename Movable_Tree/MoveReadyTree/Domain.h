@@ -17,14 +17,13 @@ public:
 		mst_pa = this;
 		fdomain_pa = this;
 		rank = 0;
+		is_root = false;
 	}
     ~Domain() {}
 	
 	std::vector<Face*>face_list;
 	std::string tag;
 	std::string texture_file; 
-	
-	//domain index
 	int index;
 
 	//for instancing
@@ -33,11 +32,12 @@ public:
 	
 	//for fgraph connected components
 	Domain *fdomain_pa;
+	int rank;
 
 	//minimum spanning tree
 	Domain *mst_pa;
 
-	int rank;
+	bool is_root;
 
 	void AddFace(Face* f)
 	{
@@ -47,10 +47,15 @@ public:
 			uv_coords_list.push_back(f->uv_coords[i]);
 		}
 	}
-	void SortUVCoords()
+
+	void SetRoot()
 	{
-		//sort(uv_coords_list.begin(), uv_coords_list.end(), UVCmp);
-		//sort(uv_coords_list.begin(), uv_coords_list.end(), uvcmp);
+		is_root = true;
+	}
+
+	bool IsRoot()
+	{
+		return is_root;
 	}
 };
 

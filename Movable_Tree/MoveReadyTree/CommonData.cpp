@@ -9,6 +9,8 @@ std::vector<Domain*>fdomain_list;
 std::map<Domain*, std::vector<Domain*>>fgraph;
 
 std::map<Domain*, std::vector<Domain*>>fdomain_components;
+std::map<Domain*, std::vector<Domain*>>mini_tree; //minimum_tree
+std::map<Domain*, std::vector<Domain*>>redundant_edges;
 
 
 
