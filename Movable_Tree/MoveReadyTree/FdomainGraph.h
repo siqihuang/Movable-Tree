@@ -12,6 +12,10 @@
 class FdomainGraph 
 {
 public: 
+	//tmp redundant edge, may be add to MST after user remove loop.
+	Domain* rd_a;
+	Domain* rd_b;
+
 	void compute()
 	{
 		//build kd-tree
@@ -94,10 +98,10 @@ public:
 		printf("[	PRINT_FDOMAIN_COMPONENTS]");
 		for(it = fdomain_components.begin(); it != fdomain_components.end(); ++it)
 		{
-			printf("%d\n", it->first->index);
+			printf("%d: \n", it->first->index);
 			for(int j = 0; j < it->second.size(); ++j)
 			{
-				printf("%d: ", it->second[j]->index);
+				printf("%d ", it->second[j]->index);
 			}
 			printf("\n");
 		}
@@ -189,34 +193,42 @@ public:
 		}
 	}
 
-	void DelEdgeInMiniTree(Domain* a, Domain*b) 
+	void DelEdge(Domain* a, Domain*b, std::map<Domain*, std::vector<Domain*>>&graph)
 	{	
-		FDG_ITER it = mini_tree.find(a);
-		//found it in mini tree
-		if(it != mini_tree.end())
+		FDG_ITER it = graph.find(a);
+		if(it != graph.end())
 		{
-			std::remove(it->second.begin(), it->second.end(), b);
-			it = mini_tree.find(b);
-			if(it != mini_tree.end())
-			{
-				std::remove(it->second.begin(), it->second.end(), a);
-			}
-			//then add origin redundant edge into mini tree
-			//TODO
+			std::remove(it->second.begin(), it->second.end(), b);	
 		}
-		else
-		{
-			//user remove the redundant edge, so no works need to do
-		}
-	}
-	
+	}	
+
+	//for user remove loop in MAYA
 	void DelEdgeExternal(int index1 ,int index2)
 	{
 		Domain* a = GetDomainByIndex(index1);	
 		Domain* b = GetDomainByIndex(index2);	
 		if(a && b)
 		{
-			DelEdgeInMiniTree(a, b);
+			DelEdge(a, b, mini_tree);
+			DelEdge(b, a, mini_tree);
+			
+			AddEdge(a, b, redundant_edges);
+			AddEdge(b, a, redundant_edges);
+
+			DelEdge(rd_a, rd_b, redundant_edges);
+			DelEdge(rd_b, rd_a, redundant_edges);
+			rd_a = rd_b = NULL;
+		}
+		else
+		{
+			if(!a)
+			{
+				printf("[ERROR] DelEdgeExternal: Domain is NULL: %d", index1);
+			}
+			else
+			{
+				printf("[ERROR] DelEdgeExternal: Domain is NULL: %d", index2);
+			}
 		}
 	}
 
@@ -327,13 +339,10 @@ public:
 
 	void SetRootDomain(int index)
 	{
-		for(int i = 0; i < fdomain_list.size(); ++i) 
+		Domain * d = GetDomainByIndex(index);
+		if(d)
 		{
-			if(fdomain_list[i]->index == index)
-			{
-				fdomain_list[i]->SetRoot();
-				return;
-			}
+			d->SetRoot();
 		}
 	}
 	
@@ -399,7 +408,7 @@ public:
 		}
 		else
 		{
-			//src's neighbors
+			//for src's neighbors
 			for(int i = 0; i < it->second.size(); ++i)
 			{
 				Domain* cur = it->second[i];
@@ -427,28 +436,41 @@ public:
 	{
 		std::vector<int>loop_path;
 		FDG_ITER re_it = redundant_edges.begin();
-		
-		Domain* a = re_it->first;
-		bool found = false;
-		for(int i = 0; i < re_it->second.size(); ++i)
+		for(;re_it != redundant_edges.end(); ++re_it)
 		{
-			std::set<Domain*>vis;
-			found = FindLoopRecursive(a, re_it->second[i], loop_path, vis);
+			Domain* key = re_it->first;
+			bool found = false;
+			for(int i = 0; i < re_it->second.size(); ++i)
+			{
+				std::set<Domain*>vis;
+				//key is the source node of dfs, and re_it->second[i] is the destination
+				found = FindLoopRecursive(key, re_it->second[i], loop_path, vis);
+				if(found)
+				{
+					rd_a = key;
+					rd_b = re_it->second[i];
+					loop_path.push_back(key->index);
+					break;
+				}
+			}
 			if(found)
 			{
-				loop_path.push_back(a->index);
 				break;
 			}
 		}
-
-		//print
-		printf("[PRINT LOOP PATH]:\n");
-		for(int i = 0; i < loop_path.size(); ++i)	
+		if(loop_path.size() == 0)
 		{
-			printf("%d ", loop_path[i]);
+			printf("[PRINT LOOP PATH]: No more loop!");
 		}
-		printf("\n");
-
+		else
+		{
+			printf("[PRINT LOOP PATH]:\n");
+			for(int i = 0; i < loop_path.size(); ++i)	
+			{
+				printf("%d ", loop_path[i]);
+			}
+			printf("\n");
+		}
 	}
 	
 	void FindRedundantEdges()	
@@ -457,9 +479,11 @@ public:
 		for(FDG_ITER fg_it = fgraph.begin(); fg_it != fgraph.end(); ++fg_it)
 		{
 			Domain* key = fg_it->first;
+			mst_it = mini_tree.find(key); 
 			//can not find this node in mini tree
-			if(mini_tree.find(key) == mini_tree.end())
+			if(mst_it == mini_tree.end())
 			{
+				//put this node's all edges into redundant
 				redundant_edges.insert(std::pair<Domain*, std::vector<Domain*>>(key, fg_it->second)); 
 			}
 			else
@@ -490,10 +514,10 @@ public:
 		printf("[PRINT REDUNDANT EDGES] size:%d\n", redundant_edges.size());
 		for(FDG_ITER it = redundant_edges.begin(); it != redundant_edges.end(); ++it)
 		{
-			printf("%d\n", it->first->index);	
+			printf("Node: %d\n", it->first->index);	
 			for(int i = 0; i < mst_it->second.size(); ++i)
 			{
-				printf("%d\n", it->second[i]);
+				printf("%d ", it->second[i]);
 			}
 			printf("\n");
 		}
@@ -512,7 +536,7 @@ public:
 			}
 			printf("\n");	
 		}
-		for(FDG_ITER it; it != fgraph.end(); ++it)
+		for(FDG_ITER it = fgraph.begin(); it != fgraph.end(); ++it)
 		{
 			if(it->second.size() == 0)
 			{
