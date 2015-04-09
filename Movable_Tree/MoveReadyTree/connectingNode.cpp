@@ -6,6 +6,7 @@ MObject connectingNode::tmp1;
 MObject connectingNode::index1;
 MObject connectingNode::index2;
 MObject connectingNode::trigger;
+MObject connectingNode::rootNumber;
 int connectingNode::state;
 
 connectingNode::connectingNode(){
@@ -33,12 +34,14 @@ MStatus connectingNode::initialize()
 	connectingNode::index1=nAttr.create("index1","in1",MFnNumericData::kInt,-1,&returnStatus);
 	connectingNode::index2=nAttr.create("index2","in2",MFnNumericData::kInt,-1,&returnStatus);
 	connectingNode::trigger=nAttr.create("trigger","tri",MFnNumericData::kBoolean,true,&returnStatus);
+	connectingNode::rootNumber=nAttr.create("rootNum","rN",MFnNumericData::kInt,0,&returnStatus);
 
 	addAttribute(tmp);
 	addAttribute(tmp1);
 	addAttribute(index1);
 	addAttribute(index2);
 	addAttribute(trigger);
+	addAttribute(rootNumber);
 
 	attributeAffects(tmp1,tmp);
 
@@ -51,16 +54,21 @@ MStatus connectingNode::compute(const MPlug &plug,MDataBlock &data){
 	if(plug==tmp&&tri){
 		//4.3 computer F-domain graph
 		if(state==0){
-			MGlobal::displayInfo("0");
 			fdg.compute();
-			MGlobal::displayInfo("1");
 			extractBlockNum();	
-			MGlobal::displayInfo("2");
 			state=1;
+
+			std::string fdNum=std::to_string(fdomain_list.size());
+			MGlobal::executeCommand("$FDomainNum="+MString(fdNum.c_str())+";");
+			//pass F Domain numbers to mel
+
+			std::string preferredRoot=std::to_string(fdg.GetInitialRootDomain());
+			MGlobal::executeCommand("$preferredDomainIndex="+MString(preferredRoot.c_str())+";");
+			//pass preferred root index to mel
+
 			turnOffTrigger(data);
-			MGlobal::displayInfo("3");
 		}
-		else if(state==1){
+		else if(state==1){//compute new blocks num and highlight blocks
 			MGlobal::executeCommand("clear($connectingBlock)");//clear the last data
 			hideOtherMesh();
 			setBlockGroup();
@@ -68,14 +76,25 @@ MStatus connectingNode::compute(const MPlug &plug,MDataBlock &data){
 			state=2;
 			turnOffTrigger(data);
 		}
-		else if(state==2){
+		else if(state==2){//connect edge
 			int in1=data.inputValue(index1,&status).asInt();
 			int in2=data.inputValue(index2,&status).asInt();
 			in1=domain_list[in1]->index;
 			in2=domain_list[in2]->index;
 			fdg.connect_edge(in1,in2);
 			extractBlockNum();
-			state=1;
+			if(fdomain_components.size()>1)
+				state=1;
+			else 
+				state=3;
+			turnOffTrigger(data);
+		}
+		else if(state==3){//select root domain
+			int rootIndex=data.inputValue(rootNumber,&status).asInt();
+			std::string s=std::to_string(rootIndex);
+			MGlobal::displayInfo(MString(s.c_str()));
+			fdg.SetRootDomain(rootIndex);
+			MGlobal::displayInfo("successful!");
 			turnOffTrigger(data);
 		}
 	}

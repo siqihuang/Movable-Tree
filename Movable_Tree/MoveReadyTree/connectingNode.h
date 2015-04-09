@@ -28,6 +28,7 @@ public:
 	static MObject index1;
 	static MObject index2;
 	static MObject trigger;
+	static MObject rootNumber;
 	static int state;
 	FdomainGraph fdg;
 };

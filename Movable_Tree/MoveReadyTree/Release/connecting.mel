@@ -39,7 +39,7 @@ global proc createConnectingGUI(){
 	columnLayout;
 		rowLayout -numberOfColumns 2 -columnWidth2 160 35;
 			button -label "next" -command "gettingBlocks()";
-			$connectingOKButton=`button -label "OK" -enable false -command "rootSelectionGUI()"`;
+			$connectingOKButton=`button -label "OK" -enable false -command "rootSelectionGUI();deleteUI ConnectingWindow;showPreferranceRoot()"`;
 		setParent..;
 	setParent..;
 
