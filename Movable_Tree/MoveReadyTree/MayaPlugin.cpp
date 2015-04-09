@@ -33,7 +33,7 @@ MStatus initializePlugin(MObject obj){
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/classification.mel\"");
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/instancing.mel\"");
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/connecting.mel\"");
-	//MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/rootSelection.mel\"");
+	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/rootSelection.mel\"");
 	status = fnPlugin.registerUI("createMoveReadyTreeUI", "deleteMoveReadyTreeUI");
 
 	return status;

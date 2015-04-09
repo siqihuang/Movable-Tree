@@ -1,4 +1,6 @@
 global int $FDomainNum;
+global int $preferredDomainIndex;
+global int $rootIndex;
 
 global proc rootSelectionGUI(){
 	global int $FDomainNum;	
@@ -15,16 +17,44 @@ global proc rootSelectionGUI(){
 	frameLayout -label "select root" -collapsable 1 -w 200;
 		columnLayout;
 			rowLayout -numberOfColumns 2 -columnWidth2 90 35;
-				button -label "select";
-				button -label "show preferrance";
+				button -label "select" -command "selectRoot()";
+				button -label "show preferrance" -command "showPreferranceRoot()";
 			setParent..;
 		setParent..;
 	setParent..;
 
 	columnLayout;
 		rowLayout -numberOfColumns 1 -columnWidth2 95 35;
-			button -label "OK";
+			button -label "OK" -command "rootSelected()";
 		setParent..;
 	setParent..;
 	showWindow rootSelectionWindow;
+}
+
+global proc rootSelected(){
+	global int $rootIndex;
+	print $rootIndex;
+	setAttr connectingNode2015.rootNum $rootIndex;
+	setAttr connectingNode2015.tri true;
+	setAttr connectingNode2015.tmp1 1;
+	
+}
+
+global proc showPreferranceRoot(){
+	global int $preferredDomainIndex;
+	string $com="select instancing"+$preferredDomainIndex;
+	eval($com);
+	viewFit;
+}
+
+global proc selectRoot(){
+	global int $rootIndex;
+	string $selectedRoot[]=`ls-sl`;
+	int $stringSize;
+	if(size($selectedRoot)!=1){ 
+		confirmDialog -title "ERROR" -message "Please select one domain as root!" -button "OK";
+		return;
+	}
+	$stringSize=`size $selectedRoot[0]`;
+	$rootIndex=`substring $selectedRoot[0] 11 $stringSize`;
 }
