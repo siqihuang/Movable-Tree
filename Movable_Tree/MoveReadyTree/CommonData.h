@@ -40,6 +40,11 @@ extern std::map<Domain*, std::vector<Domain*>>fdomain_components;
 
 //=====================================================
 
+//=============4.6 Remove loops in Fdomain-graph====================== 
+extern std::map<Domain*, std::vector<Domain*>>mini_tree; //minimum_tree
+extern std::map<Domain*, std::vector<Domain*>>redundant_edges;
+//=====================================================
+
 extern float EPS; 
 
 static void print_domainlist()
