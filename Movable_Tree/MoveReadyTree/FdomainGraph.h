@@ -40,6 +40,9 @@ public:
 		printf("Time used: %lf secs\n\n", time); 
 
 		print_graph();
+
+		//debug
+		//printf("GetInitialRootDomain: %d\n", GetInitialRootDomain());
 	}
 	
 	Domain* _Find(Domain* dom)
@@ -324,6 +327,7 @@ public:
 	//4.5 
 	int GetInitialRootDomain()
 	{
+		/*
 		int cnt = 0;
 		int idx = 0;
 		for(int i = 0; i < fdomain_list.size(); ++i) 
@@ -335,12 +339,29 @@ public:
 			}
 		}
 		return idx;
+		*/
+
+		float ymin = FLT_MAX;
+		int idx = 0;
+		for(int i = 0; i < fdomain_list.size(); ++i) 
+		{
+			for(int j = 0; j < fdomain_list[i]->face_list.size(); ++j)
+			{
+				Face* f = fdomain_list[i]->face_list[j]; 
+				if(f->min_pt.y < ymin)
+				{
+					ymin = f->min_pt.y;
+					idx = fdomain_list[i]->index;
+				}
+			}
+		}
+		return idx;
 	}
 
 	void SetRootDomain(int index)
 	{
 		Domain * d = GetDomainByIndex(index);
-		if(d)
+		if(d != NULL)
 		{
 			d->SetRoot();
 		}

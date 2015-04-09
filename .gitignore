@@ -35,3 +35,9 @@
 *.opensdf
 *.exp
 *.lastbuildstate
+*.filters
+*.pdb
+*.exp
+*.ilk
+*.vcxproj
+*.lastbuildstate
