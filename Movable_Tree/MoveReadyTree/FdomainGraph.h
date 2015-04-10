@@ -195,12 +195,34 @@ public:
 		}
 	}
 
+	int GetRedundantEdgesSize()
+	{
+		int rsize = 0;
+		FDG_ITER re_it = redundant_edges.begin();
+		for(;re_it != redundant_edges.end(); ++re_it)
+		{
+			rsize += re_it->second.size();
+		}
+		printf("[GET REDUNDANT EDGE SIZE], %d\n", rsize/2);
+		return rsize;
+	}
+
 	void DelEdge(Domain* a, Domain*b, std::map<Domain*, std::vector<Domain*>>&graph)
 	{	
 		FDG_ITER it = graph.find(a);
 		if(it != graph.end())
 		{
-			std::remove(it->second.begin(), it->second.end(), b);	
+			//std::remove(it->second.begin(), it->second.end(), b);	
+			std::vector<Domain*>::iterator vit = it->second.begin();
+			for(;vit != it->second.end(); ++vit)
+			{
+				if(*vit == b)
+				{
+					printf("[DEL EDGE] found edge! %d %d\n", a->index, b->index);
+					it->second.erase(vit);
+					return;
+				}
+			}
 		}
 	}	
 
@@ -221,19 +243,25 @@ public:
 				//del b-a
 				it = mini_tree.find(b);
 				std::remove(it->second.begin(), it->second.end(), a);	
-				printf("Edge in MST\n");
+				printf("[REMOVE EDGE] Edge in MST\n");
 
 				//add origin redundant edge into MST
 				AddEdge(rd_a, rd_b, mini_tree);
 				AddEdge(rd_b, rd_a, mini_tree);
-				printf("Add origin redundant edge into MST:%d %d\n", rd_a->index, rd_b->index);
+				printf("[REMOVE EDGE] Add origin redundant edge into MST:%d %d\n", rd_a->index, rd_b->index);
 			}
 
 			//del redundant edges 
+			printf("Del redundant before:");
+			GetRedundantEdgesSize();
+
 			printf("Del origin redundant edge: %d %d\n", rd_a->index, rd_b->index);
 			DelEdge(rd_a, rd_b, redundant_edges);
 			DelEdge(rd_b, rd_a, redundant_edges);
 			rd_a = rd_b = NULL;
+
+			printf("Del redundant After:");
+			GetRedundantEdgesSize();
 		}
 		else
 		{
@@ -454,19 +482,16 @@ public:
 		}
 		return false;
 	}
-
+	
+	//jason
 	std::vector<int> FindLoops()
 	{
-		int rsize = 0;
-		FDG_ITER re_it = redundant_edges.begin();
-		for(;re_it != redundant_edges.end(); ++re_it)
-		{
-			rsize += re_it->second.size();
-		}
-		printf("FindLoops: [REDUNDANT EDGE SIZE], %d\n", rsize);
-	
+		//for debug
+		GetRedundantEdgesSize();	
+
 		std::vector<int>loop_path;
-		for(re_it = redundant_edges.begin();re_it != redundant_edges.end(); ++re_it)
+		FDG_ITER re_it;
+		for(re_it = redundant_edges.begin(); re_it != redundant_edges.end(); ++re_it)
 		{
 			Domain* key = re_it->first;
 			bool found = false;
@@ -490,7 +515,7 @@ public:
 		}
 		if(loop_path.size() == 0)
 		{
-			printf("[PRINT LOOP PATH]: No more loop!");
+			printf("[PRINT LOOP PATH]: No more loop!\n");
 		}
 		else
 		{
@@ -541,8 +566,7 @@ public:
 				}
 			}
 		}
-		//print
-		printf("\n[PRINT REDUNDANT EDGES] size:%d\n", redundant_edges.size());
+		
 		for(FDG_ITER it = redundant_edges.begin(); it != redundant_edges.end(); ++it)
 		{
 			printf("Node: %d\n", it->first->index);	
