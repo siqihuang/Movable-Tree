@@ -15,6 +15,8 @@ public:
 	//tmp redundant edge, may be add to MST after user remove loop.
 	Domain* rd_a;
 	Domain* rd_b;
+	
+	//KdTree* ktree;	
 
 	void compute()
 	{
@@ -209,14 +211,26 @@ public:
 		Domain* b = GetDomainByIndex(index2);	
 		if(a && b)
 		{
-			//if a-b belongs to mini_tree
-			DelEdge(a, b, mini_tree);
-			DelEdge(b, a, mini_tree);
-			
-			//AddEdge(a, b, redundant_edges);
-			//AddEdge(b, a, redundant_edges);
+			printf("[REMOVE EDGE] : %d %d\n", a->index, b->index);
+			FDG_ITER it = mini_tree.find(a);
+			//MST contains a-b
+			if(it != mini_tree.end() && std::find(it->second.begin(), it->second.end(), b) != it->second.end())
+			{
+				//del a-b
+				std::remove(it->second.begin(), it->second.end(), b);	
+				//del b-a
+				it = mini_tree.find(b);
+				std::remove(it->second.begin(), it->second.end(), a);	
+				printf("Edge in MST\n");
+
+				//add origin redundant edge into MST
+				AddEdge(rd_a, rd_b, mini_tree);
+				AddEdge(rd_b, rd_a, mini_tree);
+				printf("Add origin redundant edge into MST:%d %d\n", rd_a->index, rd_b->index);
+			}
 
 			//del redundant edges 
+			printf("Del origin redundant edge: %d %d\n", rd_a->index, rd_b->index);
 			DelEdge(rd_a, rd_b, redundant_edges);
 			DelEdge(rd_b, rd_a, redundant_edges);
 			rd_a = rd_b = NULL;
@@ -245,6 +259,7 @@ public:
 		}
 		return NULL;
 	}
+
 	bool IsCollidedTri(Domain* a, Domain* b)
 	{
 		for(int i = 0; i < a->face_list.size(); ++i)
@@ -448,7 +463,7 @@ public:
 		{
 			rsize += re_it->second.size();
 		}
-		printf("[REDUNDANT EDGE SIZE], %d\n", rsize);
+		printf("FindLoops: [REDUNDANT EDGE SIZE], %d\n", rsize);
 	
 		std::vector<int>loop_path;
 		for(re_it = redundant_edges.begin();re_it != redundant_edges.end(); ++re_it)
@@ -561,9 +576,6 @@ public:
 		}
 	}
 
-	//edge table
-	//std::map<Domain*, std::vector<Domain*>>graph;
-	KdTree* ktree;	
 };
 
 #endif
