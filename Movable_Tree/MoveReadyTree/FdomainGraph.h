@@ -442,9 +442,16 @@ public:
 
 	std::vector<int> FindLoops()
 	{
-		std::vector<int>loop_path;
+		int rsize = 0;
 		FDG_ITER re_it = redundant_edges.begin();
 		for(;re_it != redundant_edges.end(); ++re_it)
+		{
+			rsize += re_it->second.size();
+		}
+		printf("[REDUNDANT EDGE SIZE], %d\n", rsize);
+	
+		std::vector<int>loop_path;
+		for(re_it = redundant_edges.begin();re_it != redundant_edges.end(); ++re_it)
 		{
 			Domain* key = re_it->first;
 			bool found = false;
