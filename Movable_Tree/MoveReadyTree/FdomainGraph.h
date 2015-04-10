@@ -209,12 +209,14 @@ public:
 		Domain* b = GetDomainByIndex(index2);	
 		if(a && b)
 		{
+			//if a-b belongs to mini_tree
 			DelEdge(a, b, mini_tree);
 			DelEdge(b, a, mini_tree);
 			
-			AddEdge(a, b, redundant_edges);
-			AddEdge(b, a, redundant_edges);
+			//AddEdge(a, b, redundant_edges);
+			//AddEdge(b, a, redundant_edges);
 
+			//del redundant edges 
 			DelEdge(rd_a, rd_b, redundant_edges);
 			DelEdge(rd_b, rd_a, redundant_edges);
 			rd_a = rd_b = NULL;
@@ -518,13 +520,13 @@ public:
 			}
 		}
 		//print
-		printf("[PRINT REDUNDANT EDGES] size:%d\n", redundant_edges.size());
+		printf("\n[PRINT REDUNDANT EDGES] size:%d\n", redundant_edges.size());
 		for(FDG_ITER it = redundant_edges.begin(); it != redundant_edges.end(); ++it)
 		{
 			printf("Node: %d\n", it->first->index);	
 			for(int i = 0; i < mst_it->second.size(); ++i)
 			{
-				printf("%d ", it->second[i]);
+				printf("%d ", it->second[i]->index);
 			}
 			printf("\n");
 		}
