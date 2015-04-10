@@ -1,0 +1,109 @@
+global int $redundantEdgeNum;
+global string $redundantEdgeText;
+global int $loopEdge[];
+
+global proc createDeleteEdgeGUI(){
+	global int $redundantEdgeNum;
+	global string $redundantEdgeText;
+	global int $loopEdge[];
+
+	window -title "Connecting Command" -w 300 -h 200 deleteEdgeWindow;
+	columnLayout;
+		rowLayout -numberOfColumns 1 -columnWidth 160 35;
+			button -label "highlight loops" -command "highlightLoops()";
+		setParent..;
+	setParent..;
+
+	frameLayout -label "loop info" -collapsable 1 -w 170;
+		columnLayout;
+			string $redundantEdge="loop remains: "+$redundantEdgeNum;
+			rowLayout -numberOfColumns 1 -columnWidth 180 35;
+				$redundantEdgeText=`text -label $redundantEdge`;
+			setParent..;
+		setParent..;
+	setParent..;
+
+	columnLayout;
+		rowLayout -numberOfColumns 2 -columnWidth2 130 35;
+			button -label "delete" -command "deleteEdge()";
+			button -label "OK" -command "highlightBlocks()";
+		setParent..;
+	setParent..;
+
+	showWindow deleteEdgeWindow;
+}
+
+global proc deleteEdge(){
+	string $selectedEdge[]=`ls-sl`;
+	int $domainNum[];
+	int $length=size($selectedEdge),$result,$stringSize;
+	if($length!=2){
+		confirmDialog -title "ERROR" -message "Please select two domains!" -button "OK";
+		return;
+	}
+	
+	$stringSize=`size $selectedEdge[0]`;
+	$domainNum[0]=`substring $selectedEdge[0] 11 $stringSize`;
+	$stringSize=`size $selectedEdge[1]`;
+	$domainNum[1]=`substring $selectedEdge[1] 11 $stringSize`;
+
+	$result=checkSelectedEdge($domainNum[0],$domainNum[1]);
+
+	if($result==0) return;//false	
+	
+	setAttr deleteEdgeNode2015.index1 $domainNum[0];
+	setAttr deleteEdgeNode2015.index2 $domainNum[1];
+	setAttr deleteEdgeNode2015.tri true;
+	setAttr deleteEdgeNode2015.tmp1 1;
+}
+
+global proc int checkSelectedEdge(int $index1,int $index2){//0 for false, 1 for true
+	global int $loopEdge[];
+	int $length=size($loopEdge),$in1,$in2;
+	$in1=getIndexInArray($index1);
+	$in2=getIndexInArray($index2);
+	if($in1<0||$in2<0){
+		confirmDialog -title "ERROR" -message "Please select in highlighted domains!" -button "OK";
+		return 0;
+	}
+	if($in1<$in2){
+		int $tmp=$in2;
+		$in2=$in1;
+		$in1=$tmp;
+	}
+	if(($in1+1)%$length==$in2||($in2+1)%$length==$in1){
+		return 1;
+	}
+	confirmDialog -title "ERROR" -message "Selected domains not have a edge, please ensure they are neighbors!" -button "OK";
+	return 0;
+}
+
+global proc int getIndexInArray(int $index){
+	global int $loopEdge[];
+	int $length=size($loopEdge);
+	print $index;
+	for($i=0;$i<$length;++$i){
+		if($loopEdge[$i]==$index)
+			return $i;
+	}
+	return -1;
+}
+
+global proc getRedundantNum(){
+	global string $redundantEdgeText;
+	global int $redundantEdgeNum;
+	string $redundantEdge="loop remains: "+$redundantEdgeNum;
+	text -edit -label $redundantEdge $redundantEdgeText;
+}
+
+global proc highlightLoops(){
+	global int $loopEdge[];
+	int $length=size($loopEdge);
+	string $com="select ";
+	for($i=0;$i<$length;++$i){
+		$com+="instancing"+$loopEdge[$i]+" ";
+	}
+	$com+=";";
+	eval($com);
+	viewFit;
+}

@@ -18,6 +18,7 @@
 #include "classificationNode.h"
 #include "instancingNode.h"
 #include "connectingNode.h"
+#include "deleteEdgeNode.h"
 #include "classificationCommand.h"
 
 MStatus initializePlugin(MObject obj){
@@ -27,6 +28,7 @@ MStatus initializePlugin(MObject obj){
 	status=fnPlugin.registerNode("classificationNode",classificationNode::id,classificationNode::creator,classificationNode::initialize);
 	status=fnPlugin.registerNode("instancingNode",instancingNode::id,instancingNode::creator,instancingNode::initialize);
 	status=fnPlugin.registerNode("connectingNode",connectingNode::id,connectingNode::creator,connectingNode::initialize);
+	status=fnPlugin.registerNode("deleteEdgeNode",deleteEdgeNode::id,deleteEdgeNode::creator,deleteEdgeNode::initialize);
 	status=fnPlugin.registerCommand( "classificationCommand",classificationCommand::creator,classificationCommand::newSyntax );
 
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/meshSelection.mel\"");
@@ -34,6 +36,7 @@ MStatus initializePlugin(MObject obj){
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/instancing.mel\"");
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/connecting.mel\"");
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/rootSelection.mel\"");
+	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/deleteEdge.mel\"");
 	status = fnPlugin.registerUI("createMoveReadyTreeUI", "deleteMoveReadyTreeUI");
 
 	return status;
@@ -45,6 +48,7 @@ MStatus uninitializePlugin(MObject obj){
 	status=fnPlugin.deregisterNode(classificationNode::id);
 	status=fnPlugin.deregisterNode(instancingNode::id);
 	status=fnPlugin.deregisterNode(connectingNode::id);
+	status=fnPlugin.deregisterNode(deleteEdgeNode::id);
 
 	status=fnPlugin.deregisterCommand("classificationCommand");
 

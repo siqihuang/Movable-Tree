@@ -120,6 +120,7 @@ global proc deleteMoveReadyTreeUI()
 	global int $representativeInstanceNum;
 	global int $unconnectedDomainNum;
 	global int $anchorPointIndex[]; 
+	global int $loopEdge[];
 	deleteUI -menu MRTMenu;
 	clear($selected);
 	clear($tags);
@@ -127,4 +128,5 @@ global proc deleteMoveReadyTreeUI()
 	$unconnectedDomainNum=0;
 	clear($RepSurfaces);
 	clear($anchorPointIndex);
+	clear($loopEdge);
 }
