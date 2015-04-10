@@ -352,11 +352,11 @@ public:
 		}
 	}
 	
-	void BeginRemoveLoops()
+	std::vector<int> BeginRemoveLoops()
 	{
 		ComputeMST();
 		FindRedundantEdges();
-		FindLoops();
+		return FindLoops();
 	}
 
 	//BFS: from the root domain
@@ -438,7 +438,7 @@ public:
 		return false;
 	}
 
-	void FindLoops()
+	std::vector<int> FindLoops()
 	{
 		std::vector<int>loop_path;
 		FDG_ITER re_it = redundant_edges.begin();
@@ -477,6 +477,7 @@ public:
 			}
 			printf("\n");
 		}
+		return loop_path;
 	}
 	
 	void FindRedundantEdges()	
