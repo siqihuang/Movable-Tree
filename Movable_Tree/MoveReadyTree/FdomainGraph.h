@@ -518,13 +518,13 @@ public:
 			}
 		}
 		//print
-		printf("[PRINT REDUNDANT EDGES] size:%d\n", redundant_edges.size());
+		printf("\n[PRINT REDUNDANT EDGES] size:%d\n", redundant_edges.size());
 		for(FDG_ITER it = redundant_edges.begin(); it != redundant_edges.end(); ++it)
 		{
 			printf("Node: %d\n", it->first->index);	
 			for(int i = 0; i < mst_it->second.size(); ++i)
 			{
-				printf("%d ", it->second[i]);
+				printf("%d ", it->second[i]->index);
 			}
 			printf("\n");
 		}
