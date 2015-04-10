@@ -37,7 +37,6 @@ global proc rootSelected(){
 	setAttr connectingNode2015.rootNum $rootIndex;
 	setAttr connectingNode2015.tri true;
 	setAttr connectingNode2015.tmp1 1;
-	
 }
 
 global proc showPreferranceRoot(){

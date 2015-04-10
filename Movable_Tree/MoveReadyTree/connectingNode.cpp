@@ -56,6 +56,7 @@ MStatus connectingNode::compute(const MPlug &plug,MDataBlock &data){
 		if(state==0){
 			fdg.compute();
 			extractBlockNum();	
+
 			state=1;
 
 			std::string fdNum=std::to_string(fdomain_list.size());
@@ -73,7 +74,10 @@ MStatus connectingNode::compute(const MPlug &plug,MDataBlock &data){
 			hideOtherMesh();
 			setBlockGroup();
 			MGlobal::executeCommand("highlightBlocks();");
-			state=2;
+			if(fdomain_components.size()>1)
+				state=2;
+			else 
+				state=3;
 			turnOffTrigger(data);
 		}
 		else if(state==2){//connect edge
@@ -83,10 +87,7 @@ MStatus connectingNode::compute(const MPlug &plug,MDataBlock &data){
 			in2=domain_list[in2]->index;
 			fdg.connect_edge(in1,in2);
 			extractBlockNum();
-			if(fdomain_components.size()>1)
-				state=1;
-			else 
-				state=3;
+			state=1;
 			turnOffTrigger(data);
 		}
 		else if(state==3){//select root domain
