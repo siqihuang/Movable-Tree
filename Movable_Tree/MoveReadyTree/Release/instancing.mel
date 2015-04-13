@@ -102,6 +102,7 @@ global proc showHideMesh(){
 global proc selectCoordinate(string $positionField){
 	global int $currentRepInstanceNum;
 	global int $anchorPointIndex[];
+	global int $RepSurfaces[];
 	string $s[]=`ls -sl`;
 	if(size($s)==0){
 		confirmDialog -title "ERROR" -message "Please select a point!" -button "OK";
@@ -120,6 +121,10 @@ global proc selectCoordinate(string $positionField){
 	$anchorPointIndex[$currentRepInstanceNum]=$subTmp;
 
 	showCoordinate($positionField);
+
+	setAttr instancingNode2015.iNum $RepSurfaces[$currentRepInstanceNum];
+	
+	setAttr instancingNode2015.trigger 1;
 }
 
 global proc showCoordinate(string $positionField){
@@ -139,6 +144,11 @@ global proc showCoordinate(string $positionField){
 	$text+="\n";
 	$text+="Z: "+$vtxPos[2];
 	$text+="\n";
+	
+	setAttr instancingNode2015.x $vtxPos[0];
+	setAttr instancingNode2015.y $vtxPos[1];
+	setAttr instancingNode2015.z $vtxPos[2];
+
 	scrollField -edit -text $text $positionField;	
 	select $tmp;
 }

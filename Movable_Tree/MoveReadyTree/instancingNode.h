@@ -40,8 +40,9 @@ public:
 	static std::vector<MObject>outputMesh;//the output
 	static MObject trigger;//the trigger
 	static MObject command;//command
-	static MObject state;
-	static int domainNum;
+	static MObject x,y,z;
+	static MObject instancingNum;
+	static int domainNum,state;
 	mesh m;
 protected:
 	MObject createMesh(int n,MObject& outData, MStatus& stat);

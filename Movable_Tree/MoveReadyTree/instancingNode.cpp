@@ -5,7 +5,11 @@ MObject instancingNode::repInstancingNum;
 std::vector<MObject> instancingNode::outputMesh;//the output
 MObject instancingNode::trigger;//the trigger
 MObject instancingNode::command;//command
-MObject instancingNode::state;
+MObject instancingNode::x;
+MObject instancingNode::y;
+MObject instancingNode::z;
+MObject instancingNode::instancingNum;
+int instancingNode::state;
 int instancingNode::domainNum;
 
 MStatus returnStatus;
@@ -28,13 +32,21 @@ MStatus instancingNode::initialize()
 	
 	MStatus returnStatus;
 
+	instancingNode::state=0;
+
 	instancingNode::repInstancingNum=nAttr.create("represent","rep",MFnNumericData::kInt,0,&returnStatus);
 
 	instancingNode::trigger=nAttr.create("trigger","tri",MFnNumericData::kBoolean,false,&returnStatus);
 
 	instancingNode::command=tAttr.create("command","com",MFnData::kString,&returnStatus);
 
-	instancingNode::state=nAttr.create("state","st",MFnNumericData::kInt,0,&returnStatus);
+	instancingNode::x=nAttr.create("PosX","x",MFnNumericData::kFloat,0,&returnStatus);
+
+	instancingNode::y=nAttr.create("PosY","y",MFnNumericData::kFloat,0,&returnStatus);
+
+	instancingNode::z=nAttr.create("PosZ","z",MFnNumericData::kFloat,0,&returnStatus);
+
+	instancingNode::instancingNum=nAttr.create("instNum","iNum",MFnNumericData::kInt,-1,&returnStatus);
 
 	MString longFlag,shortFlag;
 	for(int i=0;i<DOMAINS;i++){
@@ -50,7 +62,13 @@ MStatus instancingNode::initialize()
 	
 	returnStatus=addAttribute(instancingNode::command);
 
-	returnStatus=addAttribute(instancingNode::state);
+	returnStatus=addAttribute(instancingNode::x);
+
+	returnStatus=addAttribute(instancingNode::y);
+
+	returnStatus=addAttribute(instancingNode::z);
+
+	returnStatus=addAttribute(instancingNode::instancingNum);
 
 	for(int i=0;i<DOMAINS;i++)
 		returnStatus=addAttribute(instancingNode::outputMesh[i]);
@@ -62,7 +80,7 @@ MStatus instancingNode::initialize()
 
 MStatus instancingNode::compute(const MPlug &plug,MDataBlock &data){
 	MStatus status=MStatus::kSuccess;
-	if(plug==outputMesh[0]){
+	if(plug==outputMesh[0]&&state==0){
 		int length=domain_list.size();
 		m.setDomain(domain_list);
 
@@ -101,7 +119,20 @@ MStatus instancingNode::compute(const MPlug &plug,MDataBlock &data){
 			MGlobal::executeCommand(MString(com.c_str()));
 			MGlobal::displayInfo(s.c_str());
 		}
+		state=1;
 		data.setClean(plug);
+	}
+	else if(state==1){
+		float posX,posY,posZ;
+		int iNum;
+		posX=data.inputValue(instancingNode::x,&status).asFloat();
+		posY=data.inputValue(instancingNode::y,&status).asFloat();
+		posZ=data.inputValue(instancingNode::z,&status).asFloat();
+		//std::cout<<posX<<","<<posY<<","<<posZ<<std::endl;
+		iNum=data.inputValue(instancingNode::instancingNum,&status).asInt();
+		//std::cout<<iNum<<std::endl;
+		repr_anchor_points.insert(std::pair<int, glm::vec3>(iNum, glm::vec3(posX,posY,posZ)));
+		std::cout<<"successful"<<std::endl;
 	}
 	else
 		return MS::kUnknownParameter;
