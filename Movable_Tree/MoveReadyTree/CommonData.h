@@ -45,6 +45,11 @@ extern std::map<Domain*, std::vector<Domain*>>mini_tree; //minimum_tree
 extern std::map<Domain*, std::vector<Domain*>>redundant_edges;
 //=====================================================
 
+//=============4.7 Add R-domain to domain graph 
+extern std::map<int, glm::vec3>repr_anchor_points; 
+//=====================================================
+
+
 extern float EPS; 
 
 static void print_domainlist()
