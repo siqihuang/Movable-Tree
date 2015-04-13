@@ -105,7 +105,7 @@ MStatus connectingNode::compute(const MPlug &plug,MDataBlock &data){
 void connectingNode::extractBlockNum(){
 	std::string num=std::to_string(fdomain_components.size());
 	MString com="$unconnectedDomainNum="+MString(num.c_str())+";";
-	com+="string $tmp=\"unconnected domains: \"+$unconnectedDomainNum;";
+	com+="string $tmp=\"connected domains: \"+$unconnectedDomainNum;";
 	com+="text -edit -label $tmp $domainsToBeConnected;";
 	MGlobal::executeCommand(com);
 }

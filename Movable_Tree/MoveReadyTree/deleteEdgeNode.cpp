@@ -55,7 +55,11 @@ MStatus deleteEdgeNode::compute(const MPlug &plug,MDataBlock &data){
 			loop=fdg.BeginRemoveLoops();
 			setLoop(loop);
 			setRedundantEdgeNum();
-			state=1;
+			if(fdg.GetRedundantEdgesSize()==0){
+				state=2;
+				MGlobal::executeCommand("button -edit -enable true $deleteEdgeOKButton");
+			}
+			else state=1;
 			turnOffTrigger(data);
 		}
 		else if(state==1){//delete edges
@@ -70,12 +74,15 @@ MStatus deleteEdgeNode::compute(const MPlug &plug,MDataBlock &data){
 			loop=fdg.FindLoops();
 			setLoop(loop);
 			setRedundantEdgeNum();
-			if(redundant_edges.size()==1) state=2;
+			if(fdg.GetRedundantEdgesSize()==0){
+				state=2;
+				MGlobal::executeCommand("button -edit -enable true $deleteEdgeOKButton");
+			}
 
 			turnOffTrigger(data);
 		}
 		else if(state==2){//connect edge
-			MGlobal::displayInfo("!");
+			MGlobal::displayInfo("@");
 			turnOffTrigger(data);
 		}
 		else if(state==3){//select root domain
@@ -105,8 +112,8 @@ void deleteEdgeNode::setLoop(std::vector<int> loop){
 
 void deleteEdgeNode::setRedundantEdgeNum(){
 	std::string com="$redundantEdgeNum=";
-	com+=std::to_string(redundant_edges.size())+";";
-	std::cout<<","<<redundant_edges.size()<<std::endl;
+	com+=std::to_string(fdg.GetRedundantEdgesSize())+";";
+	std::cout<<fdg.GetRedundantEdgesSize()<<std::endl;
 	MGlobal::executeCommand(MString(com.c_str()));
 	MGlobal::executeCommand("getRedundantNum()");
 }

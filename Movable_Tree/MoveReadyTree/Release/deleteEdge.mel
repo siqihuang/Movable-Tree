@@ -1,11 +1,13 @@
 global int $redundantEdgeNum;
 global string $redundantEdgeText;
 global int $loopEdge[];
+global string $deleteEdgeOKButton;
 
 global proc createDeleteEdgeGUI(){
 	global int $redundantEdgeNum;
 	global string $redundantEdgeText;
 	global int $loopEdge[];
+	global string $deleteEdgeOKButton;
 
 	window -title "Connecting Command" -w 300 -h 200 deleteEdgeWindow;
 	columnLayout;
@@ -26,7 +28,7 @@ global proc createDeleteEdgeGUI(){
 	columnLayout;
 		rowLayout -numberOfColumns 2 -columnWidth2 130 35;
 			button -label "delete" -command "deleteEdge()";
-			button -label "OK" -command "highlightBlocks()";
+			$deleteEdgeOKButton=`button -label "OK" -enable false -command "highlightBlocks()"`;
 		setParent..;
 	setParent..;
 

@@ -22,7 +22,7 @@ global proc createConnectingGUI(){
 
 	frameLayout -label "connecting info" -collapsable 1 -w 200;
 		columnLayout;
-			string $unconnectedDomain="unconnected domains: "+$unconnectedDomainNum;
+			string $unconnectedDomain="connected domains: "+$unconnectedDomainNum;
 			rowLayout -numberOfColumns 1 -columnWidth 310 35;
 				$domainsToBeConnected=`text -label $unconnectedDomain`;
 			setParent..;
