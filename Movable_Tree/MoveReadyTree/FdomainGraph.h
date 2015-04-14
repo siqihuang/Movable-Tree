@@ -647,18 +647,21 @@ public:
 	//Add domain which tag "R1" and "R2" into the fdomain-graph
 	void AddRdomainToGraph()
 	{
+		int cnt = 0;
 		for(int i = 0; i < domain_list.size(); ++i)
 		{
 			Domain* cur = domain_list[i];
 			Domain* pa = FindDomainParent(cur);
-			if(pa)
+			if(pa != NULL)
 			{
 				cur->graph_parent = pa;
 				AddEdge(pa, cur, fgraph);
 				AddEdge(cur, pa, fgraph);
 				printf("[AddRdomainToGraph] Parent:%d son:%d\n", pa->index, cur->index);
+				++cnt;
 			}
 		}
+		printf("[AddRdomainToGraph] Finished! Total add: %d", cnt); 
 	}
 	
 	//4.7 Find parent of domain graph
