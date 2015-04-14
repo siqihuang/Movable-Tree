@@ -128,10 +128,17 @@ MStatus instancingNode::compute(const MPlug &plug,MDataBlock &data){
 		posX=data.inputValue(instancingNode::x,&status).asFloat();
 		posY=data.inputValue(instancingNode::y,&status).asFloat();
 		posZ=data.inputValue(instancingNode::z,&status).asFloat();
-		//std::cout<<posX<<","<<posY<<","<<posZ<<std::endl;
 		iNum=data.inputValue(instancingNode::instancingNum,&status).asInt();
-		//std::cout<<iNum<<std::endl;
-		repr_anchor_points.insert(std::pair<int, glm::vec3>(iNum, glm::vec3(posX,posY,posZ)));
+		std::map<int, glm::vec3>::iterator  it = repr_anchor_points.find(iNum);
+		//not create
+		if(it == repr_anchor_points.end())
+		{
+			repr_anchor_points.insert(std::pair<int, glm::vec3>(iNum, glm::vec3(posX,posY,posZ)));
+		}
+		else
+		{
+			it->second = glm::vec3(posX,posY,posZ);
+		}
 	}
 	else
 		return MS::kUnknownParameter;
