@@ -82,7 +82,7 @@ MStatus deleteEdgeNode::compute(const MPlug &plug,MDataBlock &data){
 			turnOffTrigger(data);
 		}
 		else if(state==2){//connect edge
-			MGlobal::displayInfo("@");
+
 			turnOffTrigger(data);
 		}
 		else if(state==3){//select root domain
