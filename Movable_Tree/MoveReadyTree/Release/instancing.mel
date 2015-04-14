@@ -168,7 +168,7 @@ global proc selectAnchorPoint(int $n){
 	} comment it for debug only!!!!!*/
 
 	if($n==0&&$currentRepInstanceNum>=size($anchorPointIndex)){
-		$anchorPointIndex[$currentRepInstanceNum]=0;
+		$anchorPointIndex[$currentRepInstanceNum]=7;
 		string $tmp="instancing"+$RepSurfaces[$currentRepInstanceNum]+".vtx["+$anchorPointIndex[$currentRepInstanceNum]+"]";
 		float $vtxPos[3] = `xform -q -ws -t $tmp`;
 		setAttr instancingNode2015.x $vtxPos[0];

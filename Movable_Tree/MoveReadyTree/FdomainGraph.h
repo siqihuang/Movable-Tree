@@ -668,18 +668,18 @@ public:
 	//4.7 Find parent of domain graph
 	Domain* FindDomainParent(Domain* cur)
 	{
-		Domain* d;
 		if(cur->tag == "R1")
 		{
 			//Find parent in F
-			d = FindNearestFDomain(cur);
+			return FindNearestFDomain(cur);
 		}
 		else if(cur->tag == "R2")
 		{
 			//Find parent in R1 and F
-			d = FindNearestFDomain(cur);
+			//debug
+			return FindNearestFDomain(cur);
 		}
-		return d;
+		return NULL;
 	}
 	
 	//With anchor points 
@@ -687,20 +687,18 @@ public:
 	{
 		float dis = FLT_MAX;
 		Domain* d;
+		glm::vec3 ap = cur->anchor_point;
 		for(int i = 0; i < fdomain_list.size(); ++i)
 		{
-			if(fdomain_list[i] != cur)
+			float tmp_dis = GetNearestDisFromOtherWA(fdomain_list[i], ap); 
+			if(tmp_dis < dis)
 			{
-				float tmp_dis = GetNearestDisFromOtherWA(fdomain_list[i], cur->anchor_point);	
-				if(tmp_dis < dis)
+				if(tmp_dis < EPS)
 				{
-					dis = tmp_dis;
-					d = fdomain_list[i];
-					if(dis < EPS)
-					{
-						return d;
-					}
+					return fdomain_list[i];
 				}
+				dis = tmp_dis;
+				d = fdomain_list[i];
 			}
 		}
 		return d;
@@ -710,10 +708,9 @@ public:
 	float GetNearestDisFromOtherWA(Domain* other, const glm::vec3& anchor_point)
 	{
 		float dis = FLT_MAX;
-		for(int j = 0; j < other->face_list.size(); ++j)
+		for(int i = 0; i < other->face_list.size(); ++i)
 		{
-			Face* f = other->face_list[j];
-			dis = std::min(dis, f->GetNearestCoordDis(anchor_point));
+			dis = std::min(dis, other->face_list[i]->GetNearestCoordDis(anchor_point));
 			if(dis < EPS)
 			{
 				return dis;
