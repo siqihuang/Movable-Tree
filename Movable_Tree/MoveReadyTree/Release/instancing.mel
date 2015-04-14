@@ -167,19 +167,17 @@ global proc selectAnchorPoint(int $n){
 		return;
 	} comment it for debug only!!!!!*/
 
-	/*if($n==0&&$currentRepInstanceNum>=size($anchorPointIndex)){
+	if($n==0&&$currentRepInstanceNum>=size($anchorPointIndex)){
 		$anchorPointIndex[$currentRepInstanceNum]=0;
 		string $tmp="instancing"+$RepSurfaces[$currentRepInstanceNum]+".vtx["+$anchorPointIndex[$currentRepInstanceNum]+"]";
 		float $vtxPos[3] = `xform -q -ws -t $tmp`;
-		string $text="";
-		$text+="X: "+$vtxPos[0];
-		$text+="\n";
-		$text+="Y: "+$vtxPos[1];
-		$text+="\n";
-		$text+="Z: "+$vtxPos[2];
-		$text+="\n";
+		setAttr instancingNode2015.x $vtxPos[0];
+		setAttr instancingNode2015.y $vtxPos[1];
+		setAttr instancingNode2015.z $vtxPos[2];
+		setAttr instancingNode2015.iNum $RepSurfaces[$currentRepInstanceNum];
+		setAttr instancingNode2015.trigger 1;
 	}//used only for testing	
-	*/
+	
 	if($n==0&&$representativeInstanceNum>0){
 		$currentRepInstanceNum++;
 		$representativeInstanceNum--;
