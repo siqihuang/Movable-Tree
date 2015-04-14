@@ -18,11 +18,11 @@ class UnionFindDomain
 public:
 	Domain* _Find(Domain* dom)
 	{
-		if(dom->instance_pa != dom)
+		if(dom->instancing_repr != dom)
 		{
-			dom->instance_pa = _Find(dom->instance_pa);
+			dom->instancing_repr = _Find(dom->instancing_repr);
 		}
-		return dom->instance_pa;
+		return dom->instancing_repr;
 	}
 
 	void _Union(Domain* a, Domain* b) 
@@ -35,12 +35,12 @@ public:
 		}
 		if(pa->rank >= pb->rank)
 		{
-			pb->instance_pa = pa;
+			pb->instancing_repr = pa;
 			++pa->rank;
 		}
 		else 
 		{
-			pa->instance_pa = pb;
+			pa->instancing_repr = pb;
 			++pb->rank;
 		}
 	}

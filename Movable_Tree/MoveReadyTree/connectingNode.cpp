@@ -52,8 +52,12 @@ MStatus connectingNode::compute(const MPlug &plug,MDataBlock &data){
 	MStatus status=MStatus::kSuccess;
 	bool tri=data.inputValue(trigger,&status).asBool();
 	if(plug==tmp&&tri){
-		//4.3 computer F-domain graph
-		if(state==0){
+		//4.3 compute F-domain graph
+		if(state==0)
+		{
+			//jason
+			//fdg.beforeInit();
+			fdg.InitAnchorPoints();
 			fdg.compute();
 			extractBlockNum();	
 
@@ -66,7 +70,6 @@ MStatus connectingNode::compute(const MPlug &plug,MDataBlock &data){
 			std::string preferredRoot=std::to_string(fdg.GetInitialRootDomain());
 			MGlobal::executeCommand("$preferredDomainIndex="+MString(preferredRoot.c_str())+";");
 			//pass preferred root index to mel
-
 			turnOffTrigger(data);
 		}
 		else if(state==1){//compute new blocks num and highlight blocks

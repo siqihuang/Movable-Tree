@@ -83,11 +83,12 @@ public:
 					
 					/*
 					//printf("uv_coords: %d %f %f\n", uv_idx, 
-						//objloader.UV_COORDS[i][uv_idx].x, objloader.UV_COORDS[i][uv_idx].y);
+						objloader.UV_COORDS[i][uv_idx].x, objloader.UV_COORDS[i][uv_idx].y);
 					*/
 				}
 				Face *face = new Face(objloader.index[i][j], _vertex_coords, objloader.UV_INDEXS[i][j], _uv_coords);
 				face_list.push_back(face);
+				//printf("Face Vertex size%d, UV size%d\n", face->vertex_coords.size(), face->uv_coords.size());
 			}
 
 			printf("face_list size %d\n", face_list.size()); 

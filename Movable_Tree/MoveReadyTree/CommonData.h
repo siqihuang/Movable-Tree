@@ -10,16 +10,16 @@
 
 class Domain;
 
-//==================4.1 union-find: all domain======================
+//==================4.1 union-find: all domain================
 extern std::vector<Domain*>domain_list;
-//=========================================================
+//====================================================
 
-//=================4.2 instancing: all instance set================= 
+//=================4.2 instancing: all instance set=============== 
 
 //instance set: all domains look the same. (according to UV)
 extern std::vector<std::vector<Domain*>>all_instance_set;
 
-//=====================================================
+//====================================================
 
 //===============4.3 compute F-domain Graph================= 
 
@@ -30,7 +30,7 @@ extern std::map<Domain*, std::vector<Domain*>>fgraph;
 
 //=====================================================
 
-//=============4.4 connect F-domain Graph====================== 
+//=============4.4 connect F-domain Graph===================== 
 
 //To find how many connected-components in fdomain graph, for later process(4.4 connect).
 //A map:
@@ -40,12 +40,16 @@ extern std::map<Domain*, std::vector<Domain*>>fdomain_components;
 
 //=====================================================
 
-//=============4.6 Remove loops in Fdomain-graph====================== 
+//=============4.6 Remove loops in Fdomain-graph================ 
+extern Domain* root_domain; 
+//=====================================================
+
+//=============4.6 Remove loops in Fdomain-graph================ 
 extern std::map<Domain*, std::vector<Domain*>>mini_tree; //minimum_tree
 extern std::map<Domain*, std::vector<Domain*>>redundant_edges;
 //=====================================================
 
-//=============4.7 Add R-domain to domain graph 
+//==========4.7 Add R-domain to domain graph=================== 
 extern std::map<int, glm::vec3>repr_anchor_points; 
 //=====================================================
 

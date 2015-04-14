@@ -19,10 +19,11 @@ void InstancingModule::TextureMap()
 	//find instance copies
 	for(int i = 0; i < len; ++i)
 	{
+		Domain* repr = domain_list[i]->instancing_repr;
 		for(int j = i + 1; j < len; ++j)
 		{
-			if(domain_list[i]->instance_pa == domain_list[j]->instance_pa)
-				continue;
+			//in the same set
+			if(repr == domain_list[j]->instancing_repr) continue;
 			bool res = _TextureMap(domain_list[i], domain_list[j]);
 			//is instanced copy
 			if(res)
@@ -48,7 +49,7 @@ void InstancingModule::TextureMap()
 		{
 			std::vector<Domain*>instance_set;
 			instance_set.push_back(d);
-			instance_map.insert(std::pair<Domain*, std::vector<Domain*>>(d->instance_pa, instance_set)); 
+			instance_map.insert(std::pair<Domain*, std::vector<Domain*>>(d->instancing_repr, instance_set)); 
 		}
 		else
 		{
