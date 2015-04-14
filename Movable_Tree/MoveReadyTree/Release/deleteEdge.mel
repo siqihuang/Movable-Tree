@@ -28,7 +28,7 @@ global proc createDeleteEdgeGUI(){
 	columnLayout;
 		rowLayout -numberOfColumns 2 -columnWidth2 130 35;
 			button -label "delete" -command "deleteEdge()";
-			$deleteEdgeOKButton=`button -label "OK" -enable false -command "deleteUI deleteEdgeWindow"`;
+			$deleteEdgeOKButton=`button -label "OK" -enable false -command "deleteUI deleteEdgeWindow;setAttr deleteEdgeNode2015.tmp1 1"`;
 		setParent..;
 	setParent..;
 
