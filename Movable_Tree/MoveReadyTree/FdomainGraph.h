@@ -203,6 +203,7 @@ public:
 		{
 			rsize += re_it->second.size();
 		}
+
 		rsize /= 2;
 		printf("[GET REDUNDANT EDGE SIZE], %d\n", rsize);
 		return rsize;
