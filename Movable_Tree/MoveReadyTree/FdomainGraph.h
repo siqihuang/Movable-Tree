@@ -2,7 +2,7 @@
 #define FDOMAINGRAPH_H 
 
 #include "CommonData.h"
-#include "kd_tree.h"
+//#include "kd_tree.h"
 #include<ctime>
 #include<queue>
 #include<set>
@@ -46,11 +46,11 @@ public:
 	
 	Domain* _Find(Domain* dom)
 	{
-		if(dom->fdomain_pa != dom)
+		if(dom->components_repr != dom)
 		{
-			dom->fdomain_pa = _Find(dom->fdomain_pa);
+			dom->components_repr = _Find(dom->components_repr);
 		}
-		return dom->fdomain_pa;
+		return dom->components_repr;
 	}
 
 	void _Union(Domain* a, Domain* b) 
@@ -59,7 +59,7 @@ public:
 		Domain* pb = _Find(b);
 		if(pa != pb)
 		{
-			pb->fdomain_pa = pa;
+			pb->components_repr = pa;
 		}
 	}
 
@@ -203,7 +203,8 @@ public:
 		{
 			rsize += re_it->second.size();
 		}
-		printf("[GET REDUNDANT EDGE SIZE], %d\n", rsize/2);
+		rsize /= 2;
+		printf("[GET REDUNDANT EDGE SIZE], %d\n", rsize);
 		return rsize;
 	}
 
@@ -394,6 +395,27 @@ public:
 		{
 			d->SetRoot();
 			printf("SetRootDomain: %d", index);
+			//global data
+			root_domain = d;
+		}
+		else
+		{
+			printf("[ERROR]SetRootDomain: The domain is NULL! %d", index);
+		}
+	}
+
+	Domain* GetRootDomain()
+	{
+		if(root_domain)
+		{
+			return root_domain;
+		}
+		for(int i = 0; i < fdomain_list.size(); ++i) 
+		{
+			if(fdomain_list[i]->IsRoot())
+			{
+				return fdomain_list[i];
+			}
 		}
 	}
 	
@@ -407,14 +429,11 @@ public:
 	//BFS: from the root domain
 	void ComputeMST()
 	{
-		Domain* root;
-		for(int i = 0; i < fdomain_list.size(); ++i) 
+		Domain* root = GetRootDomain();
+		if(!root)
 		{
-			if(fdomain_list[i]->IsRoot())
-			{
-				root = fdomain_list[i];
-				break;
-			}
+			printf("[ERROR] ComputeMST the root is NULL!");
+			return;
 		}
 		std::queue<Domain*>q;
 		q.push(root);
@@ -433,10 +452,10 @@ public:
 				//node's neighbors
 				for(int i = 0; i < it->second.size(); ++i)
 				{
-					if(node->mst_pa != it->second[i]->mst_pa)
+					if(node->mst_repr != it->second[i]->mst_repr)
 					{
 						//union
-						it->second[i]->mst_pa = node->mst_pa;
+						it->second[i]->mst_repr = node->mst_repr;
 						//Add to mini tree
 						AddEdge(node, it->second[i], mini_tree);
 						AddEdge(it->second[i], node, mini_tree);
@@ -577,6 +596,127 @@ public:
 			printf("\n");
 		}
 	}
+	
+//============4.7 Add domains Rx to the domain tree===================
+	void beforeInit()
+	{
+		for(int i = 0; i < domain_list.size(); ++i)
+		{
+			printf("repr: %d\n", domain_list[i]->instancing_repr->index);
+		}
+	}
+
+	void InitAnchorPoints()
+	{
+		//first: init all repr domain's anchor points
+		std::map<int, glm::vec3>::iterator it; 
+		for(int i = 0; i < domain_list.size(); ++i)
+		{
+			Domain* d = domain_list[i];
+			//is a instancing representative
+			if(d->instancing_repr == d)
+			{
+				//global data
+				it = repr_anchor_points.find(d->index);
+				if(it != repr_anchor_points.end())
+				{
+					d->anchor_point = it->second;
+					d->ComputeAnchorPointUV();
+				}
+				else
+				{
+					printf("[ERROR] InitAnchorPoints Can not find repr_anchor_points %d\n", d->index);
+					return;
+				}
+			}
+		}
+		//second: init all other intance copies domain's anchor points
+		for(int i = 0; i < domain_list.size(); ++i)
+		{
+			Domain* d = domain_list[i];
+			Domain* repr = d->instancing_repr;
+			//is instancing copies 
+			if(d != repr)
+			{
+				d->ComputeAnchorPoint(repr->anchor_uv);	
+			}
+		}
+		printf("=============InitAnchorPoints finished!===================");
+	}
+
+	//Add domain which tag "R1" and "R2" into the fdomain-graph
+	void AddRdomainToGraph()
+	{
+		for(int i = 0; i < domain_list.size(); ++i)
+		{
+			Domain* cur = domain_list[i];
+			Domain* pa = FindDomainParent(cur);
+			if(pa)
+			{
+				cur->graph_parent = pa;
+				AddEdge(pa, cur, fgraph);
+				AddEdge(cur, pa, fgraph);
+				printf("[AddRdomainToGraph] Parent:%d son:%d\n", pa->index, cur->index);
+			}
+		}
+	}
+	
+	//4.7 Find parent of domain graph
+	Domain* FindDomainParent(Domain* cur)
+	{
+		Domain* d;
+		if(cur->tag == "R1")
+		{
+			//Find parent in F
+			d = FindNearestFDomain(cur);
+		}
+		else if(cur->tag == "R2")
+		{
+			//Find parent in R1 and F
+			d = FindNearestFDomain(cur);
+		}
+		return d;
+	}
+	
+	//With anchor points 
+	Domain* FindNearestFDomain(Domain* cur)
+	{
+		float dis = FLT_MAX;
+		Domain* d;
+		for(int i = 0; i < fdomain_list.size(); ++i)
+		{
+			if(fdomain_list[i] != cur)
+			{
+				float tmp_dis = GetNearestDisFromOtherWA(fdomain_list[i], cur->anchor_point);	
+				if(tmp_dis < dis)
+				{
+					dis = tmp_dis;
+					d = fdomain_list[i];
+					if(dis < EPS)
+					{
+						return d;
+					}
+				}
+			}
+		}
+		return d;
+	}
+	
+	//According a domain's anchor_point, find its nearest distance with another domain.
+	float GetNearestDisFromOtherWA(Domain* other, const glm::vec3& anchor_point)
+	{
+		float dis = FLT_MAX;
+		for(int j = 0; j < other->face_list.size(); ++j)
+		{
+			Face* f = other->face_list[j];
+			dis = std::min(dis, f->GetNearestCoordDis(anchor_point));
+			if(dis < EPS)
+			{
+				return dis;
+			}
+		}
+		return dis;
+	}
 
 	void print_graph()
 	{
@@ -599,7 +739,6 @@ public:
 			}
 		}
 	}
-
 };
 
 #endif

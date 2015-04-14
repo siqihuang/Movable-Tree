@@ -356,5 +356,21 @@ public:
 		delete[ ] vis;
 		return 0;
 	}
+	
+	//Find the nearest distance to other face's anchor_point
+	float GetNearestCoordDis(const glm::vec3& anchor_point)
+	{
+		float dis = FLT_MAX;
+		for(int i = 0; i < vertex_coords.size(); ++i)
+		{
+			float tmp_dis = glm::distance(vertex_coords[i], anchor_point); 
+			dis = std::min(dis, tmp_dis);
+			if(dis < 1e-3f)
+			{
+				return dis;
+			}
+		}
+		return dis;
+	}
 };
 #endif

@@ -132,7 +132,6 @@ MStatus instancingNode::compute(const MPlug &plug,MDataBlock &data){
 		iNum=data.inputValue(instancingNode::instancingNum,&status).asInt();
 		//std::cout<<iNum<<std::endl;
 		repr_anchor_points.insert(std::pair<int, glm::vec3>(iNum, glm::vec3(posX,posY,posZ)));
-		std::cout<<"successful"<<std::endl;
 	}
 	else
 		return MS::kUnknownParameter;
