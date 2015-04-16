@@ -7,6 +7,9 @@ global int $showHideMode;
 global string $findRepButton;
 global int $anchorPointIndex[];
 global string $InstancingOKButton;
+global string $InstancingNextButton;
+global string $InstancingLastButton;
+global int $domainListNum;
 
 global proc createInstancingGUI(){
 	global int $representativeInstanceNum;
@@ -15,12 +18,14 @@ global proc createInstancingGUI(){
 	global string $showHideButton;
 	global string $findRepButton;
 	global string $InstancingOKButton;
+	global string $InstancingNextButton;
+	global string $InstancingLastButton;
 	global int $showHideMode;
 	$showHideMode=1;
 	window -title "Instancing Command" -w 300 -h 240 InstancingWindow;
 	columnLayout;
 		rowLayout -numberOfColumns 2 -columnWidth2 160 35;
-			$findRepButton=`button -label "find Representative" -command "findRepresentative()"`;
+			$findRepButton=`button -label "find Representative" -enable false -command "findRepresentative()"`;
 			$showHideButton=`button -label "hide other" -command "showHideMesh()"`;
 		setParent..;
 	setParent..;
@@ -50,13 +55,22 @@ global proc createInstancingGUI(){
 
 	columnLayout;
 		rowLayout -numberOfColumns 3 -columnWidth2 200 35;
-			button -label "next" -command "selectAnchorPoint(0);showCoordinate($positionField)";
-			button -label "last" -command "selectAnchorPoint(1);showCoordinate($positionField)";
-			$InstancingOKButton=`button -label "OK" -enable false -command "createConnectingGUI();deleteUI InstancingWindow;select -all;select -cl;changeSelectMode -object;"`;
+			$InstancingNextButton=`button -label "next" -enable false -command "selectAnchorPoint(0);showCoordinate($positionField)"`;
+			$InstancingLastButton=`button -label "last" -enable false -command "selectAnchorPoint(1);showCoordinate($positionField)"`;
+			$InstancingOKButton=`button -label "OK" -enable false -command "InstancingOKButtonCommand()"`;
 		setParent..;
 	setParent..;
 
 	showWindow InstancingWindow;
+}
+
+global proc InstancingOKButtonCommand(){
+	createConnectingGUI();
+	deleteUI InstancingWindow;
+	select -all;
+	select -cl;
+	changeSelectMode -object;
+	showHidden -all;
 }
 
 global proc relocateMesh(){
@@ -168,7 +182,7 @@ global proc selectAnchorPoint(int $n){
 	} comment it for debug only!!!!!*/
 
 	if($n==0&&$currentRepInstanceNum>=size($anchorPointIndex)){
-		$anchorPointIndex[$currentRepInstanceNum]=7;
+		$anchorPointIndex[$currentRepInstanceNum]=0;
 		string $tmp="instancing"+$RepSurfaces[$currentRepInstanceNum]+".vtx["+$anchorPointIndex[$currentRepInstanceNum]+"]";
 		float $vtxPos[3] = `xform -q -ws -t $tmp`;
 		setAttr instancingNode2015.x $vtxPos[0];
@@ -177,6 +191,12 @@ global proc selectAnchorPoint(int $n){
 		setAttr instancingNode2015.iNum $RepSurfaces[$currentRepInstanceNum];
 		setAttr instancingNode2015.trigger 1;
 	}//used only for testing	
+
+	if($representativeInstanceNum==0){
+		showHidden -all;
+		button -edit -enable true $InstancingOKButton;
+		//need to be fixed in the final version here!!
+	}
 	
 	if($n==0&&$representativeInstanceNum>0){
 		$currentRepInstanceNum++;
@@ -205,12 +225,6 @@ global proc selectAnchorPoint(int $n){
 	changeSelectMode -component;
 	selectType  -curveParameterPoint 1;
 	hilite $polyName;
-	
-	if($representativeInstanceNum==0){
-		showHidden -all;
-		button -edit -enable true $InstancingOKButton;
-		//need to be fixed in the final version here!!
-	}
 
 	string $tmp="representative instance remains: "+$representativeInstanceNum;
 	text -edit -label $tmp $RepToBeTaged;
@@ -218,11 +232,15 @@ global proc selectAnchorPoint(int $n){
 
 global proc findRepresentative(){
 	global string $selected[];
+	global string $iniSelected[];
 	global int $RepSurfaces[];
 	global string $RepToBeTaged;
 	global int $representativeInstanceNum;
 	global int $currentRepInstanceNum;
 	global string $findRepButton;
+	global string $InstancingNextButton;
+	global string $InstancingLastButton;
+	global int $domainListNum;
 	$currentRepInstanceNum=-1;
 	$representativeInstanceNum=size($RepSurfaces);
 	//global int $RepSurfaces[3];
@@ -237,13 +255,15 @@ global proc findRepresentative(){
 		polySeparate -ch 1 $tmp;
 	}*/
 	for($i=0;$i<$size;++$i){
-		select $selected[$i];
+		select $iniSelected[$i];
 		doDelete;
 	}
 	
-	for($i=0;$i<409;++$i){//409 for tree1, 517 for tree2, 4516 for tree3
+	for($i=0;$i<$domainListNum;++$i){//409 for tree1, 517 for tree2, 4516 for tree3
 		string $com="connectAttr instancingNode2015.outputMesh"+$i+" instancingShape"+$i+".inMesh";
 		eval($com);
 	}
-	button -edit -enable false $findRepButton;	
+	button -edit -enable false $findRepButton;
+	button -edit -enable true $InstancingNextButton;
+	button -edit -enable true $InstancingLastButton;	
 }

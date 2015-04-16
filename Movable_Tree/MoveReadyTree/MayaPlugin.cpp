@@ -25,19 +25,20 @@ MStatus initializePlugin(MObject obj){
 	MStatus status;
 
 	MFnPlugin fnPlugin(obj,"Siqi Huang","1.0","CIS660");
-	status=fnPlugin.registerNode("classificationNode",classificationNode::id,classificationNode::creator,classificationNode::initialize);
-	status=fnPlugin.registerNode("instancingNode",instancingNode::id,instancingNode::creator,instancingNode::initialize);
-	status=fnPlugin.registerNode("connectingNode",connectingNode::id,connectingNode::creator,connectingNode::initialize);
-	status=fnPlugin.registerNode("deleteEdgeNode",deleteEdgeNode::id,deleteEdgeNode::creator,deleteEdgeNode::initialize);
-	status=fnPlugin.registerCommand( "classificationCommand",classificationCommand::creator,classificationCommand::newSyntax );
 
-	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/meshSelection.mel\"");
+	//MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/meshSelection.mel\"");
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/classification.mel\"");
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/instancing.mel\"");
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/connecting.mel\"");
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/rootSelection.mel\"");
 	MGlobal::executeCommand("source \"" + fnPlugin.loadPath() + "/deleteEdge.mel\"");
 	status = fnPlugin.registerUI("createMoveReadyTreeUI", "deleteMoveReadyTreeUI");
+
+	status=fnPlugin.registerNode("classificationNode",classificationNode::id,classificationNode::creator,classificationNode::initialize);
+	status=fnPlugin.registerNode("instancingNode",instancingNode::id,instancingNode::creator,instancingNode::initialize);
+	status=fnPlugin.registerNode("connectingNode",connectingNode::id,connectingNode::creator,connectingNode::initialize);
+	status=fnPlugin.registerNode("deleteEdgeNode",deleteEdgeNode::id,deleteEdgeNode::creator,deleteEdgeNode::initialize);
+	status=fnPlugin.registerCommand( "classificationCommand",classificationCommand::creator,classificationCommand::newSyntax );
 
 	return status;
 }

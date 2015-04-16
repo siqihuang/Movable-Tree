@@ -11,6 +11,8 @@ MObject instancingNode::z;
 MObject instancingNode::instancingNum;
 int instancingNode::state;
 int instancingNode::domainNum;
+std::fstream instancingNode::read;
+
 
 MStatus returnStatus;
 
@@ -49,7 +51,15 @@ MStatus instancingNode::initialize()
 	instancingNode::instancingNum=nAttr.create("instNum","iNum",MFnNumericData::kInt,-1,&returnStatus);
 
 	MString longFlag,shortFlag;
-	for(int i=0;i<DOMAINS;i++){
+
+	std::string fileName="C:/Users/siqiHuang/Desktop/tree/log.txt";
+	read.open(fileName);
+	int num;
+	read>>num;
+	std::string com="$domainListNum="+std::to_string(num)+";";
+	MGlobal::executeCommand(MString(com.c_str()));
+
+	for(int i=0;i<num;i++){
 		longFlag="outputMesh"+MString(std::to_string(i).c_str());
 		shortFlag="out"+MString(std::to_string(i).c_str());
 		MObject tempMesh=tAttr.create( longFlag, shortFlag, MFnData::kMesh, &returnStatus ); 
@@ -70,7 +80,7 @@ MStatus instancingNode::initialize()
 
 	returnStatus=addAttribute(instancingNode::instancingNum);
 
-	for(int i=0;i<DOMAINS;i++)
+	for(int i=0;i<num;i++)
 		returnStatus=addAttribute(instancingNode::outputMesh[i]);
 	
 	attributeAffects(trigger,outputMesh[0]);

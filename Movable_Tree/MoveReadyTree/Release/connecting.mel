@@ -5,12 +5,14 @@ global string $domainsToBeConnected;
 global int $connectingBlock[];
 global int $connectedCurrentBlock;
 global string $connectingOKButton;
+global string $connectingNextButton;
 
 global proc createConnectingGUI(){
 	global int $unconnectedDomainNum;
 	global string $buildFDButton;
 	global string $domainsToBeConnected;
 	global string $connectingOKButton;
+	global string $connectingNextButton;
 	global int $connectedCurrentBlock;
 	$connectedCurrentBlock=1;
 	window -title "Connecting Command" -w 300 -h 240 ConnectingWindow;
@@ -38,12 +40,19 @@ global proc createConnectingGUI(){
 
 	columnLayout;
 		rowLayout -numberOfColumns 2 -columnWidth2 160 35;
-			button -label "next" -command "gettingBlocks()";
-			$connectingOKButton=`button -label "OK" -enable false -command "rootSelectionGUI();deleteUI ConnectingWindow;showPreferranceRoot();selectRoot();"`;
+			$connectingNextButton=`button -label "next" -enable false -command "gettingBlocks()"`;
+			$connectingOKButton=`button -label "OK" -enable false -command "connectingOKButtonCommand()"`;
 		setParent..;
 	setParent..;
 
 	showWindow ConnectingWindow;
+}
+
+global proc connectingOKButtonCommand(){
+	rootSelectionGUI();
+	deleteUI ConnectingWindow;
+	showPreferranceRoot();
+	selectRoot();
 }
 
 global proc buildFDomain(){
@@ -67,7 +76,6 @@ global proc gettingBlocks(){
 
 	if($unconnectedDomainNum==1){
 		button -edit -enable true $connectingOKButton;
-
 	}
 }
 

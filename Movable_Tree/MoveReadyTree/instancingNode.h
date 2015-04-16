@@ -23,6 +23,8 @@
 #include <maya/MIOStream.h>
 #include <string>
 #include <vector>
+#include <fstream>
+#include <iostream>
 #include "CommonData.h"
 #include "mesh.h"
 
@@ -43,6 +45,7 @@ public:
 	static MObject x,y,z;
 	static MObject instancingNum;
 	static int domainNum,state;
+	static std::fstream read;
 	mesh m;
 protected:
 	MObject createMesh(int n,MObject& outData, MStatus& stat);

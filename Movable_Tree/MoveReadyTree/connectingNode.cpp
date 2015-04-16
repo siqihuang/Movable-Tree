@@ -70,6 +70,8 @@ MStatus connectingNode::compute(const MPlug &plug,MDataBlock &data){
 			std::string preferredRoot=std::to_string(fdg.GetInitialRootDomain());
 			MGlobal::executeCommand("$preferredDomainIndex="+MString(preferredRoot.c_str())+";");
 			//pass preferred root index to mel
+
+			MGlobal::executeCommand("button -edit -enable true $connectingNextButton;");
 			turnOffTrigger(data);
 		}
 		else if(state==1){//compute new blocks num and highlight blocks

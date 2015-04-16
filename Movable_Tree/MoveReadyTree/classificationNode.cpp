@@ -102,6 +102,7 @@ MStatus classificationNode::compute(const MPlug &plug,MDataBlock &data){
 		uf.Union(Objloader, Mtlloader, tags, componentNum);
 		//4.2 instancing
 		im.Instancing();
+		MGlobal::executeCommand("button -edit -enable true $findRepButton;");
 	}
 	/*if(plug==Empty){
 		int remain=data.inputValue(remainComponent,&status).asInt();

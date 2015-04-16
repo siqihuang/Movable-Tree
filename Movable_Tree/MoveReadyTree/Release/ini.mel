@@ -1,0 +1,120 @@
+global string $iniComponentField;
+global string $iniScenePathField;
+global string $iniScenePath;
+global string $iniSelected[];
+global string $selected[];
+global string $ObjFilePath="";
+global string $MtlFilePath="";
+iniToolGUI();
+
+global proc iniToolGUI()
+{
+	global string $iniComponentField;
+	global string $iniScenePathField;
+	global string $iniScenePath;
+	window -title "Mesh Selection Command" -w 300 -h 200 iniToolWindow;
+	columnLayout;
+		rowLayout -numberOfColumns 1;
+			text -label "Selected Meshes";
+		setParent ..;
+
+		$iniComponentField = `scrollField -w 300 -h 100 -wordWrap true -editable false`;
+		setParent ..;
+		rowLayout -numberOfColumns 1 -columnWidth2 300 35;
+			button -label "select" -command "iniGetComponent()";
+	setParent ..;
+
+	columnLayout;
+		rowLayout -numberOfColumns 1;
+			text -label "Selected Scene File Path";
+		setParent ..;
+		string $iniScenePathField = `scrollField -w 300 -h 30 -wordWrap true -editable false`;
+		setParent ..;
+		rowLayout -numberOfColumns 1 -columnWidth2 300 35;
+			button -label "browse" -command "iniGetScenePath()";
+	setParent ..;
+
+	button -label "OK" -command "iniCheckInput()";
+	showWindow iniToolWindow;
+}
+
+global proc iniGetComponent(){
+	global string $iniComponentField;
+	global string $selected[];//= `ls -sl`;
+	$selected=`ls -sl`;
+	string $lines = "";
+	int $size=size($selected);
+	for($i=0;$i<$size;++$i){
+		$lines+=$selected[$i];
+		$lines+="\n";
+	}
+	scrollField -edit -text $lines $iniComponentField;
+}
+
+global proc iniGetScenePath(){
+	global string $iniScenePathField;
+	global string $iniScenePath;
+	$iniScenePath= `fileDialog -dm "*.ma"`;
+	scrollField -e -text $iniScenePath $iniScenePathField;
+}
+
+global proc iniCheckInput(){
+	global string $selected[];
+	global string $iniSelected[];
+	global string $iniScenePath;
+	global string $ObjFilePath;
+	global string $MtlFilePath;
+	int $size=size($selected);
+	if($size==0) confirmDialog -title "ERROR" -message "No mesh selected!"  -button "OK";
+	else if($iniScenePath=="") confirmDialog -title "ERROR" -message "No scene file selected" -button "OK";
+	else{
+		deleteUI iniToolWindow;
+		//string $filePath=$iniScenePath+
+		file  -typ "OBJexport" -es $iniScenePath;//obj export
+
+		for($i=0;$i<$size;++$i){
+			string $tmp=$selected[$i]+"Shape";
+			polySeparate -ch 1 $tmp;
+		}
+		
+		string $sh[] = `ls -type geometryShape`;
+		string $t[] = `listRelatives -p $sh`;
+		select -r $t;
+		
+		int $num=size($t)-$size;
+		string $meshNum=$num+" ";
+		
+		string $exampleFileName = ( "C:/Users/siqiHuang/Desktop/tree/log.txt" );
+		$fileId=`fopen $exampleFileName "w"`;
+		fwrite $fileId $meshNum;
+		fwrite $fileId $iniScenePath;
+		fclose $fileId;
+		//clear ($selected);
+
+		$result=`confirmDialog -title "NOTICE" -message "Initialize successful, please load the plugin to continue!" -button "OK"`;
+		if($result=="OK"){
+			file -f -new;
+			file -import $iniScenePath;
+			
+			string $filePart = match( "[^/\\]*$", $iniScenePath);
+			string $sfix=`match "\\..*" $iniScenePath`;
+			int $nameSize=size($filePart)-size($sfix);
+			string $name=`substring $filePart 1 $nameSize`;
+			
+			string $dir = match( "^.*/", $iniScenePath );
+			int $sz = size( $dir );
+			if ( ( $sz > 1 ) && ( substring( $dir, $sz, $sz ) == "/" ) ) {
+				$dir = substring( $dir, 1, ($sz - 1) );
+			}
+			
+			$ObjFilePath=$dir+"/"+$name+".obj";
+			$MtlFilePath=$dir+"/"+$name+".mtl";
+			for($i=0;$i<$size;++$i){
+				int $tmp=`size $name`+2;
+				int $len=`size $selected[$i]`;
+				$iniSelected[$i]=`substring $selected[$i] $tmp $len`;
+				print $iniSelected[$i];
+			}
+		}
+	}
+}
