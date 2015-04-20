@@ -90,7 +90,7 @@ MStatus connectingNode::compute(const MPlug &plug,MDataBlock &data){
 			int in2=data.inputValue(index2,&status).asInt();
 			in1=domain_list[in1]->index;
 			in2=domain_list[in2]->index;
-			fdg.connect_edge(in1,in2);
+			fdg.ConnectFdomain(in1,in2);
 			extractBlockNum();
 			state=1;
 			turnOffTrigger(data);

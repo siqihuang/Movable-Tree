@@ -52,7 +52,7 @@ MStatus instancingNode::initialize()
 
 	MString longFlag,shortFlag;
 
-	std::string fileName="C:/Users/siqiHuang/Desktop/tree/log.txt";
+	std::string fileName="C:/Users/Wingszero/Desktop/660 Adv CG/Movable-Tree/Movable_Tree/tree/log.txt";
 	read.open(fileName);
 	int num;
 	read>>num;

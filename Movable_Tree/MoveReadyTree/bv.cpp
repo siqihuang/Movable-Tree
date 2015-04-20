@@ -31,18 +31,13 @@ BV::BV(std::vector<Domain*>&all_domains)
 		//each faces
 		for(int f = 0; f < (*iter)->face_list.size(); ++f)
 		{
-			//each vertex 
-			for(int i = 0; i < (*iter)->face_list[f]->vertex_coords.size(); ++i)
-			{
-				min_x = std::min(min_x, (*iter)->face_list[i]->vertex_coords[i].x);	
-				max_x = std::max(max_x, (*iter)->face_list[i]->vertex_coords[i].x);	
+			min_x = std::min(min_x, (*iter)->face_list[f]->min_pt.x);
+			min_y = std::min(min_y, (*iter)->face_list[f]->min_pt.y);
+			min_z = std::min(min_z, (*iter)->face_list[f]->min_pt.z);
 
-				min_y = std::min(min_y, (*iter)->face_list[i]->vertex_coords[i].y); 
-				max_y = std::max(max_y, (*iter)->face_list[i]->vertex_coords[i].y); 
-
-				min_z = std::min(min_z, (*iter)->face_list[i]->vertex_coords[i].z); 
-				max_z = std::max(max_z, (*iter)->face_list[i]->vertex_coords[i].z); 
-			}
+			max_x = std::max(max_x, (*iter)->face_list[f]->max_pt.x);
+			max_y = std::max(max_y, (*iter)->face_list[f]->max_pt.y);
+			max_z = std::max(max_z, (*iter)->face_list[f]->max_pt.z);	
 		}
 	}
 	max_pt = glm::vec3(max_x, max_y, max_z);

@@ -28,13 +28,10 @@ public:
 		clock_t start = clock();
 		
 		//4.3 Compute Fdomain graph
-		compute_graph();
-
-		//copy to global data
-		//fgraph = graph;
+		ComputeFGraph();
 		
 		//4.4 Compute each fdomain components according to the fgraph.
-		compute_connect_components();
+		ComputeConnectedComponents();
 
 		clock_t end = clock();
 		double time = (double) (end-start) / CLOCKS_PER_SEC; 
@@ -63,7 +60,7 @@ public:
 		}
 	}
 
-	void compute_connect_components()
+	void ComputeConnectedComponents()
 	{
 		FDG_ITER it;
 		for(it = fgraph.begin(); it != fgraph.end(); ++it)
@@ -130,7 +127,7 @@ public:
 
 	//Compute Fdomain-graph.
 	//brute_force version
-	void compute_graph()
+	void ComputeFGraph()
 	{
 		int n = fdomain_list.size();	
 		fgraph.clear();
@@ -328,7 +325,7 @@ public:
 	}
 	
 	//arguments: domain_1 index, domain_2 index
-	void connect_edge(int index1 ,int index2)
+	void ConnectFdomain(int index1 ,int index2)
 	{
 		Domain* a; 
 		Domain* b;
@@ -354,7 +351,7 @@ public:
 		AddEdge(b, a, fgraph);
 
 		//update fdomain_components 
-		compute_connect_components();
+		ComputeConnectedComponents();
 
 		printf("F-Graph updated!\n[PRINT_FGRAPH]\n");
 		for(FDG_ITER it = fgraph.begin(); it != fgraph.end(); ++it)
@@ -503,12 +500,8 @@ public:
 		return false;
 	}
 	
-	//jason
 	std::vector<int> FindLoops()
 	{
-		//for debug
-		GetRedundantEdgesSize();	
-
 		std::vector<int>loop_path;
 		FDG_ITER re_it;
 		for(re_it = redundant_edges.begin(); re_it != redundant_edges.end(); ++re_it)
@@ -599,6 +592,7 @@ public:
 	}
 	
 //============4.7 Add domains Rx to the domain tree===================
+	//for test
 	void beforeInit()
 	{
 		for(int i = 0; i < domain_list.size(); ++i)
@@ -704,7 +698,7 @@ public:
 		return d;
 	}
 	
-	//According a domain's anchor_point, find its nearest distance with another domain.
+	//According to a domain's anchor_point, find its nearest distance with another domain.
 	float GetNearestDisFromOtherWA(Domain* other, const glm::vec3& anchor_point)
 	{
 		float dis = FLT_MAX;
