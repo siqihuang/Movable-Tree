@@ -21,7 +21,6 @@ Debug/
 *.lai
 *.la
 *.a
-*.lib
 
 # Executables
 *.exe
@@ -43,3 +42,4 @@ Debug/
 *.ilk
 *.vcxproj
 *.lastbuildstate
+Movable_Tree/MoveReadyTree/Release/ini.mel
