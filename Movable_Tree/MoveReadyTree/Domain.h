@@ -6,6 +6,7 @@
 #include <algorithm>
 
 #include "Face.h"
+
 class Face;
 
 class Domain
@@ -19,7 +20,21 @@ public:
 		rank = 0;
 		is_root = false;
 	}
-    ~Domain() {}
+    
+	~Domain() 
+	{
+		for(int i = 0; i < face_list.size(); ++i)
+		{
+			delete face_list[i];
+		}
+		face_list.clear();
+		uv_coords_list.clear();
+		for(int i = 0; i < direct_child.size(); ++i)
+		{
+			delete direct_child[i];
+		}	
+		direct_child.clear();
+	}
 	
 	std::vector<Face*>face_list;
 	std::string tag;
@@ -37,6 +52,9 @@ public:
 	//instancing: union-find, set representative
 	Domain *instancing_repr;
 	int rank;
+
+	//child node in hierarchy which connects to myself		
+	std::vector<Domain*>direct_child;
 	
 	//for fgraph connected components: union-find, set representative
 	Domain *components_repr;

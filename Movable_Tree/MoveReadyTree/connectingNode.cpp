@@ -63,11 +63,11 @@ MStatus connectingNode::compute(const MPlug &plug,MDataBlock &data){
 
 			state=1;
 
-			std::string fdNum=std::to_string(fdomain_list.size());
+			std::string fdNum=std::to_string((long double)fdomain_list.size());
 			MGlobal::executeCommand("$FDomainNum="+MString(fdNum.c_str())+";");
 			//pass F Domain numbers to mel
 
-			std::string preferredRoot=std::to_string(fdg.GetInitialRootDomain());
+			std::string preferredRoot=std::to_string((long double)fdg.GetInitialRootDomain());
 			MGlobal::executeCommand("$preferredDomainIndex="+MString(preferredRoot.c_str())+";");
 			//pass preferred root index to mel
 
@@ -97,7 +97,7 @@ MStatus connectingNode::compute(const MPlug &plug,MDataBlock &data){
 		}
 		else if(state==3){//select root domain
 			int rootIndex=data.inputValue(rootNumber,&status).asInt();
-			std::string s=std::to_string(rootIndex);
+			std::string s=std::to_string((long double)rootIndex);
 			MGlobal::displayInfo(MString(s.c_str()));
 			fdg.SetRootDomain(rootIndex);
 			MGlobal::displayInfo("successful!");
@@ -108,7 +108,7 @@ MStatus connectingNode::compute(const MPlug &plug,MDataBlock &data){
 }
 
 void connectingNode::extractBlockNum(){
-	std::string num=std::to_string(fdomain_components.size());
+	std::string num=std::to_string((long double)fdomain_components.size());
 	MString com="$unconnectedDomainNum="+MString(num.c_str())+";";
 	com+="string $tmp=\"connected domains: \"+$unconnectedDomainNum;";
 	com+="text -edit -label $tmp $domainsToBeConnected;";
@@ -120,9 +120,9 @@ void connectingNode::hideOtherMesh(){
 	std::string com;
 	com="select ";
 	for(int i=0;i<fdomain_list.size();i++){
-		com+="instancing"+std::to_string(fdomain_list[i]->index)+" ";
+		com+="instancing"+std::to_string((long double)fdomain_list[i]->index)+" ";
 	}
-	std::string s=std::to_string(fdomain_list.size());
+	std::string s=std::to_string((long double)fdomain_list.size());
 	MGlobal::displayInfo(MString(s.c_str()));
 	com+=";showHidden -above;";
 	MGlobal::executeCommand(MString(com.c_str()));
@@ -134,12 +134,12 @@ void connectingNode::setBlockGroup(){
 	std::string com;
 	com="";
 	it=fdomain_components.begin();//once at a time, no need to loop, recompute after every operation
-	com="$connectingBlock["+std::to_string(n)+"]="+std::to_string(it->first->index)+";";
+	com="$connectingBlock["+std::to_string((long double)n)+"]="+std::to_string((long double)it->first->index)+";";
 	MGlobal::executeCommand(MString(com.c_str()));
 	n++;
 	for(int i = 0; i < it->second.size(); ++i)
 	{
-		com="$connectingBlock["+std::to_string(n)+"]="+std::to_string(it->second[i]->index)+";";
+		com="$connectingBlock["+std::to_string((long double)n)+"]="+std::to_string((long double)it->second[i]->index)+";";
 		MGlobal::executeCommand(MString(com.c_str()));
 		n++;
 		MGlobal::displayInfo(MString(com.c_str()));

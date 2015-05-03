@@ -56,12 +56,12 @@ MStatus instancingNode::initialize()
 	read.open(fileName);
 	int num;
 	read>>num;
-	std::string com="$domainListNum="+std::to_string(num)+";";
+	std::string com="$domainListNum="+std::to_string((long double)num)+";";
 	MGlobal::executeCommand(MString(com.c_str()));
 
 	for(int i=0;i<num;i++){
-		longFlag="outputMesh"+MString(std::to_string(i).c_str());
-		shortFlag="out"+MString(std::to_string(i).c_str());
+		longFlag="outputMesh"+MString(std::to_string((long double)i).c_str());
+		shortFlag="out"+MString(std::to_string((long double)i).c_str());
 		MObject tempMesh=tAttr.create( longFlag, shortFlag, MFnData::kMesh, &returnStatus ); 
 		instancingNode::outputMesh.push_back(tempMesh);
 	}
@@ -94,7 +94,7 @@ MStatus instancingNode::compute(const MPlug &plug,MDataBlock &data){
 		int length=domain_list.size();
 		m.setDomain(domain_list);
 
-		std::string s=std::to_string(length);
+		std::string s=std::to_string((long double)length);
 		MGlobal::displayInfo(s.c_str());
 
 		MStatus returnStatus;
@@ -109,10 +109,10 @@ MStatus instancingNode::compute(const MPlug &plug,MDataBlock &data){
 			outputHandle.setClean();
 			std::string transform,shape,node,out;
 			MString Mtransform,Mshape,Mnode,Mout;
-			transform="instancing"+std::to_string(i);Mtransform=MString(transform.c_str());
-			shape="instancingShape"+std::to_string(i);Mshape=MString(shape.c_str());
-			node="instancingNode"+std::to_string(2015);Mnode=MString(node.c_str());
-			out="outputMesh"+std::to_string(i);Mout=MString(out.c_str());
+			transform="instancing"+std::to_string((long double)i);Mtransform=MString(transform.c_str());
+			shape="instancingShape"+std::to_string((long double)i);Mshape=MString(shape.c_str());
+			node="instancingNode"+std::to_string((long double)2015);Mnode=MString(node.c_str());
+			out="outputMesh"+std::to_string((long double)i);Mout=MString(out.c_str());
 			MGlobal::executeCommand("createNode transform -n "+Mtransform);
 			//createNode transform -n instancing1;
 			MGlobal::executeCommand("createNode mesh -n "+Mshape+" -p "+Mtransform);
@@ -124,8 +124,8 @@ MStatus instancingNode::compute(const MPlug &plug,MDataBlock &data){
 		length=all_instance_set.size();
 		for(int i=0;i<length;i++){
 			Domain *tmp=all_instance_set[i][0];
-			std::string s=std::to_string(tmp->index);
-			std::string com="$RepSurfaces["+std::to_string(i)+"]="+s+";";
+			std::string s=std::to_string((long double)tmp->index);
+			std::string com="$RepSurfaces["+std::to_string((long double)i)+"]="+s+";";
 			MGlobal::executeCommand(MString(com.c_str()));
 			MGlobal::displayInfo(s.c_str());
 		}

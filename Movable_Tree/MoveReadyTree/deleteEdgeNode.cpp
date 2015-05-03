@@ -105,7 +105,7 @@ void deleteEdgeNode::setLoop(std::vector<int> loop){
 	MGlobal::executeCommand("clear($loopEdge);");
 	for(int i=0;i<loop.size();i++){
 		std::string com;
-		com="$loopEdge["+std::to_string(i)+"]="+std::to_string(loop[i])+";";
+		com="$loopEdge["+std::to_string((long double)i)+"]="+std::to_string((long double)loop[i])+";";
 		MGlobal::executeCommand(MString(com.c_str()));
 	}
 	MGlobal::executeCommand("highlightLoops()");
@@ -113,7 +113,7 @@ void deleteEdgeNode::setLoop(std::vector<int> loop){
 
 void deleteEdgeNode::setRedundantEdgeNum(){
 	std::string com="$redundantEdgeNum=";
-	com+=std::to_string(fdg.GetRedundantEdgesSize())+";";
+	com+=std::to_string((long double)fdg.GetRedundantEdgesSize())+";";
 	std::cout<<fdg.GetRedundantEdgesSize()<<std::endl;
 	MGlobal::executeCommand(MString(com.c_str()));
 	MGlobal::executeCommand("getRedundantNum()");

@@ -131,6 +131,16 @@ public:
 		rank = 0;
 		parent = this;
 	}
+	
+	~Face() 
+	{
+		vertex_coords.clear();
+		vertex_indexs.clear();
+		uv_indexs.clear();
+		uv_coords.clear();
+		C1.clear();
+		C2.clear();
+	}
 
 	Face(const std::vector<unsigned int>&_vertex_indexs, const std::vector<glm::vec3>&_vertex_coords,
 		const std::vector<unsigned int>&_uv_indexs, const std::vector<glm::vec2>&_uv_coords) 

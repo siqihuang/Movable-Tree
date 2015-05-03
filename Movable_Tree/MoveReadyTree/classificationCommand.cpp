@@ -36,7 +36,7 @@ MStatus classificationCommand::doIt( const MArgList& args ){
 	
 	
 
-	std::string s = std::to_string(selectedNum);
+	std::string s = std::to_string((long double)selectedNum);
 	MString ms(s.c_str());
 	MGlobal::displayInfo(ms);
 	

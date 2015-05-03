@@ -17,6 +17,13 @@ public:
 	Domain* rd_b;
 	
 	//KdTree* ktree;	
+	struct SortCmp
+	{
+	  bool operator() (Domain* a, Domain* b) 
+	  { 
+		  return a->index < b->index;
+	  }
+	} sort_by_index;
 
 	void compute()
 	{
@@ -29,6 +36,9 @@ public:
 		
 		//4.3 Compute Fdomain graph
 		ComputeFGraph();
+		
+		//build parent->child hierarchy according to fgraph
+		InitHierarchy();
 		
 		//4.4 Compute each fdomain components according to the fgraph.
 		ComputeConnectedComponents();
@@ -120,6 +130,9 @@ public:
 				total_faces += domain_list[i]->face_list.size();
 			}	
 		}
+		//sort the fdomain_list
+		sort(fdomain_list.begin(), fdomain_list.end(), sort_by_index);
+
 		printf("\n\n==============================\n");
 		printf("fdomain_list size: %d\n", fdomain_list.size());	
 		printf("fdomain_list face size: %d\n", total_faces); 
@@ -415,6 +428,81 @@ public:
 				return fdomain_list[i];
 			}
 		}
+	}
+
+	//return all the vertice indexs of root domain below a height
+	std::vector<int> GetHeightPoints(float y)
+	{
+		std::vector<int>res;
+		Domain* root = GetRootDomain();	
+		if(!root)
+		{
+			return res;
+		}
+		for(int i = 0; i < root->face_list.size(); ++i)
+		{
+			Face* face = root->face_list[i];
+			for(int j = 0; j < face->vertex_coords.size(); ++j)
+			{
+				if(face->vertex_coords[j].y <= y)
+				{
+					res.push_back(face->vertex_indexs[j]);
+				}
+			}
+		}
+		return res;
+	}
+
+	//jason
+	void InitHierarchy()
+	{
+		std::set<int>vis;
+		std::queue<Domain*>q;
+		q.push(GetRootDomain());
+		while(!q.empty())
+		{
+			Domain* p = q.front();
+			q.pop();
+			FDG_ITER iter = fgraph.find(p);
+			if(iter != fgraph.end())
+			{
+				//bfs all its neighbors
+				for(int i = 0; i < iter->second.size(); ++i)
+				{
+					Domain* tmp = iter->second[i];
+					//not visited
+					if(vis.find(tmp->index) == vis.end())
+					{
+						//add child
+						p->direct_child.push_back(tmp);
+						//add visited
+						vis.insert(tmp->index);
+						q.push(tmp);
+					}
+				}
+			}
+		}
+	}
+	
+	//get all the fdomian child's array index  
+	std::vector<int> GetDomainChild(int array_index)
+	{
+		std::vector<int>res;
+		if(array_index >= fdomain_list.size())
+		{
+			printf("[ERROR] array index > fdomain list size!!");
+			return res;
+		}
+		Domain* d = fdomain_list[array_index];
+		for(int i = 0 ; i < d->direct_child.size(); ++i)
+		{
+			Domain* son = d->direct_child[i];
+			if(son->tag == "F")
+			{
+				res.push_back(son->index);
+			}
+		}
+		return res;
 	}
 	
 	std::vector<int> BeginRemoveLoops()
