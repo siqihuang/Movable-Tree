@@ -111,7 +111,7 @@ MStatus classificationNode::compute(const MPlug &plug,MDataBlock &data){
 		if(!back) remainNum=remain-1;
 		else remainNum=remain+1;
 
-		std::string s=std::to_string(remainNum);
+		std::string s=std::to_string((long double)remainNum);
 		MString sRemainNum(s.c_str());
 		MGlobal::executeCommand("setAttr \"classification1.remain\""+sRemainNum);
 

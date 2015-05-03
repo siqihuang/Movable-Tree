@@ -2,6 +2,7 @@ global int $redundantEdgeNum;
 global string $redundantEdgeText;
 global int $loopEdge[];
 global string $deleteEdgeOKButton;
+global string $FDomainList[];
 
 global proc createDeleteEdgeGUI(){
 	global int $redundantEdgeNum;

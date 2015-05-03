@@ -166,7 +166,7 @@ MObject instancingNode::createMesh(int n,MObject& outData, MStatus& stat){
 	
 	/*for(int i=0;i<faceConnects.length();i++){
 		std::string s;
-		s=std::to_string(faceConnects[i]);
+		s=std::to_string((long double)faceConnects[i]);
 		MGlobal::displayInfo(MString(s.c_str()));
 	}*/
 	MObject newMesh = myMesh.create(points.length(), faceCounts.length(), points, faceCounts, faceConnects, outData, &stat);

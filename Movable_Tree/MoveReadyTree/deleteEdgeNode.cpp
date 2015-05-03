@@ -84,6 +84,20 @@ MStatus deleteEdgeNode::compute(const MPlug &plug,MDataBlock &data){
 		else if(state==2){//connect edge
 			MGlobal::displayInfo("@");
 			fdg.AddRdomainToGraph();
+			for(int i=0;i<fdomain_list.size();i++){
+				std::string com="$FDomainList["+std::to_string((long double)i)+"]="+std::to_string((long double)fdomain_list[i]->index)+";";
+				MGlobal::executeCommand(MString(com.c_str()));
+				com="polyCloseBorder -ch 1 instancing"+std::to_string((long double)fdomain_list[i]->index);
+				MGlobal::executeCommand(MString(com.c_str()));
+			}
+			std::string com="select";
+			for(int i=0;i<fdomain_list.size();i++){
+				com+=" instancing"+std::to_string((long double)fdomain_list[i]->index);
+			}
+			com+=";";
+			MGlobal::executeCommand(MString(com.c_str()));
+			com="tenlize();";
+			MGlobal::executeCommand(MString(com.c_str()));
 			turnOffTrigger(data);
 		}
 		else if(state==3){//select root domain
