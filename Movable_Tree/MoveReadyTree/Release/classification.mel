@@ -191,8 +191,9 @@ global proc createMoveReadyTreeUI(){
 	global string $ObjFilePath,$MtlFilePath;
 	setParent $gMainWindow;
 	menu -l "MoveReadyTree" MRTMenu;
-	menuItem -l "Select Mesh" -command "createClassificationGUI();createClassificationNode($selected,$ObjFilePath,$MtlFilePath);";
+	menuItem -l "Restructure Mesh" -command "createClassificationGUI();createClassificationNode($selected,$ObjFilePath,$MtlFilePath);";
 	//menuItem -l "Classification" -command "showClassificationGUI()";
+	menuItem -l "Simulate Mesh" -command "solve";
 }
 
 global proc deleteMoveReadyTreeUI()

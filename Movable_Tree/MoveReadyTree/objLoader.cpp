@@ -97,7 +97,7 @@ void objLoader::readObj(){
 		}
 		else if(n<componentNum&&input==meshName[n]){
 			n++;
-			MString num(std::to_string(n).c_str());
+			MString num(std::to_string((long double)n).c_str());
 			MString s="reading the "+num+" mesh";
 			MGlobal::displayInfo(s);
 		}
