@@ -439,6 +439,7 @@ public:
 		{
 			return res;
 		}
+		printf("[GetHeightPoints]");
 		for(int i = 0; i < root->face_list.size(); ++i)
 		{
 			Face* face = root->face_list[i];
@@ -446,6 +447,7 @@ public:
 			{
 				if(face->vertex_coords[j].y <= y)
 				{
+					printf("[Point:] y:%f\n", face->vertex_coords[j].y);
 					res.push_back(face->vertex_indexs[j]);
 				}
 			}
@@ -453,7 +455,7 @@ public:
 		return res;
 	}
 
-	//jason
+	//compute parent->child relationship
 	void InitHierarchy()
 	{
 		std::set<int>vis;
