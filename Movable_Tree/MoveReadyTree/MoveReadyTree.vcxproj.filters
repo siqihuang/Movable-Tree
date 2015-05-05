@@ -1,126 +1,55 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{1b089fed-4d4a-4990-bf76-d12a5d069833}</UniqueIdentifier>
-      <Extensions>cpp</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{a370dc32-f0e0-4e45-855e-0f8fbf0164d1}</UniqueIdentifier>
-      <Extensions>h</Extensions>
-    </Filter>
-    <Filter Include="Miscellaneous Files">
-      <UniqueIdentifier>{ea0d7ae2-7a37-4b1c-9f17-8600ba9cca27}</UniqueIdentifier>
-      <Extensions>txt</Extensions>
-    </Filter>
+    <ClCompile Include="bv.cpp" />
+    <ClCompile Include="classificationCommand.cpp" />
+    <ClCompile Include="classificationNode.cpp" />
+    <ClCompile Include="CommonData.cpp" />
+    <ClCompile Include="Domain.cpp" />
+    <ClCompile Include="FileAnalysis.cpp" />
+    <ClCompile Include="InstancingModule.cpp" />
+    <ClCompile Include="instancingNode.cpp" />
+    <ClCompile Include="kd_tree.cpp" />
+    <ClCompile Include="MayaPlugin.cpp" />
+    <ClCompile Include="mesh.cpp" />
+    <ClCompile Include="mtlLoader.cpp" />
+    <ClCompile Include="objLoader.cpp" />
+    <ClCompile Include="test.cpp" />
+    <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="LSSolverNode.cpp" />
+    <ClCompile Include="LSTetgenNode.cpp" />
+    <ClCompile Include="soft_body_sim.cpp" />
+    <ClCompile Include="connectingNode.cpp" />
+    <ClCompile Include="deleteEdgeNode.cpp" />
+    <ClCompile Include="simulationInfoNode.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt">
-      <Filter>Miscellaneous Files</Filter>
-    </None>
-    <None Include="Options.txt">
-      <Filter>Miscellaneous Files</Filter>
-    </None>
+    <ClInclude Include="bv.h" />
+    <ClInclude Include="classificationCommand.h" />
+    <ClInclude Include="classificationNode.h" />
+    <ClInclude Include="CommonData.h" />
+    <ClInclude Include="Domain.h" />
+    <ClInclude Include="Face.h" />
+    <ClInclude Include="FdomainGraph.h" />
+    <ClInclude Include="FileAnalysis.h" />
+    <ClInclude Include="InstancingModule.h" />
+    <ClInclude Include="instancingNode.h" />
+    <ClInclude Include="kd_tree.h" />
+    <ClInclude Include="mesh.h" />
+    <ClInclude Include="mtlLoader.h" />
+    <ClInclude Include="objLoader.h" />
+    <ClInclude Include="Ray.h" />
+    <ClInclude Include="UnionFindDomain.h" />
+    <ClInclude Include="union_find.h" />
+    <ClInclude Include="LSSolverNode.h" />
+    <ClInclude Include="LSTetgenNode.h" />
+    <ClInclude Include="soft_body_sim.h" />
+    <ClInclude Include="connectingNode.h" />
+    <ClInclude Include="deleteEdgeNode.h" />
+    <ClInclude Include="simulationInfoNode.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MayaPlugin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="classificationNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FileAnalysis.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="classificationCommand.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="objLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Triangle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Domain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InstancingModule.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CommonData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="instancingNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mtlLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="bv.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="kd_tree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-<<<<<<< HEAD
-    <ClCompile Include="mesh.cpp">
-=======
-    <ClCompile Include="test.cpp">
->>>>>>> origin/master
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="classificationNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FileAnalysis.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="classificationCommand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="objLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="union_find.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Face.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CommonData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Domain.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="InstancingModule.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UnionFindDomain.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="instancingNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mtlLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="bv.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="kd_tree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ray.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FdomainGraph.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <None Include="Options.txt" />
+    <None Include="ReadMe.txt" />
   </ItemGroup>
 </Project>

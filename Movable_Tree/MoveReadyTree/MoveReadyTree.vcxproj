@@ -19,15 +19,21 @@
     <ClCompile Include="classificationCommand.cpp" />
     <ClCompile Include="classificationNode.cpp" />
     <ClCompile Include="CommonData.cpp" />
+    <ClCompile Include="connectingNode.cpp" />
+    <ClCompile Include="deleteEdgeNode.cpp" />
     <ClCompile Include="Domain.cpp" />
     <ClCompile Include="FileAnalysis.cpp" />
     <ClCompile Include="InstancingModule.cpp" />
     <ClCompile Include="instancingNode.cpp" />
     <ClCompile Include="kd_tree.cpp" />
+    <ClCompile Include="LSSolverNode.cpp" />
+    <ClCompile Include="LSTetgenNode.cpp" />
     <ClCompile Include="MayaPlugin.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="mtlLoader.cpp" />
     <ClCompile Include="objLoader.cpp" />
+    <ClCompile Include="simulationInfoNode.cpp" />
+    <ClCompile Include="soft_body_sim.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
@@ -36,6 +42,8 @@
     <ClInclude Include="classificationCommand.h" />
     <ClInclude Include="classificationNode.h" />
     <ClInclude Include="CommonData.h" />
+    <ClInclude Include="connectingNode.h" />
+    <ClInclude Include="deleteEdgeNode.h" />
     <ClInclude Include="Domain.h" />
     <ClInclude Include="Face.h" />
     <ClInclude Include="FdomainGraph.h" />
@@ -43,10 +51,14 @@
     <ClInclude Include="InstancingModule.h" />
     <ClInclude Include="instancingNode.h" />
     <ClInclude Include="kd_tree.h" />
+    <ClInclude Include="LSSolverNode.h" />
+    <ClInclude Include="LSTetgenNode.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="mtlLoader.h" />
     <ClInclude Include="objLoader.h" />
     <ClInclude Include="Ray.h" />
+    <ClInclude Include="simulationInfoNode.h" />
+    <ClInclude Include="soft_body_sim.h" />
     <ClInclude Include="UnionFindDomain.h" />
     <ClInclude Include="union_find.h" />
   </ItemGroup>
@@ -58,12 +70,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -97,7 +109,7 @@
       <MinimalRebuild>true</MinimalRebuild>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>.;C:\Program Files\Autodesk\Maya2015\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;C:\Program Files\Autodesk\Maya2015\include;C:\Users\siqiHuang\Documents\GitHub\moveReadyTreeNew\Movable-Tree\Movable_Tree\include\tetgen\include;C:\Users\siqiHuang\Documents\GitHub\moveReadyTreeNew\Movable-Tree\Movable_Tree\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>$(Configuration)\MoveReadyTree.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>.\Debug/</AssemblerListingLocation>
       <ObjectFileName>.Debug/</ObjectFileName>
@@ -107,8 +119,8 @@
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <AdditionalOptions>/export:initializePlugin /export:uninitializePlugin %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>Foundation.lib;OpenMaya.lib;OpenMayaUI.lib;OpenMayaAnim.lib;OpenMayaFX.lib;OpenMayaRender.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\Maya2015\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Foundation.lib;OpenMaya.lib;OpenMayaUI.lib;OpenMayaAnim.lib;OpenMayaFX.lib;OpenMayaRender.lib;OpenGL32.lib;Vega.lib;tetgen64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\Maya2015\lib;C:\Users\siqiHuang\Documents\GitHub\moveReadyTreeNew\Movable-Tree\Movable_Tree\include\vega\lib;C:\Users\siqiHuang\Documents\GitHub\moveReadyTreeNew\Movable-Tree\Movable_Tree\include\tetgen\lib\x64\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <OutputFile>$(Configuration)\MoveReadyTree.mll</OutputFile>
       <ImportLibrary>$(Configuration)\MoveReadyTree.lib</ImportLibrary>
       <ProgramDatabaseFile>$(Configuration)\MoveReadyTree.pdb</ProgramDatabaseFile>
@@ -135,7 +147,7 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>.;C:\Program Files\Autodesk\Maya2015\include;..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;C:\Program Files\Autodesk\Maya2015\include;..\include;C:\Users\siqiHuang\Documents\GitHub\moveReadyTreeNew\Movable-Tree\Movable_Tree\include\vega;C:\Users\siqiHuang\Documents\GitHub\moveReadyTreeNew\Movable-Tree\Movable_Tree\include\tetgen\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>$(Configuration)\MoveReadyTree.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>
@@ -145,8 +157,8 @@
       <AdditionalOptions>/export:initializePlugin /export:uninitializePlugin %(AdditionalOptions)</AdditionalOptions>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Foundation.lib;OpenMaya.lib;OpenMayaUI.lib;OpenMayaAnim.lib;OpenMayaFX.lib;OpenMayaRender.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\Maya2015\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Foundation.lib;OpenMaya.lib;OpenMayaUI.lib;OpenMayaAnim.lib;OpenMayaFX.lib;OpenMayaRender.lib;OpenGL32.lib;Vega.lib;tetgen64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\Maya2015\lib;C:\Users\siqiHuang\Documents\GitHub\moveReadyTreeNew\Movable-Tree\Movable_Tree\include\tetgen\lib\x64\release;C:\Users\siqiHuang\Documents\GitHub\moveReadyTreeNew\Movable-Tree\Movable_Tree\include\vega\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <OutputFile>$(Configuration)\MoveReadyTree.mll</OutputFile>
       <ImportLibrary>$(Configuration)\MoveReadyTree.lib</ImportLibrary>
       <ProgramDatabaseFile>$(Configuration)\MoveReadyTree.pdb</ProgramDatabaseFile>
