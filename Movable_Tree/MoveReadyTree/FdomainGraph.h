@@ -530,10 +530,7 @@ public:
 		for(int i = 0 ; i < d->direct_child.size(); ++i)
 		{
 			Domain* son = d->direct_child[i];
-			if(son->tag == "F")
-			{
-				res.push_back(son->index);
-			}
+			res.push_back(son->index);
 		}
 		return res;
 	}
