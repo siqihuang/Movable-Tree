@@ -1,3 +1,48 @@
+global int $fixedPoint[];
+global int $fixedPointDisplacement[];
+global int $domainParent[];
+global int $fixedPointOnParent[];
+global int $fixedPointDisplacementOnParent[];
+global int $pointIndex=0;
+global int $displacementIndex=0;
+global int $pointIndexOnParent=0;
+global int $displacementIndexOnParent=0;
+
+global proc createSolverGUI(){
+	
+	window -title "Connecting Command" -w 300 -h 240 solverWindow;
+
+	columnLayout;
+		rowLayout -numberOfColumns 2 -columnWidth2 95 35;
+			button -label "find Constraints" -command "getFixedPoints();sendFixedPointToNode()";
+			button -label "create solver" -command "solve()";
+		setParent..;
+	setParent..;
+	showWindow solverWindow;
+}
+
+global proc sendFixedPointToNode(){
+	global int $fixedPoint[];
+	global int $fixedPointDisplacement[];
+	string $pointList,$numList;
+	$pointList="";
+	$numList="";
+	for($i=0;$i<size($fixedPoint);++$i){
+		$pointList+=$fixedPoint[$i];
+		$pointList+="$$";
+	}
+	for($i=0;$i<size($fixedPointDisplacement);$i++){
+		$numList+=$fixedPointDisplacement[$i];
+		$numList+="$$";
+	}
+	int $pointNum=size($fixedPoint);
+	createNode simulationInfoNode -n "simulationInfoNode2015";
+	setAttr -type "string" simulationInfoNode2015.pointList $pointList;
+	setAttr -type "string" simulationInfoNode2015.pointNumList $numList;
+	setAttr simulationInfoNode2015.pointNum $pointNum;
+	setAttr simulationInfoNode2015.trigger true;
+}
+
 global proc solve(){
 	string $shapeNodes[] = `listRelatives -s`;
 	int $shapeNodesSize = `size $shapeNodes`;
@@ -43,6 +88,115 @@ global proc solve(){
 	
 			//connectAttr ($tetgenNodes[$i]+".ofp") ($solverNode+".ifp"); // no longer needed
 			sets -add initialShadingGroup $solverS;
+			print "out";
 		}
 	}
+}
+
+global proc getFixedPointsOnParent(){
+	global int $domainParent[];
+	global int $fixedPointOnParent[];
+	global int $fixedPointDisplacementOnParent[];
+	global int $FDomainNum;
+	global int $pointIndexOnParent=0;
+	global int $displacementIndexOnParent=0;
+	for($i=0;$i<$FDomainNum;++$i){
+		float $r1,$r2,$targetDis=0.05;
+		int $displacement=0;
+		string $childString="transform"+($i+1)+".vtx[0]";
+		float $childPos[3] = `xform -q -ws -t $childString`;
+		string $parentString="transform"+($domainParent[$i]+1);
+		eval("select"+$parentString);
+		int $vtxSize[0]=`polyEvaluate -vertex`;
+		for($j=0;$j<$vtxSize[0];++$j){
+			string $tmp=$parentString+".vtx["+$j+"]";
+			float $vtxPos[3] = `xform -q -ws -t $tmp`;
+			float $dis=($childPos[0]-$vtxPos[0])*($childPos[0]-$vtxPos[0])+($childPos[1]-$vtxPos[1])*($childPos[1]-$vtxPos[1])+($childPos[2]-$vtxPos[2])*($childPos[2]-$vtxPos[2]);
+			if($dis<$targetDis*$targetDis){
+				$fixedPointOnParent[$pointIndexOnParent]=$j;
+				$pointIndexOnParent++;
+				$displacement++;
+			}
+		}
+		$fixedPointDisplacementOnParent[$displacementIndexOnParent]=$displacement;
+		$displacementIndexOnParent++;
+	}
+}
+
+global proc getFixedPoints(){
+	global int $rootTransformIndex;
+	global int $fixedPoint[];
+	global int $fixedPointDisplacement[];
+	global int $pointIndex;
+	global int $displacementIndex;
+	global int $FDomainNum;
+	$pointIndex=0;
+	$displacementIndex=0;
+	string $rootName="transform"+$rootTransformIndex;
+
+	for($i=0;$i<$FDomainNum;++$i){
+		//print $FDomainNum;
+		if($i==$rootTransformIndex-1){
+			string $com="select "+$rootName+";";
+			eval($com);
+			int $vtxSize[0]=`polyEvaluate -vertex`;
+			int $displacement=0;
+			for($j=0;$j<$vtxSize[0];++$j){
+				string $tmp=$rootName+".vtx["+$j+"]";
+				float $vtxPos[3] = `xform -q -ws -t $tmp`;
+				if($vtxPos[1]<0.3){
+					$fixedPoint[$pointIndex]=$j;
+					++$pointIndex;
+					++$displacement;
+				}
+			}
+			$fixedPointDisplacement[$displacementIndex]=$displacement;
+			$displacementIndex++;
+		}
+		else{
+			findNearestPoints($i+1);
+		}
+	}
+	string $com="select";
+	int $acc=$fixedPointDisplacement[0];
+	int $count=1;
+	for($i=0;$i<size($fixedPoint);++$i){
+		if($acc<=$i){
+			$count++;
+			$acc+=$fixedPointDisplacement[$count-1];
+		}
+		$com+=" transform"+$count+".vtx["+$fixedPoint[$i]+"]";
+	}
+	$com+=";";
+	eval($com);
+}
+
+global proc findNearestPoints(int $n){
+	global int $fixedPoint[];
+	global int $fixedPointDisplacement[];
+	global int $pointIndex;
+	global int $displacementIndex;
+	float $r1,$r2,$targetDis=0.05;
+	string $fixString="transform"+$n+".vtx[0]";
+	float $fixPos[3] = `xform -q -ws -t $fixString`;
+	eval("select transform"+$n);
+	int $vtxSize[0]=`polyEvaluate -vertex`;
+	int $displacement=0;
+	$fixedPoint[$pointIndex]=0;
+	$pointIndex++;
+	$displacement++;
+	//print $vtxSize[0];
+	//print "@";
+	for($i=1;$i<$vtxSize[0];++$i){
+		string $tmp="transform"+$n+".vtx["+$i+"]";
+		float $vtxPos[3] = `xform -q -ws -t $tmp`;
+		float $dis=($fixPos[0]-$vtxPos[0])*($fixPos[0]-$vtxPos[0])+($fixPos[1]-$vtxPos[1])*($fixPos[1]-$vtxPos[1])+($fixPos[2]-$vtxPos[2])*($fixPos[2]-$vtxPos[2]);
+		if($dis<$targetDis*$targetDis){
+			$fixedPoint[$pointIndex]=$i;
+			$pointIndex++;
+			$displacement++;
+		}
+	}
+	$fixedPointDisplacement[$displacementIndex]=$displacement;
+	$displacementIndex++;
 }

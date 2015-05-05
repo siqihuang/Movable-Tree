@@ -1,4 +1,8 @@
+global int $rootTransformIndex;
+
 global proc tenlize(){
+	global int $rootIndex;
+	global int $rootTransformIndex;
 	string $selectedItems[] = `ls -sl -dag`;
 	int $numItems = size($selectedItems);
 	if ($numItems<2)
@@ -15,6 +19,9 @@ global proc tenlize(){
 			string $nodeS = $selectedItems[$j];
 			string $outputT = `createNode transform`; // new transform node node used to display the output from tetgen
 			string $outputS = `createNode mesh`; // new mesh (shape) node used to display the output from tetgen
+
+			if($nodeT=="instancing"+$rootIndex) $rootTransformIndex=$i/2+1;
+
 			parent -s -relative $outputS $outputT;
 			sets -add initialShadingGroup $outputS;
 			string $tetgenNode = `createNode LSTetgenNode`;

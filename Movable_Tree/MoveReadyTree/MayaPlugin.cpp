@@ -21,6 +21,7 @@
 #include "deleteEdgeNode.h"
 #include "LSTetgenNode.h"
 #include "LSSolverNode.h"
+#include "simulationInfoNode.h"
 #include "classificationCommand.h"
 
 MStatus initializePlugin(MObject obj){
@@ -44,7 +45,8 @@ MStatus initializePlugin(MObject obj){
 	status=fnPlugin.registerNode("deleteEdgeNode",deleteEdgeNode::id,deleteEdgeNode::creator,deleteEdgeNode::initialize);
 	status=fnPlugin.registerNode("LSTetgenNode",LSTetgenNode::id,LSTetgenNode::creator, LSTetgenNode::initialize);
 	status=fnPlugin.registerNode("LSSolverNode",LSSolverNode::id,LSSolverNode::creator, LSSolverNode::initialize);
-	status=fnPlugin.registerCommand( "classificationCommand",classificationCommand::creator,classificationCommand::newSyntax );
+	status=fnPlugin.registerNode("simulationInfoNode",simulationInfoNode::id,simulationInfoNode::creator, simulationInfoNode::initialize);
+	status=fnPlugin.registerCommand("classificationCommand",classificationCommand::creator,classificationCommand::newSyntax );
 
 	return status;
 }
@@ -58,6 +60,7 @@ MStatus uninitializePlugin(MObject obj){
 	status=fnPlugin.deregisterNode(deleteEdgeNode::id);
 	status=fnPlugin.deregisterNode(LSSolverNode::id);
 	status=fnPlugin.deregisterNode(LSTetgenNode::id);
+	status=fnPlugin.deregisterNode(simulationInfoNode::id);
 
 	status=fnPlugin.deregisterCommand("classificationCommand");
 

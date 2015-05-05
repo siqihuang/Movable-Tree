@@ -193,7 +193,7 @@ global proc createMoveReadyTreeUI(){
 	menu -l "MoveReadyTree" MRTMenu;
 	menuItem -l "Restructure Mesh" -command "createClassificationGUI();createClassificationNode($selected,$ObjFilePath,$MtlFilePath);";
 	//menuItem -l "Classification" -command "showClassificationGUI()";
-	menuItem -l "Simulate Mesh" -command "solve";
+	menuItem -l "Simulate Mesh" -command "createSolverGUI()";
 }
 
 global proc deleteMoveReadyTreeUI()
@@ -206,6 +206,8 @@ global proc deleteMoveReadyTreeUI()
 	global int $unconnectedDomainNum;
 	global int $anchorPointIndex[]; 
 	global int $loopEdge[];
+	global int $fixedPoint[];
+	global int $fixedPointDisplacement[];
 	deleteUI -menu MRTMenu;
 	clear($selected);
 	clear($tags);
@@ -215,4 +217,6 @@ global proc deleteMoveReadyTreeUI()
 	clear($RepSurfaces);
 	clear($anchorPointIndex);
 	clear($loopEdge);
+	clear($fixedPoint);
+	clear($fixedPointDisplacement);
 }

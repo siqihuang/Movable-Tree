@@ -98,6 +98,26 @@ MStatus deleteEdgeNode::compute(const MPlug &plug,MDataBlock &data){
 			MGlobal::executeCommand(MString(com.c_str()));
 			com="tenlize();";
 			MGlobal::executeCommand(MString(com.c_str()));
+
+			for(int i=0;i<fdomain_list.size();i++){
+				std::vector<int> tmp=fdg.GetDomainChild(i);
+				//MGlobal::displayInfo(MString(std::to_string((long double) tmp.size()).c_str()));
+				for(int j=0;j<tmp.size();j++){
+					//MGlobal::displayInfo(MString(std::to_string((long double) tmp[j]).c_str()));
+					int n=-1;
+					for(int k=0;k<fdomain_list.size();k++){
+						if(fdomain_list[k]->index==tmp[j]){
+							n=k;
+							break;
+						}
+					}
+					//MGlobal::displayInfo(MString(std::to_string((long double) n).c_str()));
+					com="$domainParent["+std::to_string((long double)n)+"]="+std::to_string((long double)i);
+					MGlobal::displayInfo(MString(com.c_str()));
+					MGlobal::executeCommand(MString(com.c_str()));
+				}
+			}
+
 			turnOffTrigger(data);
 		}
 		else if(state==3){//select root domain

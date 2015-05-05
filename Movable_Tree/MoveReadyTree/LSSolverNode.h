@@ -9,6 +9,7 @@
 #include <maya/MFnDoubleArrayData.h>
 #include <maya/MFnIntArrayData.h>
 #include "soft_body_sim.h"
+#include "CommonData.h"
 #include <vector>
 
 using std::vector;
@@ -63,7 +64,7 @@ public:
 	static MObject useSuppliedForce;
 	static MObject contactKs;
 	static MObject contactKd;
-
+	static int currentConstriant;
 	static MTypeId id;
 
 	double prevDeformed;

@@ -15,5 +15,5 @@ std::map<Domain*, std::vector<Domain*>>redundant_edges;
 
 std::map<int, glm::vec3>repr_anchor_points; 
 
-
+std::vector<std::vector<int>>constraintIndex;
 

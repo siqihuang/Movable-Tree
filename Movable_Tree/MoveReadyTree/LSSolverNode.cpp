@@ -74,6 +74,7 @@ MObject LSSolverNode::useSuppliedForce;
 MObject LSSolverNode::forceDirection; 
 MObject LSSolverNode::contactKd;
 MObject LSSolverNode::contactKs;
+int LSSolverNode::currentConstriant=0;
 
 MStatus LSSolverNode::compute(const MPlug& plug, MDataBlock& data)
 {
@@ -206,11 +207,19 @@ MStatus LSSolverNode::compute(const MPlug& plug, MDataBlock& data)
 			{
 				selectedConstraintVertIndices.push_back(sv[i]);
 			}
-			std::string tmp=std::to_string((long double)selectedConstraintVertIndices.size());
+			MGlobal::displayInfo("!!!!!");
+			//std::string tmp=std::to_string((long double)selectedConstraintVertIndices.size());
 			//MGlobal::displayInfo(MString(tmp.c_str()));
-			for(int i=0;i<10;i++){
-				selectedConstraintVertIndices.push_back(i+1);
+			for(int i=0;i<constraintIndex[currentConstriant].size();i++){
+				selectedConstraintVertIndices.push_back(constraintIndex[currentConstriant][i]);
 			}
+			currentConstriant++;
+			if(currentConstriant==fdomain_list.size()) currentConstriant=0;
+			
+
+			/*for(int i=0;i<10;i++){
+				selectedConstraintVertIndices.push_back(i+1);
+			}*/
 
 			MFnIntArrayData selectedForceVertsArrayData(selectedForceVertsData.data());
 			MIntArray sf = selectedForceVertsArrayData.array();
@@ -345,7 +354,7 @@ MStatus LSSolverNode::initialize()
 	nAttr.setMax(0.45);
 	nAttr.setMin(0);
 
-	youngsModulus = nAttr.create("youngsModulus", "ym", MFnNumericData::kDouble, 900000000, &returnStatus);
+	youngsModulus = nAttr.create("youngsModulus", "ym", MFnNumericData::kDouble, 10000000, &returnStatus);
 	McheckErr(returnStatus, "ERROR creating LSSolverNode youngsModulus\n");
 	MAKE_INPUT(nAttr);
 	//nAttr.setMax(50000);

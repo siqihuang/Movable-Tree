@@ -170,7 +170,7 @@ MStatus LSTetgenNode::initialize()
 	radiusEdgeRatio = nAttr.create("radiusEdgeRatio", "rer", MFnNumericData::kDouble, 1.414, &returnStatus);
 	McheckErr(returnStatus, "ERROR creating LSTetgenNode radiusEdgeRatio attribute\n");
 	nAttr.setMin(1.0);
-	nAttr.setMax(4.0);
+	nAttr.setMax(40.0);
 	MAKE_INPUT(nAttr);
 
 	volumeConstraint = nAttr.create("volumeConstraint", "vc", MFnNumericData::kDouble, 0.1, &returnStatus);
