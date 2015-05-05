@@ -37,8 +37,7 @@ public:
 		//4.3 Compute Fdomain graph
 		ComputeFGraph();
 		
-		//build parent->child hierarchy according to fgraph
-		InitHierarchy();
+		//InitHierarchy();
 		
 		//4.4 Compute each fdomain components according to the fgraph.
 		ComputeConnectedComponents();
@@ -165,7 +164,7 @@ public:
 						AddEdge(fdomain_list[j], fdomain_list[i], fgraph);
 					}
 				}
-				printf("Finished The %d fdomain.......\n", fdomain_list[i]->index);
+				//printf("Finished The %d fdomain.......\n", fdomain_list[i]->index);
 			}
 		}
 		else if(shape == 4) //quad
@@ -180,8 +179,20 @@ public:
 						AddEdge(fdomain_list[j], fdomain_list[i], fgraph);
 					}
 				}
-				printf("Finished The %d fdomain.......\n", i); 
+				//printf("Finished The %d fdomain.......\n", i); 
 			}
+		}
+
+		//print graph
+		printf("[PRINT GRAPH]: \n");
+		for(FDG_ITER it = fgraph.begin(); it != fgraph.end(); ++it)
+		{
+			printf("Parent: %d\n", it->first->index);			
+			for(int j = 0; j < it->second.size(); ++j)
+			{
+				printf("%d ", it->second[j]->index);
+			}
+			printf("\n"); 
 		}
 	}
 
@@ -428,6 +439,7 @@ public:
 				return fdomain_list[i];
 			}
 		}
+		return NULL;
 	}
 
 	//return all the vertice indexs of root domain below a height
@@ -439,6 +451,7 @@ public:
 		{
 			return res;
 		}
+		printf("[GetHeightPoints]");
 		for(int i = 0; i < root->face_list.size(); ++i)
 		{
 			Face* face = root->face_list[i];
@@ -446,6 +459,7 @@ public:
 			{
 				if(face->vertex_coords[j].y <= y)
 				{
+					printf("[Point:] y:%f\n", face->vertex_coords[j].y);
 					res.push_back(face->vertex_indexs[j]);
 				}
 			}
@@ -453,12 +467,19 @@ public:
 		return res;
 	}
 
-	//jason
+	//build parent->child hierarchy according to fgraph
 	void InitHierarchy()
 	{
 		std::set<int>vis;
 		std::queue<Domain*>q;
-		q.push(GetRootDomain());
+		Domain* root = GetRootDomain();
+		if(!root)
+		{
+			printf("[ERROR] InitHierarchy, root is NULL!");
+			return;
+		}
+		q.push(root);
+		vis.insert(root->index);
 		while(!q.empty())
 		{
 			Domain* p = q.front();
@@ -481,6 +502,18 @@ public:
 					}
 				}
 			}
+		}
+		//debug
+		printf("==========InitHierarchy============\n");
+		for(int i = 0 ; i < fdomain_list.size(); ++i)
+		{
+			printf("Parent: %d\n", fdomain_list[i]->index);
+			std::vector<int>tmp = GetDomainChild(i);
+			for(int j = 0 ; j < tmp.size(); ++j)
+			{
+				printf("%d ", tmp[j]);
+			}
+			printf("\n");
 		}
 	}
 	
@@ -680,7 +713,6 @@ public:
 	}
 	
 //============4.7 Add domains Rx to the domain tree===================
-	//for test
 	void beforeInit()
 	{
 		for(int i = 0; i < domain_list.size(); ++i)
@@ -730,6 +762,7 @@ public:
 	//Add domain which tag "R1" and "R2" into the fdomain-graph
 	void AddRdomainToGraph()
 	{
+		printf("======process 4.7 Add domains Rx to the domain tree============\n"); 
 		int cnt = 0;
 		for(int i = 0; i < domain_list.size(); ++i)
 		{
@@ -740,11 +773,13 @@ public:
 				cur->graph_parent = pa;
 				AddEdge(pa, cur, fgraph);
 				AddEdge(cur, pa, fgraph);
-				printf("[AddRdomainToGraph] Parent:%d son:%d\n", pa->index, cur->index);
+				//printf("[AddRdomainToGraph] Parent:%d son:%d\n", pa->index, cur->index);
 				++cnt;
 			}
 		}
 		printf("[AddRdomainToGraph] Finished! Total add: %d", cnt); 
+
+		InitHierarchy();
 	}
 	
 	//4.7 Find parent of domain graph
@@ -758,7 +793,6 @@ public:
 		else if(cur->tag == "R2")
 		{
 			//Find parent in R1 and F
-			//debug
 			return FindNearestFDomain(cur);
 		}
 		return NULL;

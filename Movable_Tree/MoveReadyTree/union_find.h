@@ -129,10 +129,11 @@ public:
 				}
 			}
 		}
+		int i = 0;
 		for(it = domain_map.begin(); it != domain_map.end(); ++it)
 		{
 			Domain* d = it->second;
-			d->index = domain_list.size(); 
+			d->index = i++; 
 			domain_list.push_back(it->second);
 		}
 		
