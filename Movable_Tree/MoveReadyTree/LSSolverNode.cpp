@@ -74,7 +74,7 @@ MObject LSSolverNode::useSuppliedForce;
 MObject LSSolverNode::forceDirection; 
 MObject LSSolverNode::contactKd;
 MObject LSSolverNode::contactKs;
-int LSSolverNode::currentConstriant=0;
+//int LSSolverNode::currentConstriant=0;
 
 MStatus LSSolverNode::compute(const MPlug& plug, MDataBlock& data)
 {
@@ -210,12 +210,12 @@ MStatus LSSolverNode::compute(const MPlug& plug, MDataBlock& data)
 			MGlobal::displayInfo("!!!!!");
 			//std::string tmp=std::to_string((long double)selectedConstraintVertIndices.size());
 			//MGlobal::displayInfo(MString(tmp.c_str()));
+			//std::cout<<currentConstriant<<" up"<<std::endl;
 			for(int i=0;i<constraintIndex[currentConstriant].size();i++){
 				selectedConstraintVertIndices.push_back(constraintIndex[currentConstriant][i]);
+				//std::cout<<constraintIndex[currentConstriant][i]<<std::endl;
 			}
-			currentConstriant++;
-			if(currentConstriant==fdomain_list.size()) currentConstriant=0;
-			
+			//std::cout<<currentConstriant<<" up"<<std::endl;
 
 			/*for(int i=0;i<10;i++){
 				selectedConstraintVertIndices.push_back(i+1);
@@ -278,10 +278,75 @@ MStatus LSSolverNode::compute(const MPlug& plug, MDataBlock& data)
 			
 			if (useSuppliedForceBool)
 				sm->setUserForceAttributes(forceMagnitudeDouble, dir,selectedForceVertIndices,fAppT,fReleasedT,fIncT,fStartT,fStopT);
+
+			std::vector<int> childList=fdg.GetDomainChild(currentConstriant);
+			if(childList.size()!=0){//not the root
+				for(int i=0;i<childList.size();i++){
+					int childIndex=-1;
+					for(int j=0;j<fdomain_list.size();j++){
+						if(fdomain_list[j]->index==childList[i]){
+							childIndex=j;
+						}
+					}//j
+					glm::dvec3 oldPos=glm::dvec3(0,0,0);
+					for(int j=0;j<parentConstraintIndex[childIndex].size();j++){
+						int index=3*parentConstraintIndex[childIndex][j];
+						oldPos.x+=sm->m_vertices[index];
+						oldPos.y+=sm->m_vertices[index+1];
+						oldPos.z+=sm->m_vertices[index+2];
+					}
+					oldPos=oldPos*(1.0/parentConstraintIndex[childIndex].size());
+					parentLastPosOld[childIndex]=oldPos;
+					parentLastPosNew[childIndex]=oldPos;
+				}//i
+			}
+			domainID=currentConstriant;
+			currentConstriant++;
+			if(currentConstriant==fdomain_list.size()) currentConstriant=0;
 		}
 
 		else
 		{
+			std::vector<int> childList=fdg.GetDomainChild(domainID);
+			if(childList.size()!=0){//not the root
+				for(int i=0;i<childList.size();i++){
+					int childIndex=-1;
+					for(int j=0;j<fdomain_list.size();j++){
+						if(fdomain_list[j]->index==childList[i]){
+							childIndex=j;
+						}
+					}//j
+					glm::dvec3 newPos=glm::dvec3(0,0,0);
+					for(int j=0;j<parentConstraintIndex[childIndex].size();j++){
+						int index=3*parentConstraintIndex[childIndex][j];
+						newPos.x+=sm->m_vertices[index];
+						newPos.y+=sm->m_vertices[index+1];
+						newPos.z+=sm->m_vertices[index+2];
+					}
+					//std::cout<<newPos.x<<","<<newPos.y<<","<<newPos.z<<std::endl;
+					newPos=newPos*(1.0/parentConstraintIndex[childIndex].size());
+					parentLastPosOld[childIndex]=parentLastPosNew[childIndex];
+					parentLastPosNew[childIndex]=newPos;
+				}//i
+			}
+			//update the parents' fixed point moving distance
+			if(domainParentIndex[domainID]!=-1){//has parent
+				//std::cout<<sm->numOfVertices<<std::endl;
+				for(int i=0;i<constraintIndex[domainID].size();i++){
+					int index=3*constraintIndex[domainID][i];
+					if(index>3*sm->numOfVertices) std::cout<<index-3*sm->numOfVertices<<"big "<<currentConstriant<<std::endl;
+					glm::dvec3 movePos=parentLastPosNew[domainID]-parentLastPosOld[domainID];
+					std::cout<<sm->m_vertices[index]<<","<<sm->m_vertices[index+1]<<","<<sm->m_vertices[index+2]<<std::endl;
+					sm->m_vertices[index]+=movePos.x;
+					sm->m_vertices[index+1]+=movePos.y;
+					sm->m_vertices[index+2]+=movePos.z;
+					sm->m_restVertices[index]+=movePos.x;
+					sm->m_restVertices[index+1]+=movePos.y;
+					sm->m_restVertices[index+2]+=movePos.z;
+					std::cout<<sm->m_vertices[index]<<","<<sm->m_vertices[index+1]<<","<<sm->m_vertices[index+2]<<"end"<<std::endl;
+					//std::cout<<constraintIndex[domainID][i]<<std::endl;
+				}
+			}
 			sm->update();
 		}
 
@@ -354,7 +419,7 @@ MStatus LSSolverNode::initialize()
 	nAttr.setMax(0.45);
 	nAttr.setMin(0);
 
-	youngsModulus = nAttr.create("youngsModulus", "ym", MFnNumericData::kDouble, 10000000, &returnStatus);
+	youngsModulus = nAttr.create("youngsModulus", "ym", MFnNumericData::kDouble, 9000000, &returnStatus);
 	McheckErr(returnStatus, "ERROR creating LSSolverNode youngsModulus\n");
 	MAKE_INPUT(nAttr);
 	//nAttr.setMax(50000);

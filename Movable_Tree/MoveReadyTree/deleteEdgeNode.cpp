@@ -100,6 +100,12 @@ MStatus deleteEdgeNode::compute(const MPlug &plug,MDataBlock &data){
 			MGlobal::executeCommand(MString(com.c_str()));
 
 			for(int i=0;i<fdomain_list.size();i++){
+					com="$domainParent["+std::to_string((long double)i)+"]=-1";
+					MGlobal::executeCommand(MString(com.c_str()));
+			}
+			//initialie
+
+			for(int i=0;i<fdomain_list.size();i++){
 				std::vector<int> tmp=fdg.GetDomainChild(i);
 				//MGlobal::displayInfo(MString(std::to_string((long double) tmp.size()).c_str()));
 				for(int j=0;j<tmp.size();j++){

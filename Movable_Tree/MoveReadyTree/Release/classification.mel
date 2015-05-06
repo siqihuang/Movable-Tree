@@ -208,6 +208,9 @@ global proc deleteMoveReadyTreeUI()
 	global int $loopEdge[];
 	global int $fixedPoint[];
 	global int $fixedPointDisplacement[];
+	global int $fixedPointOnParent[];
+	global int $fixedPointDisplacementOnParent[];
+	global int $domainParent[];
 	deleteUI -menu MRTMenu;
 	clear($selected);
 	clear($tags);
@@ -219,4 +222,7 @@ global proc deleteMoveReadyTreeUI()
 	clear($loopEdge);
 	clear($fixedPoint);
 	clear($fixedPointDisplacement);
+	clear($fixedPointOnParent);
+	clear($fixedPointDisplacementOnParent);
+	clear($domainParent);
 }
