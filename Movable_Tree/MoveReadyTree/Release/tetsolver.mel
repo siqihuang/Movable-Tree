@@ -14,7 +14,7 @@ global proc createSolverGUI(){
 
 	columnLayout;
 		rowLayout -numberOfColumns 2 -columnWidth2 95 35;
-			button -label "find Constraints" -command "getFixedPoints();sendFixedPointToNode()";
+			button -label "find Constraints" -command "getFixedPointsOnParent();getFixedPoints();sendFixedPointToNode()";
 			button -label "create solver" -command "solve()";
 		setParent..;
 	setParent..;
@@ -24,9 +24,15 @@ global proc createSolverGUI(){
 global proc sendFixedPointToNode(){
 	global int $fixedPoint[];
 	global int $fixedPointDisplacement[];
-	string $pointList,$numList;
+	global int $fixedPointOnParent[];
+	global int $fixedPointDisplacementOnParent[];
+	global int $domainParent[];
+	string $pointList,$numList,$parentPointList,$parentNumList,$domainParentList;
 	$pointList="";
 	$numList="";
+	$parentPointList="";
+	$parentNumList="";
+	$domainParentList="";
 	for($i=0;$i<size($fixedPoint);++$i){
 		$pointList+=$fixedPoint[$i];
 		$pointList+="$$";
@@ -35,11 +41,29 @@ global proc sendFixedPointToNode(){
 		$numList+=$fixedPointDisplacement[$i];
 		$numList+="$$";
 	}
+	for($i=0;$i<size($fixedPointOnParent);++$i){
+		$parentPointList+=$fixedPointOnParent[$i];
+		$parentPointList+="$$";
+	}
+	for($i=0;$i<size($fixedPointDisplacementOnParent);$i++){
+		$parentNumList+=$fixedPointDisplacementOnParent[$i];
+		$parentNumList+="$$";
+	}
+	for($i=0;$i<size($domainParent);$i++){
+		$domainParentList+=$domainParent[$i];
+		$domainParentList+="$$";
+	}
+	
 	int $pointNum=size($fixedPoint);
+	int $parentPointNum=size($fixedPointOnParent);
 	createNode simulationInfoNode -n "simulationInfoNode2015";
 	setAttr -type "string" simulationInfoNode2015.pointList $pointList;
 	setAttr -type "string" simulationInfoNode2015.pointNumList $numList;
+	setAttr -type "string" simulationInfoNode2015.parentPointList $parentPointList;
+	setAttr -type "string" simulationInfoNode2015.parentPointNumList $parentNumList;
+	setAttr -type "string" simulationInfoNode2015.domainParentList $domainParentList;
 	setAttr simulationInfoNode2015.pointNum $pointNum;
+	setAttr simulationInfoNode2015.parentPointNum $parentPointNum;
 	setAttr simulationInfoNode2015.trigger true;
 }
 
@@ -98,15 +122,26 @@ global proc getFixedPointsOnParent(){
 	global int $fixedPointOnParent[];
 	global int $fixedPointDisplacementOnParent[];
 	global int $FDomainNum;
-	global int $pointIndexOnParent=0;
-	global int $displacementIndexOnParent=0;
+	global int $pointIndexOnParent;
+	global int $displacementIndexOnParent;
+	$pointIndexOnParent=0;
+	$displacementIndexOnParent=0;
 	for($i=0;$i<$FDomainNum;++$i){
 		float $r1,$r2,$targetDis=0.05;
 		int $displacement=0;
 		string $childString="transform"+($i+1)+".vtx[0]";
 		float $childPos[3] = `xform -q -ws -t $childString`;
 		string $parentString="transform"+($domainParent[$i]+1);
-		eval("select"+$parentString);
+		
+
+		if($domainParent[$i]==-1){
+			$fixedPointDisplacementOnParent[$displacementIndexOnParent]=$displacement;
+			$displacementIndexOnParent++;
+			continue;
+		}
+		print $parentString;
+
+		eval("select "+$parentString);
 		int $vtxSize[0]=`polyEvaluate -vertex`;
 		for($j=0;$j<$vtxSize[0];++$j){
 			string $tmp=$parentString+".vtx["+$j+"]";
@@ -121,6 +156,30 @@ global proc getFixedPointsOnParent(){
 		$fixedPointDisplacementOnParent[$displacementIndexOnParent]=$displacement;
 		$displacementIndexOnParent++;
 	}
+	string $com="select";
+	int $acc=$fixedPointDisplacementOnParent[0];
+	int $count=0;
+	int $parent=$domainParent[$count]+1;
+	if($parent==0){
+		$count++;
+		$parent=$domainParent[$count]+1;
+		$acc+=$fixedPointDisplacementOnParent[$count];
+	}
+	for($i=0;$i<size($fixedPointOnParent);++$i){
+		if($acc<=$i){
+			$count++;
+			$parent=$domainParent[$count]+1;
+			$acc+=$fixedPointDisplacementOnParent[$count];
+			if($parent==0){
+				$count++;
+				$parent=$domainParent[$count]+1;
+				$acc+=$fixedPointDisplacementOnParent[$count];
+			}
+		}
+		$com+=" transform"+$parent+".vtx["+$fixedPointOnParent[$i]+"]";
+	}
+	$com+=";";
+	eval($com);
 }
 
 global proc getFixedPoints(){

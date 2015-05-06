@@ -55,6 +55,11 @@ extern std::map<int, glm::vec3>repr_anchor_points;
 
 //==========4.10 Simulation==========
 extern std::vector<std::vector<int>>constraintIndex ;
+extern std::vector<std::vector<int>>parentConstraintIndex ;
+extern std::vector<int> domainParentIndex;
+extern std::vector<glm::dvec3> parentLastPosNew;
+extern std::vector<glm::dvec3> parentLastPosOld;
+extern int currentConstriant;
 //=====================================
 extern float EPS; 
 

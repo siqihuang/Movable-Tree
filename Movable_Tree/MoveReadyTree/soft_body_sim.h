@@ -40,11 +40,11 @@ public:
 	int *in_elements; // these are indices of the tetrahedra passed in by LSSolverNode, which are used to make TetMesh
 	int in_vertices_size;
 	int in_elements_size;
-
+	float* m_restVertices;
 protected:
 
     //unsigned int m_solver_iterations;
-	float* m_restVertices;
+	
 	double* m_forces;
 	double* m_velocities;
 	unsigned int numOfFaces;

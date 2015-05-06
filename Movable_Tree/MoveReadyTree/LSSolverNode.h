@@ -10,6 +10,7 @@
 #include <maya/MFnIntArrayData.h>
 #include "soft_body_sim.h"
 #include "CommonData.h"
+#include "FdomainGraph.h"
 #include <vector>
 
 using std::vector;
@@ -64,12 +65,13 @@ public:
 	static MObject useSuppliedForce;
 	static MObject contactKs;
 	static MObject contactKd;
-	static int currentConstriant;
+	//static int currentConstriant;
 	static MTypeId id;
+	int domainID;
 
 	double prevDeformed;
 	SoftBodySim* sm;
-	
+	FdomainGraph fdg;
 };
 
 #endif

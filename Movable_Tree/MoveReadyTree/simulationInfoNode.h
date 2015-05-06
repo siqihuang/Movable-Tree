@@ -29,6 +29,10 @@ public:
 	static MObject trigger;//the trigger that trigger compute
 	static MObject output;//the output
 	static MObject pointNum;//the fix vertex number
+	static MObject parentPointList;//the parent point list
+	static MObject parentPointNumList;//the parent point num list
+	static MObject parentPointNum;//the parent point num
+	static MObject domainParentList;//the domain parent list
 	static bool dataSent;
 };
 

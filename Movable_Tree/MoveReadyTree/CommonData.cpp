@@ -16,4 +16,8 @@ std::map<Domain*, std::vector<Domain*>>redundant_edges;
 std::map<int, glm::vec3>repr_anchor_points; 
 
 std::vector<std::vector<int>>constraintIndex;
-
+std::vector<std::vector<int>>parentConstraintIndex;
+std::vector<int> domainParentIndex;
+std::vector<glm::dvec3> parentLastPosNew;
+std::vector<glm::dvec3> parentLastPosOld;
+int currentConstriant=0;
