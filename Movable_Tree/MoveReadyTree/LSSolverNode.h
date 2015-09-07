@@ -68,6 +68,7 @@ public:
 	//static int currentConstriant;
 	static MTypeId id;
 	int domainID;
+	int sTime;
 
 	double prevDeformed;
 	SoftBodySim* sm;

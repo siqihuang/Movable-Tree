@@ -34,7 +34,7 @@ public:
 	unsigned int numOfVertices;
 
     void initialize(std::string filename, float dt,const std::vector<int>& constrainedVIndices);
-    void update();
+    void update(int t);
 	
 	double *in_vertices; // these are vertices passed in by LSSolverNode, which are used to make TetMesh (i.e only used in the first frame)
 	int *in_elements; // these are indices of the tetrahedra passed in by LSSolverNode, which are used to make TetMesh
@@ -57,7 +57,7 @@ private:
 	ForceModel * forceModel;
 	TetMesh * tetMesh;
 	SparseMatrix * massMatrix;
-	void addExternalForces();
+	void addExternalForces(int t);
 	void addUserForces();
 	void clearForces();
 	void handleContacts();

@@ -286,14 +286,16 @@ void SoftBodySim::setupTrifaces(const tetgenio &out)
 }
 
 
-void SoftBodySim::addExternalForces()
+void SoftBodySim::addExternalForces(int t)
 {
 	for (int i=0; i<numOfVertices; i=i++)
 	{
-		m_forces[3*i] = 2.0;
-		m_forces[3*i+1] = -1.8;
-		m_forces[3*i+2] = 3.0;
+		m_forces[3*i] = 6.0*pow(-1.0,(int)(t/30));
+		m_forces[3*i+1] = -5.8*pow(-1.0,(int)(t/20));
+		m_forces[3*i+2] = 6.0*pow(-1.0,(int)(t/25));
+		std::cout<<m_forces[3*i]<<","<<m_forces[3*i+1]<<","<<m_forces[3*i+2]<<std::endl;
 	}
+	std::cout<<"t "<<t<<std::endl;
 	addUserForces();
 
 
@@ -376,14 +378,14 @@ void SoftBodySim::clearForces()
 }
 
 
-void SoftBodySim::update()
+void SoftBodySim::update(int t)
 {
 
 	int r = 3*numOfVertices;
 	
 	integratorBaseSparse->SetExternalForcesToZero();
 	clearForces();
-	addExternalForces();
+	addExternalForces(t);
 
 	
 	integratorBaseSparse->SetExternalForces(m_forces);
